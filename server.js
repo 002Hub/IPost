@@ -12,10 +12,14 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const signature = require('cookie-signature')
 const mysql = require('mysql');
+const csurf = require("csurf");
+const helmet = require("helmet");
+
+const csrfProtection = csurf({ cookie: true })
 
 const con = mysql.createConnection({
   host: "localhost",
-  user: "root",
+  user: fs.readFileSync("mysql_user.txt").toString(),
   password: fs.readFileSync("mysql_key.txt").toString()
 });
 
@@ -79,6 +83,7 @@ function unsign(text,req,res) {
   return unsigned
 }
 
+app.use(helmet());
 app.use(useragent.express());
 app.use(fileUpload())
 app.use(bodyParser.json({ limit: "100mb" }));
@@ -188,7 +193,7 @@ router.get("/*", (request, response, next) => {
   if(fs.existsSync(dir + "views"+originalUrl)) {
     return response.sendFile(dir + "views"+originalUrl);
   }
-  response.status(200).send("No file with that name found: "+originalUrl)
+  response.status(200).send("No file with that name found")
 })
 
 
@@ -196,9 +201,9 @@ router.get("/*", (request, response, next) => {
 router.post("/register",async function(req,res) {
   if(!increaseAPICall(req,res))return;
   res.status(200)
-  let username = req.body.user
+  let username = req.body.user.toString()
   username = username.replace(" ","")
-  let password = req.body.pass
+  let password = req.body.pass.toString()
   if(!username) {
     res.status(400)
     res.redirect("/register?success=false&reason=username")
@@ -234,9 +239,9 @@ router.post("/register",async function(req,res) {
 })
 
 router.post("/login",async function(req,res) {
-  let username = req.body.user
+  let username = req.body.user.toString()
   username = username.replace(" ","")
-  let password = req.body.pass
+  let password = req.body.pass.toString()
   if(!username) {
     res.status(400)
     res.send("no username given")

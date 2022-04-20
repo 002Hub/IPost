@@ -83,24 +83,6 @@ function unsign(text,req,res) {
   return unsigned
 }
 
-app.use(helmet());
-app.use(useragent.express());
-app.use(fileUpload())
-app.use(bodyParser.json({ limit: "100mb" }));
-app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
-app.use(clientErrorHandler);
-app.use(cookieParser(cookiesecret));
-
-router.get("/",function(req,res) {
-  res.sendFile(dir+"views/index.html")
-})
-
-/*
-
-START /API/*
-
-*/
-
 var API_CALLS = {}
 var USER_CALLS = {}
 function clear_api_calls() {
@@ -129,7 +111,7 @@ function increaseAPICall(req,res,next) {
 function increaseUSERCall(req,res,next) {
   let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   if(USER_CALLS[ip]==undefined)USER_CALLS[ip]=0
-  if(USER_CALLS[ip] >= 20) {
+  if(USER_CALLS[ip] >= 60) {
     res.status(429)
     res.send("You are sending too many requests!")
     console.log("rate limiting " + ip);
@@ -139,6 +121,25 @@ function increaseUSERCall(req,res,next) {
   if(next)next()
   return true
 }
+
+app.use(helmet());
+app.use(useragent.express());
+app.use(fileUpload())
+app.use(bodyParser.json({ limit: "100mb" }));
+app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
+app.use(clientErrorHandler);
+app.use(cookieParser(cookiesecret));
+
+router.get("/",function(req,res) {
+  if(!increaseUSERCall(req,res))return
+  res.sendFile(dir+"views/index.html")
+})
+
+/*
+
+START /API/*
+
+*/
 
 router.use("/api/*",async function(req,res,next) {
   increaseAPICall(req,res,next)

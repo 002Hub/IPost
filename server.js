@@ -13,9 +13,10 @@ const cookieParser = require('cookie-parser');
 const signature = require('cookie-signature')
 const mysql = require('mysql');
 const csurf = require("csurf");
-const helmet = require("helmet");
 
 const csrfProtection = csurf({ cookie: true })
+
+const DID_I_FINALLY_ADD_HTTPS = false
 
 const con = mysql.createConnection({
   host: "localhost",
@@ -122,13 +123,17 @@ function increaseUSERCall(req,res,next) {
   return true
 }
 
-app.use(helmet());
 app.use(useragent.express());
 app.use(fileUpload())
 app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 app.use(clientErrorHandler);
 app.use(cookieParser(cookiesecret));
+
+app.use("/*",function(req,res,next){
+  res.set("x-powered-by","ZeroTwoHub")
+  next()
+})
 
 router.get("/",function(req,res) {
   if(!increaseUSERCall(req,res))return
@@ -265,7 +270,7 @@ router.post("/register",async function(req,res) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       let setTo = username + " " + SHA256(password)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: true });
+      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
     });
   })
@@ -310,7 +315,7 @@ router.post("/login",async function(req,res) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       let setTo = username + " " + SHA256(password)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: true });
+      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
     } else {
       res.redirect("/login?success=false")

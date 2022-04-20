@@ -102,11 +102,15 @@ START /API/*
 */
 
 var API_CALLS = {}
-
+var USER_CALLS = {}
 function clear_api_calls() {
   API_CALLS = {}
 }
+function clear_user_calls() {
+  USER_CALLS = {}
+}
 setInterval(clear_api_calls, 10000)
+setInterval(clear_user_calls, 30000)
 
 function increaseAPICall(req,res,next) {
   let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
@@ -122,11 +126,26 @@ function increaseAPICall(req,res,next) {
   return true
 }
 
+function increaseUSERCall(req,res,next) {
+  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  if(USER_CALLS[ip]==undefined)USER_CALLS[ip]=0
+  if(USER_CALLS[ip] >= 20) {
+    res.status(429)
+    res.send("You are sending too many requests!")
+    console.log("rate limiting " + ip);
+    return false
+  }
+  USER_CALLS[ip]++;
+  if(next)next()
+  return true
+}
+
 router.use("/api/*",async function(req,res,next) {
   increaseAPICall(req,res,next)
 })
 
 router.get("/api/getuser",async function(req,res) {
+  //already counted due to the /api/* handler
   let cookie = req.cookies.AUTH_COOKIE
   if(!cookie){
     res.status(400)
@@ -160,6 +179,7 @@ router.get("/api/getuser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
+  //already counted due to the /api/* handler
   res.send("not implemented yet.")
 })
 
@@ -171,6 +191,7 @@ END /API/*
 */
 
 router.get("/css/*", (request, response) => {
+  if(!increaseUSERCall(request,response))return
   if(fs.existsSync(__dirname + request.originalUrl)){
     response.sendFile(__dirname + request.originalUrl);
   } else {
@@ -180,6 +201,7 @@ router.get("/css/*", (request, response) => {
 });
 
 router.get("/*", (request, response, next) => {
+  if(!increaseUSERCall(request,response))return
   let originalUrl = request.originalUrl.split("?").shift()
   if(fs.existsSync(dir + "views/"+originalUrl+".html")) {
     return response.sendFile(dir + "views/"+originalUrl+".html");
@@ -207,6 +229,16 @@ router.post("/register",async function(req,res) {
   if(!username) {
     res.status(400)
     res.redirect("/register?success=false&reason=username")
+    return
+  }
+  if(username.length > 100) {
+    res.status(400)
+    res.send("username is too long")
+    return
+  }
+  if(password.length > 100000) {
+    res.status(400)
+    res.send("password is too long")
     return
   }
   if(!password) {
@@ -239,6 +271,9 @@ router.post("/register",async function(req,res) {
 })
 
 router.post("/login",async function(req,res) {
+  if(!increaseAPICall(req,res))return;
+  if(!increaseAPICall(req,res))return;
+  //login is counted twice (think of bruteforces man)
   let username = req.body.user.toString()
   username = username.replace(" ","")
   let password = req.body.pass.toString()
@@ -247,11 +282,22 @@ router.post("/login",async function(req,res) {
     res.send("no username given")
     return
   }
+  if(username.length > 100) {
+    res.status(400)
+    res.send("username is too long")
+    return
+  }
+  if(password.length > 100000) {
+    res.status(400)
+    res.send("password is too long")
+    return
+  }
   if(!password) {
     res.status(400)
     res.send("no password given")
     return
   }
+
   let hashed_pw = password;
   for (let i = 0; i < 10000; i++) {
     hashed_pw = SHA256(hashed_pw)

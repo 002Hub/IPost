@@ -232,7 +232,7 @@ router.post("/register",async function(req,res) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       let setTo = username + " " + SHA256(password)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true });
+      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: false });
       res.redirect("/user?success=true")
     });
   })
@@ -263,7 +263,7 @@ router.post("/login",async function(req,res) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       let setTo = username + " " + SHA256(password)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true });
+      res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: false });
       res.redirect("/user?success=true")
     } else {
       res.redirect("/login?success=false")

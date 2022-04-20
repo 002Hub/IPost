@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged In</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body onload="setuser()">
+    <h1>Welcome Back!</h1>
+    <h2 id="user">User: USER</h2>
+    <button onclick="location.assign('/')">To Login Page</button><button onclick="location.assign('/register')">To Register Page</button>
+    <script>
+      async function setuser() {
+        let user = await (await fetch("/api/getuser")).json();
+        let username
+        username = user["username"];
+        if(user["error"])username=user["error"];
+        document.getElementById("user").innerText = `User: ${username}`;
+      }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<head>
+<link rel="stylesheet" href="/css/logon.css">
+  <script type="text/javascript">
+    function login() {
+      const user = document.getElementById("user").value
+      const pw = document.getElementById("pass").value
+    }
+  </script>
+</head>
+
+<body>
+    <header>
+        <h1>Login</h1>
+    </header>
+    <main>
+        <form id="login_form" class="form_class" action="login" method="post">
+            <div class="form_div">
+                <label>Username:</label>
+                <input id="user" class="field_class" name="user" type="text" placeholder="username" autofocus required>
+                <label>Password:</label>
+                <input id="pass" class="field_class" name="pass" type="password" placeholder="password" required>
+                <button class="submit_class" type="submit" form="login_form" onclick="return login()">Login</button>
+            </div>
+            <div class="info_div">
+                <p>Do you not have an account? <a href="register">Register now!</a></p>
+            </div>
+        </form>
+    </main>
+    <footer>
+
+    </footer>
+</body>

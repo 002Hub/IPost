@@ -16,6 +16,10 @@ const csurf = require("csurf");
 
 const csrfProtection = csurf({ cookie: true })
 
+const HASHES_DB = 10000
+const HASHES_COOKIE = 10
+const HASHES_DIFF = HASHES_DB - HASHES_COOKIE
+
 const DID_I_FINALLY_ADD_HTTPS = false
 
 const con = mysql.createConnection({
@@ -162,13 +166,14 @@ router.use("/api/*",async function(req,res,next) {
   let unsigned = unsign(cookie,req,res)
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
+  values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   con.query(sql, values, function (err, result) {
     if (err) throw err;
-    if(result[0] && result[0].User_Name && result[0].User_Name == username) {
-      res.locals.username = username;
+    if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
+      res.locals.username = values[0];
       next()
     } else {
-      res.json({"error":"you are not logged in! (invalid cookie)"})
+      res.json({"error":"you cannot access the api without being logged in"})
     }
   });
 })
@@ -186,7 +191,7 @@ router.get("/api/getuser",async function(req,res) {
   let values = unsigned.split(" ")
   let username = values[0]
 
-  values[1] = SHA256(values[1],username,10000-10)
+  values[1] = SHA256(values[1],username,HASHES_DIFF)
 
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let sent_res = false
@@ -207,12 +212,13 @@ router.post("/api/post", async function(req,res) {
   let values = [res.locals.username,req.body.message]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
-    res.json({"post_id":result[0].post_id})
+    console.log(result);
+    res.send("success")
   });
 })
 
 router.get("/api/getPosts/*", async function(req,res) {
-  let sql = `select post_user_name,post_text from zerotwohub.posts where post_id > ? and post_id < ? order by post_id desc;`
+  let sql = `select post_user_name,post_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
   if(isNaN(id))id=0
   let values = [id,id+10]
@@ -292,13 +298,13 @@ router.post("/register",async function(req,res) {
       res.redirect("/register?success=false&reason=already_exists")
       return
     }
-    let hashed_pw = SHA256(password,username,10000)
+    let hashed_pw = SHA256(password,username,HASHES_DB)
     let values = [username,hashed_pw]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW) VALUES (?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      let setTo = username + " " + SHA256(password,username,10)
+      let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
@@ -334,13 +340,13 @@ router.post("/login",async function(req,res) {
     return
   }
 
-  let hashed_pw = SHA256(password,username,10000)
+  let hashed_pw = SHA256(password,username,HASHES_DB)
 
   let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {
     if(result && result[0] && result[0].User_Name && result[0].User_Name==username && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      let setTo = username + " " + SHA256(password,username,10)
+      let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")

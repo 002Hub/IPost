@@ -152,7 +152,24 @@ START /API/*
 */
 
 router.use("/api/*",async function(req,res,next) {
-  increaseAPICall(req,res,next)
+  if(!increaseAPICall(req,res))return;
+  let cookie = req.cookies.AUTH_COOKIE
+  if(!cookie){
+    res.status(400)
+    res.json({"error":"you are not logged in! (no cookie)"})
+    return
+  }
+  let unsigned = unsign(cookie,req,res)
+  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  con.query(sql, values, function (err, result) {
+    if (err) throw err;
+    if(result[0] && result[0].User_Name && result[0].User_Name == username) {
+      res.locals.username = username;
+      next()
+    } else {
+      res.json({"error":"you are not logged in! (invalid cookie)"})
+    }
+  });
 })
 
 router.get("/api/getuser",async function(req,res) {
@@ -185,8 +202,23 @@ router.get("/api/getuser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
-  //already counted due to the /api/* handler
-  res.send("not implemented yet.")
+  let sql = `insert into zerotwohub.posts (post_user_name,post_text) values (?,?);`
+  let values = [res.locals.username,req.body.message]
+  con.query(sql, values, function (err, result) {
+    if (err) throw err;
+    res.json({"post_id":result[0].post_id})
+  });
+})
+
+router.get("/api/getPosts/*", async function(req,res) {
+  let sql = `select post_user_name,post_text from zerotwohub.posts where post_id > ? and post_id < ? order by post_id desc;`
+  let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
+  if(isNaN(id))id=0
+  let values = [id,id+10]
+  con.query(sql, values, function (err, result) {
+    if (err) throw err;
+    res.json(result)
+  });
 })
 
 

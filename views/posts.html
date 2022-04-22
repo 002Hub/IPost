@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript">window.post = function(url, data) {return fetch(url, {method: "POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});}</script>
+  </head>
+  <body>
+    <div class="self">
+      Username: <span class="Username"></span> <br>
+      <textarea name="name" id="post-text" rows="8" cols="80"></textarea> <br>
+      <button type="button" name="button" id="post-btn">Post</button>
+    </div>
+    <div class="posts" id="posts">
+
+    </div>
+
+    <script type="text/javascript">
+      document.getElementById("post-btn").addEventListener("click",function() {
+        let r = post("/api/post",{"message":document.getElementById("post-text").value})
+        document.getElementById("post-text").value = ""
+        console.log(r);
+      })
+      function createPost(username,text) {
+        const newDiv = document.createElement("div");
+        const newP = document.createElement("p");
+        const newText = document.createTextNode(text);
+        const newUsername = document.createTextNode(username);
+
+        newP.appendChild(newUsername)
+
+        newDiv.appendChild(newP)
+        newDiv.appendChild(newText)
+
+        document.body.appendChild(newDiv)
+
+      }
+
+      async function buildPosts() {
+        let index = 0
+        let last_10_posts = await (await fetch(`/api/getPosts/${index}`)).json()
+        last_10_posts.forEach((item, i) => {
+          console.log(item,i);
+          createPost(item.post_user_name,item.post_text)
+        });
+
+
+      }
+
+
+    </script>
+  </body>
+</html>

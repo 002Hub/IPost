@@ -161,6 +161,7 @@ router.use("/api/*",async function(req,res,next) {
   }
   let unsigned = unsign(cookie,req,res)
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  let values = unsigned.split(" ")
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {

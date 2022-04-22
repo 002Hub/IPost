@@ -169,7 +169,7 @@ router.get("/api/getuser",async function(req,res) {
   let hashed_pw = values[1]
   let username = values[0]
 
-  for (let i = 0; i < 9999; i++) {
+  for (let i = 0; i < 10000-5; i++) {
     hashed_pw = SHA256(hashed_pw+username)
   }
 

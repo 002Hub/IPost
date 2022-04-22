@@ -160,18 +160,15 @@ router.get("/api/getuser",async function(req,res) {
   let cookie = req.cookies.AUTH_COOKIE
   if(!cookie){
     res.status(400)
-    res.json({"error":"you are not logged in!"})
+    res.json({"error":"you are not logged in! (no cookie)"})
     return
   }
   let unsigned = unsign(cookie,req,res)
 
   let values = unsigned.split(" ")
-  let hashed_pw = values[1]
   let username = values[0]
 
-  hashed_pw = SHA256(hashed_pw+username,10000-10)
-
-  values[1] = hashed_pw
+  values[1] = SHA256(values[1],10000-10)
 
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let sent_res = false
@@ -180,7 +177,7 @@ router.get("/api/getuser",async function(req,res) {
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
       res.json({"username":username})
     } else {
-      res.json({"error":"you are not logged in!"})
+      res.json({"error":"you are not logged in! (invalid cookie)"})
     }
     sent_res = true
   });
@@ -262,8 +259,7 @@ router.post("/register",async function(req,res) {
       res.redirect("/register?success=false&reason=already_exists")
       return
     }
-    let hashed_pw = password;
-    hashed_pw = SHA256(hashed_pw+username,10000)
+    let hashed_pw = SHA256(password+username,10000)
     let values = [username,hashed_pw]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW) VALUES (?, ?);`
     con.query(sql, values, function (err, result) {
@@ -305,8 +301,7 @@ router.post("/login",async function(req,res) {
     return
   }
 
-  let hashed_pw = password;
-  hashed_pw = SHA256(hashed_pw+username,10000)
+  let hashed_pw = SHA256(password+username,10000)
 
   let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {

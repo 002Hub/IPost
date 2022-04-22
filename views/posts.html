@@ -19,7 +19,8 @@
       document.getElementById("post-btn").addEventListener("click",async function() {
         let r = await post("/api/post",{"message":document.getElementById("post-text").value})
         document.getElementById("post-text").value = ""
-        console.log(r);
+        document.getElementById("posts").innerHTML = ""
+        buildPosts()
       })
       function createPost(username,text) {
         const newDiv = document.createElement("div");
@@ -32,7 +33,7 @@
         newDiv.appendChild(newP)
         newDiv.appendChild(newText)
 
-        document.body.appendChild(newDiv)
+        document.getElementById("posts").appendChild(newDiv)
 
       }
 
@@ -43,10 +44,9 @@
           console.log(item,i);
           createPost(item.post_user_name,item.post_text)
         });
-
-
       }
 
+      buildPosts()
 
     </script>
   </body>

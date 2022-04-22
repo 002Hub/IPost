@@ -33,12 +33,17 @@ const dir = __dirname + "/"
 
 const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
 
-function SHA256(str) {
+function SHA256(str,num) {
+  if(!num && num!==0)num=1;
   if(!str)return;
-  return crypto
-    .createHash("sha256")
-    .update(str)
-    .digest("base64");
+  let ret = str;
+  for (let i = 0; i < num; i++) {
+    ret = crypto
+      .createHash("sha256")
+      .update(ret)
+      .digest("base64");
+  }
+  return ret;
 }
 
 
@@ -165,7 +170,7 @@ router.get("/api/getuser",async function(req,res) {
   let username = values[0]
 
   for (let i = 0; i < 9999; i++) {
-    hashed_pw = SHA256(hashed_pw)
+    hashed_pw = SHA256(hashed_pw+username)
   }
 
   values[1] = hashed_pw
@@ -261,14 +266,14 @@ router.post("/register",async function(req,res) {
     }
     let hashed_pw = password;
     for (let i = 0; i < 10000; i++) {
-      hashed_pw = SHA256(hashed_pw)
+      hashed_pw = SHA256(hashed_pw+username)
     }
     let values = [username,hashed_pw]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW) VALUES (?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      let setTo = username + " " + SHA256(password)
+      let setTo = username + " " + SHA256(password+username,10)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
@@ -306,14 +311,14 @@ router.post("/login",async function(req,res) {
 
   let hashed_pw = password;
   for (let i = 0; i < 10000; i++) {
-    hashed_pw = SHA256(hashed_pw)
+    hashed_pw = SHA256(hashed_pw+username)
   }
 
   let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {
     if(result && result[0] && result[0].User_Name && result[0].User_Name==username && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-      let setTo = username + " " + SHA256(password)
+      let setTo = username + " " + SHA256(password+username,10)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")

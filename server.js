@@ -169,9 +169,7 @@ router.get("/api/getuser",async function(req,res) {
   let hashed_pw = values[1]
   let username = values[0]
 
-  for (let i = 0; i < 10000-10; i++) {
-    hashed_pw = SHA256(hashed_pw+username)
-  }
+  hashed_pw = SHA256(hashed_pw+username,10000-10)
 
   values[1] = hashed_pw
 
@@ -265,9 +263,7 @@ router.post("/register",async function(req,res) {
       return
     }
     let hashed_pw = password;
-    for (let i = 0; i < 10000; i++) {
-      hashed_pw = SHA256(hashed_pw+username)
-    }
+    hashed_pw = SHA256(hashed_pw+username,10000)
     let values = [username,hashed_pw]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW) VALUES (?, ?);`
     con.query(sql, values, function (err, result) {
@@ -310,9 +306,7 @@ router.post("/login",async function(req,res) {
   }
 
   let hashed_pw = password;
-  for (let i = 0; i < 10000; i++) {
-    hashed_pw = SHA256(hashed_pw+username)
-  }
+  hashed_pw = SHA256(hashed_pw+username,10000)
 
   let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {

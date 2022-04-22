@@ -16,8 +16,8 @@
     </div>
 
     <script type="text/javascript">
-      document.getElementById("post-btn").addEventListener("click",function() {
-        let r = post("/api/post",{"message":document.getElementById("post-text").value})
+      document.getElementById("post-btn").addEventListener("click",async function() {
+        let r = await post("/api/post",{"message":document.getElementById("post-text").value})
         document.getElementById("post-text").value = ""
         console.log(r);
       })

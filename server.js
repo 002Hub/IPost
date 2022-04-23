@@ -13,6 +13,8 @@ const cookieParser = require('cookie-parser');
 const signature = require('cookie-signature')
 const mysql = require('mysql');
 const csurf = require("csurf");
+const WebSocket = require("ws").Server;
+
 
 const csrfProtection = csurf({ cookie: true })
 
@@ -89,6 +91,7 @@ function unsign(text,req,res) {
   if(!unsigned) {
     res.status(400)
     res.json({"error":"Bad auth cookie set"})
+    return false
   }
   return unsigned
 }
@@ -164,10 +167,7 @@ router.use("/api/*",async function(req,res,next) {
     return
   }
   let unsigned = unsign(cookie,req,res)
-  if(!unsigned){
-    res.json({"error":"you are not logged in! (invalid cookie)"})
-    return
-  }
+  if(!unsigned){return}
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
@@ -212,24 +212,60 @@ router.get("/api/getuser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
+  if(!req.body.message) {
+    res.send("error")
+    return
+  }
   let sql = `insert into zerotwohub.posts (post_user_name,post_text) values (?,?);`
   let values = [res.locals.username,req.body.message]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     console.log(result);
+    wss.clients.forEach(function(ws) {
+      ws.send("new_post")
+    });
     res.send("success")
   });
 })
 
 router.get("/api/getPosts/*", async function(req,res) {
+
   let sql = `select post_user_name,post_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
   if(isNaN(id))id=0
-  let values = [id,id+10]
+  let values = [id,id+100]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     res.json(result)
   });
+})
+
+router.post("/api/changePW", async function(req,res) {
+  //let values = [req.body.currentPW,req.body.newPW]
+  let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
+  let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
+
+  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  let values = [res.locals.username,hashed_pw]
+  con.query(sql, values, function (err, result) {
+    if (err) throw err;
+    if(result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
+      let sql = `update zerotwohub.users set User_PW=? where User_Name=? and User_PW=?;`
+      let values = [hashed_new_pw,res.locals.username,hashed_pw]
+      con.query(sql, values, function (err, result) {
+        if (err) throw err;
+        let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        let setTo = res.locals.username + " " + SHA256(req.body.newPW,res.locals.username,HASHES_COOKIE)
+        let cookiesigned = signature.sign(setTo, cookiesecret+ip);
+        res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+        res.json({"success":"successfully changed password"})
+      })
+    } else {
+      res.json({"error":"invalid password"})
+    }
+    sent_res = true
+  });
+  setTimeout(function(){if(!sent_res)res.json({"error":"timeout"})},3000);
 })
 
 
@@ -285,11 +321,6 @@ router.post("/register",async function(req,res) {
     res.send("username is too long")
     return
   }
-  if(password.length > 100000) {
-    res.status(400)
-    res.send("password is too long")
-    return
-  }
   if(!password) {
     res.status(400)
     res.redirect("/register?success=false&reason=password")
@@ -333,11 +364,6 @@ router.post("/login",async function(req,res) {
     res.send("username is too long")
     return
   }
-  if(password.length > 100000) {
-    res.status(400)
-    res.send("password is too long")
-    return
-  }
   if(!password) {
     res.status(400)
     res.send("no password given")
@@ -365,3 +391,32 @@ app.use(router)
 
 const httpServer = http.createServer(app);
 httpServer.listen(25566);
+
+const wss = new WebSocket({
+  server: httpServer,
+  perMessageDeflate: {
+    zlibDeflateOptions: {
+      chunkSize: 1024,
+      memLevel: 7,
+      level: 3
+    },
+    zlibInflateOptions: {
+      chunkSize: 10 * 1024
+    },
+    clientNoContextTakeover: true,
+    serverNoContextTakeover: true,
+    serverMaxWindowBits: 10,
+    concurrencyLimit: 10,
+    threshold: 1024 * 16
+  }
+});
+
+wss.on("connection", function connection(ws) {
+  // ws.isAlive = true;
+  ws.on("close", function close() {
+
+  })
+  ws.on("message", function incoming(message) {
+    //message = message.toString()
+  })
+})

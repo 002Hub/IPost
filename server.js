@@ -22,7 +22,7 @@ const HASHES_DB = 10000
 const HASHES_COOKIE = 10
 const HASHES_DIFF = HASHES_DB - HASHES_COOKIE
 
-const DID_I_FINALLY_ADD_HTTPS = false
+const DID_I_FINALLY_ADD_HTTPS = true
 
 const con = mysql.createConnection({
   host: "localhost",
@@ -257,7 +257,7 @@ router.post("/api/post", async function(req,res) {
     if (err) throw err;
     console.log(result);
     wss.clients.forEach(function(ws) {
-      ws.send("new_post")
+      ws.send("new_post " + res.locals.username)
     });
     res.send("success")
   });
@@ -425,10 +425,18 @@ router.post("/login",async function(req,res) {
 app.use(router)
 
 const httpServer = http.createServer(app);
-httpServer.listen(25566);
+httpServer.listen(25567);
+
+const privateKey = fs.readFileSync("C:/Certbot/live/ws.zerotwohub.tk/privkey.pem").toString()
+const certificate = fs.readFileSync("C:/Certbot/live/ws.zerotwohub.tk/cert.pem").toString()
+
+const credentials = {key: privateKey, cert: certificate};
+
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(25566);
 
 const wss = new WebSocket({
-  server: httpServer,
+  server: httpsServer,
   perMessageDeflate: {
     zlibDeflateOptions: {
       chunkSize: 1024,

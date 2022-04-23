@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="self">
-      Username: <span class="Username"></span> <br>
+      Username: <span class="Username" id="username-self"></span> <br>
       <textarea name="name" id="post-text" rows="8" cols="80"></textarea> <br>
       <button type="button" name="button" id="post-btn">Post</button>
     </div>
@@ -46,7 +46,17 @@
         });
       }
 
+      async function setUsername() {
+        let user = await (await fetch("/api/getuser")).json()
+        let username = user.username
+        if(!username)username = user.error
+        document.getElementById("username-self").innerText = username
+      }
+
+      setUsername()
       buildPosts()
+
+
 
     </script>
   </body>

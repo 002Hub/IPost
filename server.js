@@ -98,6 +98,8 @@ function unsign(text,req,res) {
 
 var API_CALLS = {}
 var USER_CALLS = {}
+var SESSIONS = {}
+var REVERSE_SESSIONS = {}
 function clear_api_calls() {
   API_CALLS = {}
 }
@@ -111,6 +113,28 @@ function increaseAPICall(req,res,next) {
   let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   if(API_CALLS[ip]==undefined)API_CALLS[ip]=0
   if(API_CALLS[ip] >= 20) {
+    if(REVERSE_SESSIONS[ip] && req.cookies.session !== REVERSE_SESSIONS[ip]) { //expected a session, but didn't get one
+      res.status(429)
+      res.send("You are sending way too many api calls!")
+      return
+    }
+    if(!req.cookies.session){
+      let session
+      do {
+        session = genstring(300)
+      } while (SESSIONS[session] != undefined);
+      SESSIONS[session]=ip
+      REVERSE_SESSIONS[ip]=session
+      setTimeout(function(){
+        SESSIONS[session]=undefined
+        REVERSE_SESSIONS[ip]=undefined
+      },50000)
+      res.cookie('session',session, { maxAge: 100000, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+      console.log("sending session to " + ip);
+    }
+
+  }
+  if(API_CALLS[ip] >= 60) {
     res.status(429)
     res.send("You are sending too many api calls!")
     console.log("rate limiting " + ip);
@@ -142,6 +166,17 @@ app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 app.use(clientErrorHandler);
 app.use(cookieParser(cookiesecret));
 
+
+// app.use("/*",function(req,res,next){
+//   if(req.get("User-Agent").search("python") != -1) {
+//     res.status(400)
+//     res.send("illegal user agent")
+//     return
+//   }
+//   next()
+// })
+//maybe someone wants it?
+
 app.use("/*",function(req,res,next){
   res.set("x-powered-by","ZeroTwoHub")
   next()
@@ -167,7 +202,7 @@ router.use("/api/*",async function(req,res,next) {
     return
   }
   let unsigned = unsign(cookie,req,res)
-  if(!unsigned){return}
+  if(!unsigned)return
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)

@@ -164,6 +164,10 @@ router.use("/api/*",async function(req,res,next) {
     return
   }
   let unsigned = unsign(cookie,req,res)
+  if(!unsigned){
+    res.json({"error":"you are not logged in! (invalid cookie)"})
+    return
+  }
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)

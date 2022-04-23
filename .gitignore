@@ -107,6 +107,9 @@ cookiesecret.txt
 mysql_key.txt
 mysql_user.txt
 register.py
+output.txt
+gen_pw.js
+register_account.py
 # Docusaurus cache and generated files
 .docusaurus
 

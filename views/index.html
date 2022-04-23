@@ -5,7 +5,7 @@ a {
   text-decoration: none;
 }
   </style>
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/logon.css">
 </head>
 
 <body>
@@ -13,13 +13,16 @@ a {
         <h1>Auth website</h1>
     </header>
     <main>
-      <div class="info_div">
-        <p>Do you not have an account? <a href="register">Register now!</a></p>
-        <br>
-        <br>
-        <p>Do you already have an account? <a href="login">Login now!</a></p>
-      </div>
-
+      <form id="login_form" class="form_class" action="login" method="post">
+          <div class="info_div">
+            <span>Do you not have an account? <a href="register">Register now!</a></span>
+            <br>
+            <br>
+            <span>Do you already have an account? <a href="login">Login now!</a></span>
+            <br>
+            <br>
+          </div>
+      </form>
     </main>
     <footer>
 

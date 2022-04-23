@@ -3,7 +3,42 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="/css/posts.css">
     <script type="text/javascript">window.post = function(url, data) {return fetch(url, {method: "POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});}</script>
+  <script type="text/javascript">
+  const {replace} = '';
+
+const es = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/g;
+const ca = /[&<>'"]/g;
+
+const esca = {
+'&': '&amp;',
+'<': '&lt;',
+'>': '&gt;',
+"'": '&#39;',
+'"': '&quot;'
+};
+const pe = m => esca[m];
+
+const escape = es => replace.call(es, ca, pe);
+
+const unes = {
+'&amp;': '&',
+'&#38;': '&',
+'&lt;': '<',
+'&#60;': '<',
+'&gt;': '>',
+'&#62;': '>',
+'&apos;': "'",
+'&#39;': "'",
+'&quot;': '"',
+'&#34;': '"'
+};
+const cape = m => unes[m];
+
+const unescape = un => replace.call(un, es, cape);
+  </script>
+
   </head>
   <body>
     <div class="self">
@@ -14,24 +49,40 @@
     <div class="posts" id="posts">
 
     </div>
-
     <script type="text/javascript">
+      socket = new WebSocket("ws://ws.zerotwohub.tk:25566");
+      socket.addEventListener("message", function (event) {
+        let data = event.data;
+        console.log(data);
+        if(data == "new_post") {
+          buildPosts()
+        }
+      })
+      function urlify(text) {
+        let urlRegex = /(([a-z]+:\/\/)?(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
+        return text.replace(urlRegex,'<a href="$1">$1</a> ')
+      }
       document.getElementById("post-btn").addEventListener("click",async function() {
+        if(document.getElementById("post-text").value.length >= 999) {
+          alert("Error, your message cant contain more than 1000 characters!")
+          return
+        }
         let r = await post("/api/post",{"message":document.getElementById("post-text").value})
         document.getElementById("post-text").value = ""
-        document.getElementById("posts").innerHTML = ""
-        buildPosts()
       })
       function createPost(username,text) {
         const newDiv = document.createElement("div");
         const newP = document.createElement("p");
-        const newText = document.createTextNode(text);
+        //const newText = document.createTextNode(text);
         const newUsername = document.createTextNode(username);
+
+        newDiv.classList.add("post");
 
         newP.appendChild(newUsername)
 
         newDiv.appendChild(newP)
-        newDiv.appendChild(newText)
+        newDiv.innerHTML += urlify(escape(text))
+        //newDiv.appendChild(newText)
 
         document.getElementById("posts").appendChild(newDiv)
 
@@ -40,6 +91,8 @@
       async function buildPosts() {
         let index = 0
         let last_10_posts = await (await fetch(`/api/getPosts/${index}`)).json()
+        if(!last_10_posts)return;
+        document.getElementById("posts").innerHTML = ""
         last_10_posts.forEach((item, i) => {
           console.log(item,i);
           createPost(item.post_user_name,item.post_text)

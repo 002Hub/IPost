@@ -17,6 +17,18 @@
   padding-bottom: 2px;
 }
 
+.mention {
+  color: blue;
+}
+
+.user-mention {
+  color: lightgreen;
+}
+
+.everyone-mention {
+  color: aqua;
+}
+
 body {
   background-color: black;
 }

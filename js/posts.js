@@ -3,7 +3,7 @@ socket.addEventListener("message", function (event) {
   let data = event.data;
   let ds = data.split(" ")
   let message = ds[0]
-  console.log(data,ds);
+  //console.log(data,ds);
   if(message == "new_post") {
     main()
     mainNoti(ds[1])

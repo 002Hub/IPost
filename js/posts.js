@@ -5,13 +5,10 @@ socket.addEventListener("message", function (event) {
     let data = event.data;
     let ds = data.split(" ")
     let message = ds[0]
-    //console.log(data,ds);
     if(message == "new_post") {
       main()
       mainNoti(ds[1])
     }
-  } else {
-    console.log(event.origin,"wss://ws.zerotwohub.tk:25566","wss://ws.zerotwohub.tk:25566" == event.origin);
   }
 })
 function urlify(text) {
@@ -70,8 +67,6 @@ function createPost(username,text,time,specialtext) {
   const newSpan2 = document.createElement("span");
   const newSpan3 = document.createElement("span");
 
-
-  //const newText = document.createTextNode(text);
   const newUsername = document.createTextNode(username);
   let timedate = new Date(time)
   time = timedate
@@ -96,7 +91,6 @@ function createPost(username,text,time,specialtext) {
 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
-  //newDiv.appendChild(newText)
 
   document.getElementById("posts").appendChild(newDiv)
 
@@ -113,7 +107,6 @@ async function main() {
   if(!last_10_posts)return;
   document.getElementById("posts").innerHTML = ""
   last_10_posts.forEach((item, i) => {
-    //console.log(item,i);
     createPost(item.post_user_name,item.post_text,item.post_time,item.post_special_text)
   });
   let mentions = document.getElementsByClassName("mention")
@@ -139,10 +132,17 @@ async function askNotiPerms() {
   return Notification.requestPermission()
 }
 
+async function firstAsk() {
+  if(Notification.permission === 'denied' || Notification.permission === 'default') {
+    await askNotiPerms()
+  }
+}
+
+firstAsk()
+
 async function mainNoti(user) {
   if(Notification.permission === 'denied' || Notification.permission === 'default') {
     await askNotiPerms()
-    console.log("asked for perms");
   } else {
     if(cansendNoti) {
       let notification = new Notification('ZTH Board', { body: "new message posted from " + user });

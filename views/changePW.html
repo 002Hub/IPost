@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password</title>
     <link rel="stylesheet" href="/css/changePW.css">
-    <script type="text/javascript">window.post = function(url, data) {return fetch(url, {method: "POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});}</script>
+    <script type="text/javascript" src="/js/httppost.js"></script>
 </head>
 <body>
   <div>
@@ -24,29 +24,6 @@
     <br>
     <span id="response"></span>
   </div>
-  <script type="text/javascript">
-    async function setUser() {
-      let user = await (await fetch("/api/getuser")).json()
-      //user["username"],user["error"]
-      if(user["username"])document.getElementById("username").innerText = `Current User: ${user["username"]}`
-      if(user["error"])document.getElementById("username").innerText = `Error: ${user["error"]}`
-
-    }
-    
-    setUser()
-
-    document.getElementById("submit").addEventListener("click",async function(){
-      if(window.confirm("Are you sure that you want to change your Password?")){
-        let re = await (await post("/api/changePW",{"currentPW":document.getElementById("currentPW").value,"newPW":document.getElementById("newPW").value})).json()
-        document.getElementById("response").innerText = re["error"] || re["success"]
-        document.getElementById("response").style="color:green"
-        if(re["error"]) {
-          document.getElementById("response").style="color:red"
-        }
-        document.getElementById("currentPW").value = ""
-        document.getElementById("newPW").value = ""
-      }
-    })
-  </script>
+  <script type="text/javascript" src="/js/changePW.js"></script>
 </body>
 </html>

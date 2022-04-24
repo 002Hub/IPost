@@ -251,8 +251,8 @@ router.post("/api/post", async function(req,res) {
     res.send("error")
     return
   }
-  let sql = `insert into zerotwohub.posts (post_user_name,post_text) values (?,?);`
-  let values = [res.locals.username,req.body.message]
+  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
+  let values = [res.locals.username,req.body.message,Date.now()]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     console.log(result);
@@ -265,7 +265,7 @@ router.post("/api/post", async function(req,res) {
 
 router.get("/api/getPosts/*", async function(req,res) {
 
-  let sql = `select post_user_name,post_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
   if(isNaN(id))id=0
   let values = [id,id+100]
@@ -320,6 +320,16 @@ router.get("/css/*", (request, response) => {
   return;
 });
 
+router.get("/js/*", (request, response) => {
+  if(!increaseUSERCall(request,response))return
+  if(fs.existsSync(__dirname + request.originalUrl)){
+    response.sendFile(__dirname + request.originalUrl);
+  } else {
+    response.status(404).send("no file with that name found")
+  }
+  return;
+});
+
 router.get("/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return
   let originalUrl = request.originalUrl.split("?").shift()
@@ -344,9 +354,14 @@ router.post("/register",async function(req,res) {
   if(!increaseAPICall(req,res))return;
   res.status(200)
   let username = req.body.user.toString()
-  username = username.replace(" ","")
+  username = username.replace(/\s/gi,"")
   let password = req.body.pass.toString()
   if(!username) {
+    res.status(400)
+    res.redirect("/register?success=false&reason=username")
+    return
+  }
+  if(username=="") {
     res.status(400)
     res.redirect("/register?success=false&reason=username")
     return
@@ -369,11 +384,11 @@ router.post("/register",async function(req,res) {
       return
     }
     let hashed_pw = SHA256(password,username,HASHES_DB)
-    let values = [username,hashed_pw]
-    let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW) VALUES (?, ?);`
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    let values = [username,hashed_pw, Date.now(), ip, ip]
+    let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
-      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -407,7 +422,7 @@ router.post("/login",async function(req,res) {
 
   let hashed_pw = SHA256(password,username,HASHES_DB)
 
-  let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?`
+  let userexistssql = `SELECT User_Name,User_PW,Last_IP from zerotwohub.users where User_Name = ? and User_PW = ?`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {
     if(result && result[0] && result[0].User_Name && result[0].User_Name==username && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
@@ -415,6 +430,12 @@ router.post("/login",async function(req,res) {
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
+      if(result[0].Last_IP != ip) {
+        let sql = `update zerotwohub.users set Last_IP=? where User_Name=?;`
+        con.query(sql,[ip,username],function(error,result) {
+          if(error)throw error
+        })
+      }
     } else {
       res.redirect("/login?success=false")
     }

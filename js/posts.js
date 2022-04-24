@@ -10,28 +10,33 @@ socket.addEventListener("message", function (event) {
   }
 })
 function urlify(text) {
-  let urlRegex = /(([a-z]+:\/\/)?(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
-  return text.replace(urlRegex,'<a href="$1">$1</a> ')
+  let textregex = /(([a-z]+:\/\/)?(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
+  return text.replace(textregex,'<a href="$1">$1</a> ')
 }
 function newlineify(text) {
-  let urlRegex = /(\n)/gi
-  return text.replace(urlRegex,' <br>')
+  let textregex = /(\n)/gi
+  return text.replace(textregex,' <br>')
+}
+function crossout(text) {
+  let textregex = /~([^~]*)~/gi
+  return text.replace(textregex,'<span class="crossout">$1</span>')
 }
 function italicify(text) {
-  let urlRegex = /\*([^\*]*)\*/gi
-  return text.replace(urlRegex,'<i>$1</i> ')
+  let textregex = /\*([^\*]*)\*/gi
+  return text.replace(textregex,'<i>$1</i> ')
 }
 function boldify(text) {
-  let urlRegex = /\*\*([^\*]*)\*\*/gi
-  return text.replace(urlRegex,'<b>$1</b> ')
+  let textregex = /\*\*([^\*]*)\*\*/gi
+  return text.replace(textregex,'<b>$1</b> ')
 }
 function filterMentions(text) {
-  let mentionRegex = /(@[^\s]*)/gi
-  return text.replace(mentionRegex,'<span class="mention">$1</span> ')
+  let textregex = /(@[^\s]*)/gi
+  return text.replace(textregex,'<span class="mention">$1</span> ')
 }
 document.getElementById("post-btn").addEventListener("click",async function() {
-  if(document.getElementById("post-text").value.length >= 1001) {
-    alert("Error, your message cant contain more than 1000 characters!")
+  let len = document.getElementById("post-text").value.length
+  if(len >= 1001) {
+    alert(`Error, your message cant contain more than 1000 characters! (${len})`)
     return
   }
   let r = await post("/api/post",{"message":document.getElementById("post-text").value})
@@ -42,6 +47,7 @@ function filterPost(text) {
   text = newlineify(text)
   text = urlify(text)
   text = filterMentions(text)
+  text = crossout(text)
   text = boldify(text)
   text = italicify(text)
 

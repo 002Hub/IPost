@@ -3,9 +3,6 @@ const https = require('https');
 const crypto = require("crypto");
 const express = require("express");
 const fs = require("fs");
-const router = express.Router();
-const redirrouter = express.Router();
-const app = express();
 const useragent = require('express-useragent');
 const fileUpload = require('express-fileupload');
 const bodyParser = require("body-parser");
@@ -15,6 +12,8 @@ const mysql = require('mysql');
 const csurf = require("csurf");
 const WebSocket = require("ws").Server;
 
+const router = express.Router();
+const app = express();
 
 const csrfProtection = csurf({ cookie: true })
 
@@ -263,13 +262,22 @@ router.post("/api/post", async function(req,res) {
   });
 })
 
+// router.get("/api/getPosts/*", async function(req,res) {
+//
+//   let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
+//   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
+//   if(isNaN(id))id=0
+//   let values = [id,id+100]
+//   con.query(sql, values, function (err, result) {
+//     if (err) throw err;
+//     res.json(result)
+//   });
+// })
+
 router.get("/api/getPosts/*", async function(req,res) {
 
-  let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
-  let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
-  if(isNaN(id))id=0
-  let values = [id,id+100]
-  con.query(sql, values, function (err, result) {
+  let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts order by post_id desc;`
+  con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
   });

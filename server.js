@@ -483,12 +483,12 @@ const wss = new WebSocket({
   }
 });
 
-wss.on("connection", function connection(ws) {
-  // ws.isAlive = true;
-  ws.on("close", function close() {
-
-  })
-  ws.on("message", function incoming(message) {
-    //message = message.toString()
-  })
-})
+// wss.on("connection", function connection(ws) {
+//   // ws.isAlive = true;
+//   ws.on("close", function close() {
+//
+//   })
+//   ws.on("message", function incoming(message) {
+//     //message = message.toString()
+//   })
+// })

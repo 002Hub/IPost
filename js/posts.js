@@ -31,11 +31,17 @@ function filterPost(text) {
   text = filterMentions(text)
   return text
 }
-function createPost(username,text,time) {
+function createPost(username,text,time,specialtext) {
+  if(specialtext){
+    specialtext = ` | ${specialtext}`
+  } else {
+    specialtext = ""
+  }
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
   const newSpan = document.createElement("span");
   const newSpan2 = document.createElement("span");
+  const newSpan3 = document.createElement("span");
 
 
   //const newText = document.createTextNode(text);
@@ -47,12 +53,18 @@ function createPost(username,text,time) {
   time = time[0] + " " + time[1] + " " + time[2] + " " + time[3] + " " + time[4]
   if(timedate=="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time="unknown time"
   const newTime = document.createTextNode(` | ${time}`)
+  const newSpecialText = document.createTextNode(specialtext)
+
   newDiv.classList.add("post");
+  newSpan3.classList.add("specialtext")
+
   newSpan.appendChild(newUsername)
   newSpan2.appendChild(newTime)
+  newSpan3.appendChild(newSpecialText)
 
   newP.appendChild(newSpan)
   newP.appendChild(newSpan2)
+  newP.appendChild(newSpan3)
 
 
   newDiv.appendChild(newP)
@@ -75,7 +87,7 @@ async function main() {
   document.getElementById("posts").innerHTML = ""
   last_10_posts.forEach((item, i) => {
     console.log(item,i);
-    createPost(item.post_user_name,item.post_text,item.post_time)
+    createPost(item.post_user_name,item.post_text,item.post_time,item.post_special_text)
   });
   let mentions = document.getElementsByClassName("mention")
   for (let i = 0; i < mentions.length; i++) {

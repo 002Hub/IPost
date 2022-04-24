@@ -265,7 +265,7 @@ router.post("/api/post", async function(req,res) {
 
 router.get("/api/getPosts/*", async function(req,res) {
 
-  let sql = `select post_user_name,post_text,post_time from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
   if(isNaN(id))id=0
   let values = [id,id+100]

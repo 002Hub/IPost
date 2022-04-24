@@ -10,6 +10,9 @@
   color: lightgreen;
 }
 
+.specialtext {
+  color: yellow;
+}
 
 #posts > div {
   background-color: darkgray;

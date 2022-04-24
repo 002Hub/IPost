@@ -284,6 +284,11 @@ router.get("/api/getPosts/*", async function(req,res) {
 })
 
 router.post("/api/changePW", async function(req,res) {
+  if(req.body.newPW.length < 10) {
+    res.status(400)
+    res.json({"error":"password is too short"})
+    return
+  }
   //let values = [req.body.currentPW,req.body.newPW]
   let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
   let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
@@ -374,7 +379,12 @@ router.post("/register",async function(req,res) {
     res.redirect("/register?success=false&reason=username")
     return
   }
-  if(username.length > 100) {
+  if(password.length < 10) {
+    res.status(400)
+    res.send("password is too short")
+    return
+  }
+  if(username.length > 25) {
     res.status(400)
     res.send("username is too long")
     return
@@ -417,9 +427,14 @@ router.post("/login",async function(req,res) {
     res.send("no username given")
     return
   }
-  if(username.length > 100) {
+  if(username.length > 25) {
     res.status(400)
     res.send("username is too long")
+    return
+  }
+  if(password.length < 10) {
+    res.status(400)
+    res.send("password is too short")
     return
   }
   if(!password) {
@@ -430,7 +445,7 @@ router.post("/login",async function(req,res) {
 
   let hashed_pw = SHA256(password,username,HASHES_DB)
 
-  let userexistssql = `SELECT User_Name,User_PW,Last_IP from zerotwohub.users where User_Name = ? and User_PW = ?`
+  let userexistssql = `SELECT User_Name,User_PW,User_LastIP from zerotwohub.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {
     if(result && result[0] && result[0].User_Name && result[0].User_Name==username && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
@@ -438,8 +453,8 @@ router.post("/login",async function(req,res) {
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
-      if(result[0].Last_IP != ip) {
-        let sql = `update zerotwohub.users set Last_IP=? where User_Name=?;`
+      if(result[0].User_LastIP != ip) {
+        let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
         con.query(sql,[ip,username],function(error,result) {
           if(error)throw error
         })

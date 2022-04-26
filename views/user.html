@@ -6,10 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logged In</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/httppost.js" charset="utf-8"></script>
 </head>
 <body onload="setuser()">
     <h1>Welcome Back!</h1>
     <h2 id="user">User: USER</h2>
+    <br>
+    <span class="bio">Bio: <input type="text" id="bio" disabled placeholder="wow such empty"></span>
+    <button id="changeBio" onclick="bioChanger()">Change Bio</button>
+    <br>
     <button onclick="location.assign('/login')">To Login Page</button><button onclick="location.assign('/register')">To Register Page</button>
     <br>
     <button onclick="location.assign('/changePW')">Want to change your password?</button>
@@ -19,9 +24,35 @@
       async function setuser() {
         let user = await (await fetch("/api/getuser")).json();
         let username
+        let bio
         username = user["username"];
+        bio = user["bio"]
         if(user["error"])username=user["error"];
+        if(user["error"])bio=user["error"];
+        if(!bio)bio="wow such empty"
         document.getElementById("user").innerText = `User: ${username}`;
+        document.getElementById("bio").placeholder = bio;
+
+      }
+
+      async function bioChanger() {
+        document.getElementById("bio").disabled = !document.getElementById("bio").disabled
+        document.getElementById("changeBio").innerText = (document.getElementById("bio").disabled && "Change Bio") || "Submit"
+        if(document.getElementById("bio").disabled) {
+          document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 0px solid black}'
+        }
+        else
+        {
+          document.querySelector('style').innerHTML = '::placeholder {color: black;} #bio {border: 2px solid gray}'
+        }
+        if(document.getElementById("bio").disabled) {
+          let response = await sendBio(document.getElementById("bio").value)
+          console.log(response);
+        }
+      }
+
+      async function sendBio(str) {
+        return await post("/api/setBio",{"Bio":str})
       }
 
     </script>

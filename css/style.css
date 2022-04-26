@@ -12,3 +12,20 @@ button {
     font-size: 18px;
     margin: 10px;
 }
+
+::placeholder{
+  color: white;
+}
+
+#bio  {
+  color:white;
+  font-size: 20px;
+  background-color: black;
+  border: 0px solid black;
+  border-radius: 7px;
+}
+
+.bio {
+  color:white;
+  font-size: 20px;
+}

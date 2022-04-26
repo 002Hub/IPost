@@ -209,6 +209,7 @@ router.use("/api/*",async function(req,res,next) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
       res.locals.username = values[0];
+      res.locals.bio = result[0].User_Bio
       next()
     } else {
       res.json({"error":"you cannot access the api without being logged in"})
@@ -217,37 +218,27 @@ router.use("/api/*",async function(req,res,next) {
 })
 
 router.get("/api/getuser",async function(req,res) {
+  res.json({"username":res.locals.username,"bio":res.locals.bio})
+})
+
+router.get("/api/getotheruser",async function(req,res) {
   //already counted due to the /api/* handler
-  let cookie = req.cookies.AUTH_COOKIE
-  if(!cookie){
-    res.status(400)
-    res.json({"error":"you are not logged in! (no cookie)"})
-    return
-  }
-  let unsigned = unsign(cookie,req,res)
+  let username = req.query.user
 
-  let values = unsigned.split(" ")
-  let username = values[0]
-
-  values[1] = SHA256(values[1],username,HASHES_DIFF)
-
-  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
-  let sent_res = false
-  con.query(sql, values, function (err, result) {
+  let sql = `select * from zerotwohub.users where User_Name=?;`
+  con.query(sql, [username], function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
-      res.json({"username":username})
+      res.json({"username":username,"bio":result[0].User_Bio})
     } else {
-      res.json({"error":"you are not logged in! (invalid cookie)"})
+      res.json({"error":"there is no such user!"})
     }
-    sent_res = true
   });
-  setTimeout(function(){if(!sent_res)res.json({"error":"timeout"})},3000);
 })
 
 router.post("/api/post", async function(req,res) {
   if(!req.body.message) {
-    res.send("error")
+    res.json({"error":"no message to post"})
     return
   }
   let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
@@ -258,7 +249,7 @@ router.post("/api/post", async function(req,res) {
     wss.clients.forEach(function(ws) {
       ws.send("new_post " + res.locals.username)
     });
-    res.send("success")
+    res.json({"success":"successfully posted message"})
   });
 })
 
@@ -275,11 +266,24 @@ router.post("/api/post", async function(req,res) {
 // })
 
 router.get("/api/getPosts/*", async function(req,res) {
-
   let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts order by post_id desc;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
+  });
+})
+
+router.post("/api/setBio", async function(req,res) {
+  let bio = req.body.Bio
+  if(!bio){
+    res.status(400)
+    res.json({"error":"no bio set!"})
+    return
+  }
+  let sql = `update zerotwohub.users set User_Bio=? where User_Name=?`
+  con.query(sql, [bio,res.locals.username], function (err, result) {
+    if (err) throw err;
+    res.json({"success":"updated bio"})
   });
 })
 
@@ -317,11 +321,19 @@ router.post("/api/changePW", async function(req,res) {
 })
 
 
+
+
 /*
 
 END /API/*
 
 */
+
+
+router.get("/users/*", async function(req,res) {
+  if(!increaseUSERCall(req,res))return
+  res.sendFile(dir + "views/otheruser.html")
+})
 
 router.get("/css/*", (request, response) => {
   if(!increaseUSERCall(request,response))return
@@ -387,6 +399,11 @@ router.post("/register",async function(req,res) {
   if(username.length > 25) {
     res.status(400)
     res.send("username is too long")
+    return
+  }
+  if(username.search("@")!=-1) {
+    res.status(400)
+    res.send("username can't contain @-characters")
     return
   }
   if(!password) {

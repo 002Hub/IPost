@@ -47,19 +47,33 @@ function SHA256(str,salt,num) {
   return ret;
 }
 
+function RNG(seed) {
+  if(!seed)seed = Date.now();
+  this.seed = seed
 
+  this.random = function(min,max) {
+    if(!min)min=0
+    if(!max)max=1
+    seed += Math.log(Math.abs(Math.sin(seed))*100)
+    return Math.abs(Math.sin(seed))*max + min
+  }
+  this.rand = function(min,max) {
+    return Math.floor(this.random(min,max))
+  }
+}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const rand = new RNG()
+const genstring_characters =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+const genstring_charactersLength = genstring_characters.length;
 function genstring(length) {
-  var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-  var charactersLength = characters.length;
+  let result = "";
   for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    result += genstring_characters.charAt(rand.rand(genstring_charactersLength));
   }
   return result;
 }

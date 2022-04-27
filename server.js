@@ -23,15 +23,11 @@ const HASHES_DIFF = HASHES_DB - HASHES_COOKIE
 
 const DID_I_FINALLY_ADD_HTTPS = true
 
-const con = mysql.createConnection({
+const con = mysql.createPool({
+  connectionLimit : 10,
   host: "localhost",
   user: fs.readFileSync("mysql_user.txt").toString(),
   password: fs.readFileSync("mysql_key.txt").toString()
-});
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
 });
 
 const dir = __dirname + "/"

@@ -1,0 +1,23 @@
+{
+  "mysql": {
+    "connections":1000,
+    "host":"localhost",
+    "user":"root",
+    "password_file":"mysql_password.txt"
+  },
+  "cookies": {
+    "server_hashes": 10000,
+    "client_hashes": 10
+  },
+  "rate_limits": {
+    "api": {
+      "reset_time": 10000,
+      "max_without_session": 20,
+      "max_with_session": 60
+    },
+    "user": {
+      "reset_time": 30000,
+      "max": 60
+    }
+  }
+}

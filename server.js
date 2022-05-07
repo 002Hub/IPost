@@ -17,17 +17,19 @@ const app = express();
 
 const csrfProtection = csurf({ cookie: true })
 
-const HASHES_DB = 10000
-const HASHES_COOKIE = 10
+const config = JSON.parse(fs.readFileSync("server_config.json"))
+
+const HASHES_DB = config.cookies.server_hashes
+const HASHES_COOKIE = config.cookies.client_hashes
 const HASHES_DIFF = HASHES_DB - HASHES_COOKIE
 
 const DID_I_FINALLY_ADD_HTTPS = true
 
 const con = mysql.createPool({
-  connectionLimit : 10,
-  host: "localhost",
-  user: fs.readFileSync("mysql_user.txt").toString(),
-  password: fs.readFileSync("mysql_key.txt").toString()
+  connectionLimit : config.mysql.connections,
+  host: config.mysql.host,
+  user: config.mysql.user,
+  password: fs.readFileSync(config.mysql.password_file).toString()
 });
 
 const dir = __dirname + "/"
@@ -95,7 +97,7 @@ function getKeyByValue(object, value) {
 }
 
 function unsign(text,req,res) {
-  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  let ip = req.socket.remoteAddress
   let unsigned = signature.unsign(text,cookiesecret+ip)
   if(!unsigned) {
     res.status(400)
@@ -115,13 +117,13 @@ function clear_api_calls() {
 function clear_user_calls() {
   USER_CALLS = {}
 }
-setInterval(clear_api_calls, 10000)
-setInterval(clear_user_calls, 30000)
+setInterval(clear_api_calls, config.rate_limits.api.reset_time)
+setInterval(clear_user_calls, config.rate_limits.user.reset_time)
 
 function increaseAPICall(req,res,next) {
-  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  let ip = req.socket.remoteAddress
   if(API_CALLS[ip]==undefined)API_CALLS[ip]=0
-  if(API_CALLS[ip] >= 20) {
+  if(API_CALLS[ip] >= config.rate_limits.api.max_without_session) {
     if(REVERSE_SESSIONS[ip] && req.cookies.session !== REVERSE_SESSIONS[ip]) { //expected a session, but didn't get one
       res.status(429)
       res.send("You are sending way too many api calls!")
@@ -143,7 +145,7 @@ function increaseAPICall(req,res,next) {
     }
 
   }
-  if(API_CALLS[ip] >= 60) {
+  if(API_CALLS[ip] >= config.rate_limits.api.max_with_session) {
     res.status(429)
     res.send("You are sending too many api calls!")
     console.log("rate limiting " + ip);
@@ -155,9 +157,9 @@ function increaseAPICall(req,res,next) {
 }
 
 function increaseUSERCall(req,res,next) {
-  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+  let ip = req.socket.remoteAddress
   if(USER_CALLS[ip]==undefined)USER_CALLS[ip]=0
-  if(USER_CALLS[ip] >= 60) {
+  if(USER_CALLS[ip] >= config.rate_limits.user.max) {
     res.status(429)
     res.send("You are sending too many requests!")
     console.log("rate limiting " + ip);
@@ -316,7 +318,7 @@ router.post("/api/changePW", async function(req,res) {
       let values = [hashed_new_pw,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
-        let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        let ip = req.socket.remoteAddress
         let setTo = res.locals.username + " " + SHA256(req.body.newPW,res.locals.username,HASHES_COOKIE)
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -380,7 +382,7 @@ router.get("/*", (request, response, next) => {
   if(fs.existsSync(dir + "views"+originalUrl)) {
     return response.sendFile(dir + "views"+originalUrl);
   }
-  response.status(200).send("No file with that name found")
+  response.status(404).send("No file with that name found")
 })
 
 
@@ -429,7 +431,7 @@ router.post("/register",async function(req,res) {
       return
     }
     let hashed_pw = SHA256(password,username,HASHES_DB)
-    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    let ip = req.socket.remoteAddress
     let values = [username,hashed_pw, Date.now(), ip, ip]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
     con.query(sql, values, function (err, result) {
@@ -475,7 +477,7 @@ router.post("/login",async function(req,res) {
   let userexistssql = `SELECT User_Name,User_PW,User_LastIP from zerotwohub.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[username,hashed_pw],function(error,result) {
     if(result && result[0] && result[0].User_Name && result[0].User_Name==username && result[0].User_PW && result[0].User_PW == hashed_pw) {
-      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+      let ip = req.socket.remoteAddress
       let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });

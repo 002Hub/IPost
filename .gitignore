@@ -104,8 +104,7 @@ dist
 .temp
 .cache
 cookiesecret.txt
-mysql_key.txt
-mysql_user.txt
+mysql_password.txt
 register.py
 output.txt
 gen_pw.js

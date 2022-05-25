@@ -442,12 +442,13 @@ router.post("/register",async function(req,res) {
     }
     let hashed_pw = SHA256(password,username,HASHES_DB)
     let ip = req.socket.remoteAddress
+    let cookiesigned = signature.sign(setTo, cookiesecret+ip);
+    let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
+    ip = SHA256(ip,setTo,HASHES_DB)
     let values = [b64(encodeURIComponent(username)),hashed_pw, Date.now(), ip, ip]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
-      let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
-      let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
     });
@@ -492,6 +493,9 @@ router.post("/login",async function(req,res) {
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
       res.redirect("/user?success=true")
+
+      ip = SHA256(ip,setTo,HASHES_DB)
+
       if(result[0].User_LastIP != ip) {
         let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
         con.query(sql,[ip,b64(encodeURIComponent(username))],function(error,result) {

@@ -257,14 +257,14 @@ router.get("/api/getotheruser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
-  req.body.message = req.body.message.trim()
+  req.body.message = encodeURIComponent(req.body.message.trim())
   if(!req.body.message) {
     res.json({"error":"no message to post"})
     return
   }
 
   let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
-  let values = [res.locals.username,b64(req.body.message),Date.now()]
+  let values = [b64(encodeURIComponent(res.locals.username)),b64(req.body.message),Date.now()]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     console.log(result);
@@ -303,7 +303,7 @@ router.post("/api/setBio", async function(req,res) {
     return
   }
   let sql = `update zerotwohub.users set User_Bio=? where User_Name=?`
-  con.query(sql, [b64(bio),b64(res.locals.username)], function (err, result) {
+  con.query(sql, [b64(encodeURIComponent(bio)),b64(encodeURIComponent(res.locals.username))], function (err, result) {
     if (err) throw err;
     res.json({"success":"updated bio"})
   });
@@ -434,7 +434,7 @@ router.post("/register",async function(req,res) {
     return
   }
   let userexistssql = `SELECT User_Name from zerotwohub.users where User_Name = ?`
-  con.query(userexistssql,[b64(username)],function(error,result) {
+  con.query(userexistssql,[b64(encodeURIComponent(username))],function(error,result) {
     if(result && result[0] && result[0].User_Name) {
       res.status(400)
       res.redirect("/register?success=false&reason=already_exists")
@@ -442,7 +442,7 @@ router.post("/register",async function(req,res) {
     }
     let hashed_pw = SHA256(password,username,HASHES_DB)
     let ip = req.socket.remoteAddress
-    let values = [b64(username),hashed_pw, Date.now(), ip, ip]
+    let values = [b64(encodeURIComponent(username)),hashed_pw, Date.now(), ip, ip]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
@@ -485,8 +485,8 @@ router.post("/login",async function(req,res) {
   let hashed_pw = SHA256(password,username,HASHES_DB)
 
   let userexistssql = `SELECT User_Name,User_PW,User_LastIP from zerotwohub.users where User_Name = ? and User_PW = ?;`
-  con.query(userexistssql,[b64(username),hashed_pw],function(error,result) {
-    if(result && result[0] && result[0].User_Name && result[0].User_Name==b64(username) && result[0].User_PW && result[0].User_PW == hashed_pw) {
+  con.query(userexistssql,[b64(encodeURIComponent(username)),hashed_pw],function(error,result) {
+    if(result && result[0] && result[0].User_Name && result[0].User_Name==b64(encodeURIComponent(username)) && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.socket.remoteAddress
       let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
@@ -494,7 +494,7 @@ router.post("/login",async function(req,res) {
       res.redirect("/user?success=true")
       if(result[0].User_LastIP != ip) {
         let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
-        con.query(sql,[ip,b64(username)],function(error,result) {
+        con.query(sql,[ip,b64(encodeURIComponent(username))],function(error,result) {
           if(error)throw error
         })
       }

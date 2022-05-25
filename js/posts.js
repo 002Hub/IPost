@@ -54,7 +54,7 @@ document.getElementById("post-btn").addEventListener("click",async function() {
     alert(`Error, your message cant contain more than 1000 characters! (${len})`)
     return
   }
-  let r = await post("/api/post",{"message":encodeURIComponent(document.getElementById("post-text").value)})
+  let r = await post("/api/post",{"message":document.getElementById("post-text").value})
   if(window.location.href.split("?mention=")[1])location.replace('/posts');
   document.getElementById("post-text").value=""
 })
@@ -132,7 +132,7 @@ async function main(){
   if(!last_10_posts)return;
   document.getElementById("posts").innerHTML = ""
   last_10_posts.forEach((item, i) => {
-    createPost(item.post_user_name,decodeURIComponent(atob(item.post_text)),item.post_time,item.post_special_text,item.post_id)
+    createPost(decodeURIComponent(atob(item.post_user_name)),decodeURIComponent(atob(item.post_text)),item.post_time,item.post_special_text,item.post_id)
   });
 
   let links = document.getElementsByClassName("insertedlink")

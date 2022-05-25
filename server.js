@@ -257,6 +257,7 @@ router.get("/api/getotheruser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
+  req.body.message = req.body.message.trim()
   if(!req.body.message) {
     res.json({"error":"no message to post"})
     return

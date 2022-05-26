@@ -15,8 +15,8 @@ socket.addEventListener("message", function (event) {
   }
 })
 function urlify(text) {
-  let textregex = /(([a-z]+:\/\/)?(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
-  return text.replace(textregex,'<a href="$1" target="_blank">$1</a> ')
+  let textregex = /(([a-z]+:\/\/)(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga|xxx|to))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
+  return text.replace(textregex,'<a href="$1" target="_blank" class="insertedlink">$1</a> ')
 }
 
 function newlineify(text) {
@@ -76,7 +76,7 @@ function spacerTextNode() {
   return document.createTextNode(" | ")
 }
 
-function createPost(username,text,time,specialtext) {
+function createPost(username,text,time,specialtext,postid) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
@@ -115,7 +115,7 @@ function createPost(username,text,time,specialtext) {
 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
-
+  newDiv.id = postid
   document.getElementById("posts").appendChild(newDiv)
 }
 
@@ -132,8 +132,14 @@ async function main(){
   if(!last_10_posts)return;
   document.getElementById("posts").innerHTML = ""
   last_10_posts.forEach((item, i) => {
-    createPost(item.post_user_name,item.post_text,item.post_time,item.post_special_text)
+    createPost(decodeURIComponent(atob(item.post_user_name)),decodeURIComponent(atob(item.post_text)),item.post_time,item.post_special_text,item.post_id)
   });
+
+  let links = document.getElementsByClassName("insertedlink")
+  for (let i = 0; i < links.length; i++) {
+    links[i].innerText = links[i].innerText.split("\/\/")[1].split("\/")[0]
+  }
+
   let mentions = document.getElementsByClassName("mention")
   for (let i = 0; i < mentions.length; i++) {
     if(mentions[i]!=undefined && mentions[i].innerText == "@"+username) {

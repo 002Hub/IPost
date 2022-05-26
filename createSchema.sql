@@ -18,7 +18,7 @@ CREATE TABLE `users` (
 
 CREATE TABLE `posts` (
   `post_id` bigint NOT NULL AUTO_INCREMENT,
-  `post_user_name` varchar(25) NOT NULL,
+  `post_user_name` varchar(100) NOT NULL,
   `post_text` varchar(4000) NOT NULL,
   `post_time` bigint NOT NULL,
   `post_special_text` varchar(100) DEFAULT NULL,

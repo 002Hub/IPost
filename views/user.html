@@ -6,16 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logged In</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/global.css">
     <script src="/js/httppost.js" charset="utf-8"></script>
 </head>
 <body onload="setuser()">
+  <ul class="navbar">
+    <li><a href="/">Home</a></li>
+    <li><a href="/user">Profile</a></li>
+    <li><a href="/posts">Posts</a></li>
+  </ul>
     <h1>Welcome Back!</h1>
     <h2 id="user">User: USER</h2>
     <br>
     <span class="bio">Bio: <input type="text" id="bio" disabled placeholder="wow such empty"></span>
     <button id="changeBio" onclick="bioChanger()">Change Bio</button>
-    <br>
-    <button onclick="location.assign('/login')">To Login Page</button><button onclick="location.assign('/register')">To Register Page</button>
     <br>
     <button onclick="location.assign('/changePW')">Want to change your password?</button>
     <br>
@@ -31,7 +35,7 @@
         if(user["error"])bio=user["error"];
         if(!bio)bio="wow such empty"
         document.getElementById("user").innerText = `User: ${username}`;
-        document.getElementById("bio").placeholder = bio;
+        document.getElementById("bio").placeholder = atob(bio);
 
       }
 

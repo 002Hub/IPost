@@ -56,16 +56,6 @@ button {
   font-family: 'system-ui';
 }
 
-a {
-    text-decoration: none;
-}
-a:link, a:visited {
-    color: green;
-}
-a:hover {
-    color: red;
-}
-
 .post,.self {
   width: 50%;
   margin-left: 25%;

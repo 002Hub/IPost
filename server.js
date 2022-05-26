@@ -224,11 +224,12 @@ router.use("/api/*",async function(req,res,next) {
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   values[0] = b64(values[0])
+  res.locals.bio = ""
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
       res.locals.username = atob(values[0]);
-      res.locals.bio = result[0].User_Bio
+      res.locals.bio = result[0].User_Bio || ""
       next()
     } else {
       console.log(result[0],values[0],values[1]);
@@ -239,7 +240,7 @@ router.use("/api/*",async function(req,res,next) {
 })
 
 router.get("/api/getuser",async function(req,res) {
-  res.json({"username":res.locals.username,"bio":atob(res.locals.bio)})
+  res.json({"username":res.locals.username,"bio":res.locals.bio})
 })
 
 router.get("/api/getotheruser",async function(req,res) {
@@ -289,6 +290,10 @@ router.post("/api/post", async function(req,res) {
 // })
 
 router.get("/api/getPosts/*", async function(req,res) {
+  res.redirect("/api/getPosts")
+})
+
+router.get("/api/getPosts", async function(req,res) {
   let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts order by post_id desc;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
@@ -443,8 +448,8 @@ router.post("/register",async function(req,res) {
     }
     let hashed_pw = SHA256(password,username,HASHES_DB)
     let ip = req.socket.remoteAddress
-    let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
+    let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     ip = SHA256(ip,setTo,HASHES_DB)
     let values = [b64(encodeURIComponent(username)),hashed_pw, Date.now(), ip, ip]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`

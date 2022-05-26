@@ -232,6 +232,7 @@ router.use("/api/*",async function(req,res,next) {
       next()
     } else {
       console.log(result[0],values[0],values[1]);
+      res.status(400)
       res.json({"error":"you cannot access the api without being logged in"})
     }
   });

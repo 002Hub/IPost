@@ -65,3 +65,17 @@ a:link, a:visited {
 a:hover {
     color: red;
 }
+
+.post,.self {
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+#post-text, button {
+  border-radius: 5px;
+  resize: none;
+}

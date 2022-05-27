@@ -19,5 +19,8 @@
       "reset_time": 30000,
       "max": 60
     }
+  },
+  "logs": {
+    "level": 5
   }
 }

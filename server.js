@@ -14,24 +14,28 @@ function ensureExists(path, mask, cb) {
     });
 }
 
+const config = JSON.parse(fs.readFileSync("server_config.json"))
+
 const time = Date.now()
 const original_log = console.log
-function log_info(...info) {
-  ensureExists(__dirname + '/logs/', function(err) {
-      if(err) {
-        process.stderr.write(tolog) //just write it to stderr
-      } else {
+function log_info(level, ...info) {
+  if(config["logs"] && config["logs"]["level"] && config["logs"]["level"] >= level) {
+    ensureExists(__dirname + '/logs/', function(err) {
+        if(err) {
+          process.stderr.write(tolog) //just write it to stderr
+        } else {
 
-        tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
-        fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
-          if(err){
-            process.stderr.write(tolog)
-          } else {
-            original_log(tolog) //still has some nicer colors
-          }
-        })
-      }
-  });
+          tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
+          fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
+            if(err){
+              process.stderr.write(tolog)
+            } else {
+              original_log(tolog) //still has some nicer colors
+            }
+          })
+        }
+    });
+  }
 }
 
 console.log = log_info
@@ -55,8 +59,6 @@ const router = express.Router();
 const app = express();
 
 const csrfProtection = csurf({ cookie: true })
-
-const config = JSON.parse(fs.readFileSync("server_config.json"))
 
 const HASHES_DB = config.cookies.server_hashes
 const HASHES_COOKIE = config.cookies.client_hashes
@@ -129,7 +131,7 @@ function clientErrorHandler(err, req, res, next) {
     if (req.xhr) {
       res.status(200).send({ error: 'Something failed!' });
     } else {
-      console.log(err);
+      console.log(1,err);
     }
   } else {
     next()
@@ -185,14 +187,14 @@ function increaseAPICall(req,res,next) {
         REVERSE_SESSIONS[ip]=undefined
       },50000)
       res.cookie('session',session, { maxAge: 100000, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-      console.log("sending session to " + ip);
+      console.log(3,"sending session to " + ip);
     }
 
   }
   if(API_CALLS[ip] >= config.rate_limits.api.max_with_session) {
     res.status(429)
     res.send("You are sending too many api calls!")
-    console.log("rate limiting " + ip);
+    console.log(3,"rate limiting " + ip);
     return false
   }
   API_CALLS[ip]++;
@@ -206,7 +208,7 @@ function increaseUSERCall(req,res,next) {
   if(USER_CALLS[ip] >= config.rate_limits.user.max) {
     res.status(429)
     res.send("You are sending too many requests!")
-    console.log("rate limiting " + ip);
+    console.log(2,"rate limiting " + ip);
     return false
   }
   USER_CALLS[ip]++;
@@ -271,7 +273,6 @@ router.use("/api/*",async function(req,res,next) {
       res.locals.bio = result[0].User_Bio || ""
       next()
     } else {
-      console.log(result[0],values[0],values[1]);
       res.status(400)
       res.json({"error":"you cannot access the api without being logged in"})
     }
@@ -313,7 +314,7 @@ router.post("/api/post", async function(req,res) {
       ws.send("new_post " + res.locals.username)
     });
     res.json({"success":"successfully posted message"})
-    console.log(`posted new message by ${res.locals.username} : ${req.body.message}`);
+    console.log(5,`posted new message by ${res.locals.username} : ${req.body.message}`);
   });
 })
 

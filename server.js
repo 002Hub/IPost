@@ -1,8 +1,47 @@
+const fs = require("fs");
+const util = require('util');
+
+function ensureExists(path, mask, cb) {
+    if (typeof mask == 'function') { // Allow the `mask` parameter to be optional
+        cb = mask;
+        mask = 0o744;
+    }
+    fs.mkdir(path, mask, function(err) {
+        if (err) {
+            if (err.code == 'EEXIST') cb(null); // Ignore the error if the folder already exists
+            else cb(err); // Something else went wrong
+        } else cb(null); // Successfully created folder
+    });
+}
+
+const time = Date.now()
+const original_log = console.log
+function log_info(...info) {
+  ensureExists(__dirname + '/logs/', function(err) {
+      if(err) {
+        process.stderr.write(tolog) //just write it to stderr
+      } else {
+
+        tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
+        fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
+          if(err){
+            process.stderr.write(tolog)
+          } else {
+            original_log(tolog) //still has some nicer colors
+          }
+        })
+      }
+  });
+}
+
+console.log = log_info
+
+
+
 const http = require('http');
 const https = require('https');
 const crypto = require("crypto");
 const express = require("express");
-const fs = require("fs");
 const useragent = require('express-useragent');
 const fileUpload = require('express-fileupload');
 const bodyParser = require("body-parser");
@@ -259,21 +298,22 @@ router.get("/api/getotheruser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
-  req.body.message = encodeURIComponent(req.body.message.trim())
+  req.body.message = b64(encodeURIComponent(req.body.message.trim()))
   if(!req.body.message) {
     res.json({"error":"no message to post"})
     return
   }
 
   let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
-  let values = [b64(encodeURIComponent(res.locals.username)),b64(req.body.message),Date.now()]
+  let values = [b64(encodeURIComponent(res.locals.username)),req.body.message,Date.now()]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
-    console.log(result);
+
     wss.clients.forEach(function(ws) {
       ws.send("new_post " + res.locals.username)
     });
     res.json({"success":"successfully posted message"})
+    console.log(`posted new message by ${res.locals.username} : ${req.body.message}`);
   });
 })
 

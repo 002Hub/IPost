@@ -63,9 +63,11 @@ button {
   margin-top: 10px;
   margin-bottom: 10px;
   border-radius: 10px;
+  overflow-wrap: break-word;
 }
 
 #post-text, button {
   border-radius: 5px;
   resize: none;
+  overflow-wrap: break-word;
 }

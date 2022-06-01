@@ -102,8 +102,8 @@ function RNG(seed) {
   this.random = function(min,max) {
     if(!min)min=0
     if(!max)max=1
-    seed += Math.log(Math.abs(Math.sin(seed))*100)
-    return Math.abs(Math.sin(seed))*max + min
+    this.seed += Math.log(Math.abs(Math.sin(this.seed))*100)
+    return Math.abs(Math.sin(this.seed))*max + min
   }
   this.rand = function(min,max) {
     return Math.floor(this.random(min,max))

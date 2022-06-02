@@ -153,6 +153,18 @@ function unsign(text,req,res) {
   return unsigned
 }
 
+function getunsigned(req,res) {
+  let cookie = req.cookies.AUTH_COOKIE
+  if(!cookie){
+    res.status(400)
+    res.json({"error":"you are not logged in! (no cookie)"})
+    return
+  }
+  let unsigned = unsign(cookie,req,res)
+  if(!unsigned)return
+  return decodeURIComponent(unsigned)
+}
+
 var API_CALLS = {}
 var USER_CALLS = {}
 var SESSIONS = {}
@@ -252,15 +264,8 @@ START /API/*
 
 router.use("/api/*",async function(req,res,next) {
   if(!increaseAPICall(req,res))return;
-  let cookie = req.cookies.AUTH_COOKIE
-  if(!cookie){
-    res.status(400)
-    res.json({"error":"you are not logged in! (no cookie)"})
-    return
-  }
-  let unsigned = unsign(cookie,req,res)
+  let unsigned = getunsigned(req,res)
   if(!unsigned)return
-  unsigned = decodeURIComponent(unsigned)
   let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
@@ -281,6 +286,26 @@ router.use("/api/*",async function(req,res,next) {
 
 router.get("/api/getuser",async function(req,res) {
   res.json({"username":res.locals.username,"bio":res.locals.bio})
+})
+
+router.get("/api/getalluserinformation",async function(req,res) {
+  let unsigned = getunsigned(req,res)
+  if(!unsigned)return
+  unsigned = decodeURIComponent(unsigned)
+  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  let values = unsigned.split(" ")
+  values[1] = SHA256(values[1],values[0],HASHES_DIFF)
+  values[0] = b64(values[0])
+  con.query(sql, values, function (err, result) {
+    if (err) throw err;
+    if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
+      res.status(200)
+      res.json(result[0])
+    } else {
+      res.status(400)
+      res.json({"error":"you cannot access the api without being logged in"})
+    }
+  });
 })
 
 router.get("/api/getotheruser",async function(req,res) {

@@ -531,6 +531,16 @@ router.post("/login",async function(req,res) {
   if(!increaseAPICall(req,res))return;
   if(!increaseAPICall(req,res))return;
   //login is counted twice (think of bruteforces man)
+  if(!req.body.user){
+    res.status(400)
+    res.send("no username given")
+    return
+  }
+  if(!req.body.pass){
+    res.status(400)
+    res.send("no password given")
+    return
+  }
   let username = req.body.user.toString()
   username = username.replace(" ","")
   let password = req.body.pass.toString()

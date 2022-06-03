@@ -4,8 +4,12 @@
 
 body {
     background-color: black;
-    color: white;
+    color: black;
     text-align: center;
+}
+
+h1 {
+  color: white;
 }
 
 button {
@@ -18,7 +22,7 @@ button {
 }
 
 #bio  {
-  color:white;
+  color:black;
   font-size: 20px;
   background-color: black;
   border: 0px solid black;
@@ -26,6 +30,16 @@ button {
 }
 
 .bio {
-  color:white;
+  color:black;
   font-size: 20px;
+}
+
+main {
+display: flex;
+align-items: center;
+justify-content: center;
+height: 75vh;
+width: 100%;
+background: url(https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Mountains-1412683.svg/1280px-Mountains-1412683.svg.png) no-repeat center center;
+background-size: cover;
 }

@@ -19,18 +19,16 @@
       <h1>Welcome Back!</h1>
   </header>
   <main>
-    <form id="login_form" class="form_class" action="login" method="post">
-        <div class="info_div">
-          <h2 id="user">User: USER</h2>
-          <br>
-          <span class="bio">Bio: <input type="text" id="bio" disabled placeholder="wow such empty"></span>
-          <button id="changeBio" onclick="bioChanger()">Change Bio</button>
-          <br>
-          <button onclick="location.assign('/changePW')">Want to change your password?</button>
-          <br>
-          <button onclick="location.assign('/posts')">Want to chat with some cool fellas?</button>
-        </div>
-    </form>
+      <div class="info_div">
+        <h2 id="user">User: USER</h2>
+        <br>
+        <span class="bio">Bio: <input type="text" id="bio" disabled placeholder="wow such empty"></span>
+        <button id="changeBio" onclick="bioChanger()">Change Bio</button>
+        <br>
+        <button onclick="location.assign('/changePW')">Want to change your password?</button>
+        <br>
+        <button onclick="location.assign('/posts')">Want to chat with some cool fellas?</button>
+      </div>
   </main>
     <script>
       async function setuser() {

@@ -132,7 +132,7 @@ async function main(){
   if(!last_10_posts)return;
   document.getElementById("posts").innerHTML = ""
   last_10_posts.forEach((item, i) => {
-    createPost(decodeURIComponent(atob(item.post_user_name)),decodeURIComponent(atob(item.post_text)),item.post_time,item.post_special_text,item.post_id)
+    createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id)
   });
 
   let links = document.getElementsByClassName("insertedlink")

@@ -269,12 +269,11 @@ router.use("/api/*",async function(req,res,next) {
   let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
-  values[0] = b64(values[0])
   res.locals.bio = ""
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
-      res.locals.username = atob(values[0]);
+      res.locals.username = values[0];
       res.locals.bio = result[0].User_Bio || ""
       next()
     } else {
@@ -295,7 +294,6 @@ router.get("/api/getalluserinformation",async function(req,res) {
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
-  values[0] = b64(values[0])
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
@@ -310,13 +308,13 @@ router.get("/api/getalluserinformation",async function(req,res) {
 
 router.get("/api/getotheruser",async function(req,res) {
   //already counted due to the /api/* handler
-  let username = b64(req.query.user)
+  let username = req.query.user
 
   let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=?;`
   con.query(sql, [username], function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
-      res.json({"username":atob(username),"bio":atob(result[0].User_Bio)})
+      res.json({"username":username,"bio":result[0].User_Bio})
     } else {
       res.json({"error":"there is no such user!"})
     }
@@ -324,14 +322,14 @@ router.get("/api/getotheruser",async function(req,res) {
 })
 
 router.post("/api/post", async function(req,res) {
-  req.body.message = b64(encodeURIComponent(req.body.message.trim()))
+  req.body.message = encodeURIComponent(req.body.message.trim())
   if(!req.body.message) {
     res.json({"error":"no message to post"})
     return
   }
 
   let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
-  let values = [b64(encodeURIComponent(res.locals.username)),req.body.message,Date.now()]
+  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now()]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
 
@@ -375,7 +373,7 @@ router.post("/api/setBio", async function(req,res) {
     return
   }
   let sql = `update zerotwohub.users set User_Bio=? where User_Name=?`
-  con.query(sql, [b64(encodeURIComponent(bio)),b64(encodeURIComponent(res.locals.username))], function (err, result) {
+  con.query(sql, [encodeURIComponent(bio),encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json({"success":"updated bio"})
   });
@@ -392,12 +390,12 @@ router.post("/api/changePW", async function(req,res) {
   let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
 
   let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
-  let values = [b64(res.locals.username),hashed_pw]
+  let values = [res.locals.username,hashed_pw]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
       let sql = `update zerotwohub.users set User_PW=? where User_Name=? and User_PW=?;`
-      let values = [hashed_new_pw,b64(res.locals.username),hashed_pw]
+      let values = [hashed_new_pw,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
         let ip = req.socket.remoteAddress
@@ -506,7 +504,7 @@ router.post("/register",async function(req,res) {
     return
   }
   let userexistssql = `SELECT User_Name from zerotwohub.users where User_Name = ?`
-  con.query(userexistssql,[b64(encodeURIComponent(username))],function(error,result) {
+  con.query(userexistssql,[encodeURIComponent(username)],function(error,result) {
     if(result && result[0] && result[0].User_Name) {
       res.status(400)
       res.redirect("/register?success=false&reason=already_exists")
@@ -517,7 +515,7 @@ router.post("/register",async function(req,res) {
     let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
     let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     ip = SHA256(ip,setTo,HASHES_DB)
-    let values = [b64(encodeURIComponent(username)),hashed_pw, Date.now(), ip, ip]
+    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip]
     let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
@@ -568,8 +566,8 @@ router.post("/login",async function(req,res) {
   let hashed_pw = SHA256(password,username,HASHES_DB)
 
   let userexistssql = `SELECT User_Name,User_PW,User_LastIP from zerotwohub.users where User_Name = ? and User_PW = ?;`
-  con.query(userexistssql,[b64(encodeURIComponent(username)),hashed_pw],function(error,result) {
-    if(result && result[0] && result[0].User_Name && result[0].User_Name==b64(encodeURIComponent(username)) && result[0].User_PW && result[0].User_PW == hashed_pw) {
+  con.query(userexistssql,[encodeURIComponent(username),hashed_pw],function(error,result) {
+    if(result && result[0] && result[0].User_Name && result[0].User_Name==encodeURIComponent(username) && result[0].User_PW && result[0].User_PW == hashed_pw) {
       let ip = req.socket.remoteAddress
       let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
@@ -580,7 +578,7 @@ router.post("/login",async function(req,res) {
 
       if(result[0].User_LastIP != ip) {
         let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
-        con.query(sql,[ip,b64(encodeURIComponent(username))],function(error,result) {
+        con.query(sql,[ip,encodeURIComponent(username)],function(error,result) {
           if(error)throw error
         })
       }

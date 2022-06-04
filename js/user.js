@@ -8,7 +8,7 @@ async function setuser() {
   if(user["error"])bio=user["error"];
   if(!bio)bio="wow such empty"
   document.getElementById("user").innerText = `User: ${username}`;
-  document.getElementById("bio").placeholder = decodeURIComponent(atob(bio));
+  document.getElementById("bio").placeholder = decodeURIComponent(bio);
 
 }
 

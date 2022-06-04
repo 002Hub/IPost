@@ -417,6 +417,14 @@ router.post("/api/setBio", async function(req,res) {
 })
 
 router.post("/api/changePW", async function(req,res) {
+  if((typeof req.body.newPW) != "string") {
+    res.json({"error":"incorrect password"})
+    return
+  }
+  if((typeof req.body.currentPW) != "string") {
+    res.json({"error":"incorrect password"})
+    return
+  }
   if(req.body.newPW.length < 10) {
     res.status(400)
     res.json({"error":"password is too short"})
@@ -566,6 +574,14 @@ router.post("/login",async function(req,res) {
   if(!increaseAPICall(req,res))return;
   if(!increaseAPICall(req,res))return;
   //login is counted twice (think of bruteforces man)
+  if((typeof req.body.user) != "string") {
+    res.json({"error":"incorrect username"})
+    return
+  }
+  if((typeof req.body.pass) != "string") {
+    res.json({"error":"incorrect password"})
+    return
+  }
   if(!req.body.user){
     res.status(400)
     res.send("no username given")

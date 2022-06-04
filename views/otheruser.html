@@ -9,14 +9,21 @@
       <link rel="stylesheet" href="/css/global.css">
   </head>
   <body>
+
     <ul class="navbar">
       <li><a href="/">Home</a></li>
       <li><a href="/user">Profile</a></li>
       <li><a href="/posts">Posts</a></li>
     </ul>
-    <h3 id="userName">USER</h3>
-    <h4 id="userBio">Bio: </h4>
-    <button id="mentionClick" onclick="mention()">Mention this User in Posts!</button>
+    <header>
+        <h1 id="userName">USER</h1>
+    </header>
+    <main>
+        <div class="info_div">
+          <h4 id="userBio">Bio: </h4>
+          <button id="mentionClick" onclick="mention()">Mention this User in Posts!</button>
+        </div>
+    </main>
 
 
     <script type="text/javascript">

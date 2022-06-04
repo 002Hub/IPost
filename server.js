@@ -283,6 +283,35 @@ router.use("/api/*",async function(req,res,next) {
   });
 })
 
+router.get("/api/search", async function(req,res) {
+  let type = req.query.type
+  let arg = encodeURIComponent(req.query.selector)
+  if(type=="user") {
+    let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name like ?;`
+    con.query(sql, [`%${arg}%`], function (err, result) {
+      if (err) throw err;
+      if(result[0] && result[0].User_Name) {
+        res.json(result)
+      } else {
+        res.json({"error":"there is no such user!"})
+      }
+    });
+  }else if (type=="post") {
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? order by post_id desc;`
+    con.query(sql, [`%${arg}%`], function (err, result) {
+      if (err) throw err;
+      if(result[0]) {
+        res.json(result)
+      } else {
+        res.json({"error":"there is no such post!"})
+      }
+    });
+  } else {
+    res.json({"error":"invalid type passed along, expected `user` or `post`"})
+  }
+})
+
+
 router.get("/api/getuser",async function(req,res) {
   res.json({"username":res.locals.username,"bio":res.locals.bio})
 })

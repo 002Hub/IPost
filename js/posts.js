@@ -151,6 +151,7 @@ async function mainNoti(user) {
     }
   }
 }
+
 document.addEventListener("visibilitychange", function() {
   if (document.visibilityState === 'visible') {
     cansendNoti = false
@@ -159,6 +160,9 @@ document.addEventListener("visibilitychange", function() {
   }
 });
 
-if(window.location.href.includes("?mention=")) {
-  document.getElementById("post-text").innerText = `@${window.location.href.split("?mention=")[1]} `
+if(window.location.href.includes("mention=")) {
+  document.getElementById("post-text").innerText = `@${decodeURIComponent(window.location.href.split("mention=")[1])} `
+}
+if(window.location.href.includes("message=")) {
+  document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
 }

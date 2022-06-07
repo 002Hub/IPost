@@ -6,6 +6,6 @@ window.addEventListener("load",async function(){
     document.getElementById("NoAccount").style=""
     document.getElementById("hide_user").style="display:none;"
     document.getElementById("hide_posts").style="display:none;"
-
+    document.getElementById("hide_search").style="display:none;"
   }
 })

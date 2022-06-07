@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="/css/global.css">
     <script type="text/javascript" src="/js/httppost.js"></script>
     <script type="text/javascript" src="/js/htmlescape.js"></script>
-    <script src="/js/addnavbar.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/addnavbar.js"></script>
+    <script type="text/javascript" src="/js/markdown.js"></script>
   </head>
   <body>
     <div class="self">
       Username: <span class="Username" id="username-self"></span> <br>
       <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
       <br>
-      <button type="button" name="button" id="post-btn">Post</button>
+      <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
     </div>
     <div class="posts" id="posts"></div>
     <script type="text/javascript" src="/js/posts.js"></script>

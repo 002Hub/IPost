@@ -13,6 +13,8 @@ const esca = {
 const pe = m => esca[m];
 
 const escape = es => replace.call(es, ca, pe);
+const htmlesc = es => replace.call(es, ca, pe);
+
 
 const unes = {
 '&amp;': '&',

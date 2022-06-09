@@ -16,11 +16,11 @@ async function bioChanger() {
   document.getElementById("bio").disabled = !document.getElementById("bio").disabled
   document.getElementById("changeBio").innerText = (document.getElementById("bio").disabled && "Change Bio") || "Submit"
   if(document.getElementById("bio").disabled) {
-    document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 0px solid black}'
+    document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 0px solid black; color:white;}'
   }
   else
   {
-    document.querySelector('style').innerHTML = '::placeholder {color: black;} #bio {border: 2px solid gray}'
+    document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 2px solid gray; color:white;}'
   }
   if(document.getElementById("bio").disabled) {
     let response = await sendBio(document.getElementById("bio").value)

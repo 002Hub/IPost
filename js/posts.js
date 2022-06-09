@@ -82,6 +82,9 @@ async function main(){
     username = user.username
     if(!username){
       document.getElementById("noaccount").style=""
+      document.getElementById("loading").style="display:none;"
+      console.log("no account");
+      return;
     }
     document.getElementById("username-self").innerText = username
   }
@@ -119,8 +122,8 @@ async function main(){
     }
   }
 
-  document.getElementById("loading").style="display:none;" 
-
+  document.getElementById("loading").style="display:none;"
+  document.getElementById("scriptonly").style = ""
 }
 
 function reply(username) {
@@ -170,6 +173,3 @@ if(window.location.href.includes("mention=")) {
 if(window.location.href.includes("message=")) {
   document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
 }
-
-
-document.getElementById("scriptonly").style = ""

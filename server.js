@@ -19,13 +19,13 @@ const config = JSON.parse(fs.readFileSync("server_config.json"))
 const time = Date.now()
 const original_log = console.log
 function log_info(level, ...info) {
+
   if(config["logs"] && config["logs"]["level"] && config["logs"]["level"] >= level) {
+    tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
     ensureExists(__dirname + '/logs/', function(err) {
         if(err) {
           process.stderr.write(tolog) //just write it to stderr
         } else {
-
-          tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
           fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
             if(err){
               process.stderr.write(tolog)

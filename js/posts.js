@@ -82,8 +82,6 @@ async function main(){
     username = user.username
     if(!username){
       document.getElementById("noaccount").style=""
-    } else {
-      document.getElementById("loading").style="display:none;" 
     }
     document.getElementById("username-self").innerText = username
   }
@@ -120,6 +118,8 @@ async function main(){
       replies[i].style="color: red;"
     }
   }
+
+  document.getElementById("loading").style="display:none;" 
 
 }
 

@@ -13,7 +13,8 @@
     "api": {
       "reset_time": 10000,
       "max_without_session": 20,
-      "max_with_session": 60
+      "max_with_session": 60,
+      "max_per_account": 30
     },
     "user": {
       "reset_time": 30000,

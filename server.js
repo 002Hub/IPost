@@ -170,17 +170,45 @@ function getunsigned(req,res) {
 }
 
 var API_CALLS = {}
+var API_CALLS_ACCOUNT = {}
 var USER_CALLS = {}
 var SESSIONS = {}
 var REVERSE_SESSIONS = {}
 function clear_api_calls() {
   API_CALLS = {}
 }
+function clear_account_api_calls() {
+  API_CALLS_ACCOUNT = {}
+}
 function clear_user_calls() {
   USER_CALLS = {}
 }
 setInterval(clear_api_calls, config.rate_limits.api.reset_time)
+setInterval(clear_account_api_calls, config.rate_limits.api.reset_time)
 setInterval(clear_user_calls, config.rate_limits.user.reset_time)
+
+function increaseAccountAPICall(req,res) {
+  let cookie = req.cookies.AUTH_COOKIE
+  if(!cookie){
+    return true;
+  }
+  let unsigned = unsign(cookie,req,res)
+  if(!unsigned) {
+
+    return true;//if there's no account, why not just ignore it
+  }
+  unsigned = decodeURIComponent(unsigned)
+  if(!unsigned)return false;
+  let values = unsigned.split(" ")
+  let username = values[0]
+  if(API_CALLS_ACCOUNT[username]==undefined)API_CALLS_ACCOUNT[username]=0
+  if(API_CALLS_ACCOUNT[username] >= config.rate_limits.api.max_per_account) {
+    res.status(429)
+    res.send("You are sending way too many api calls!")
+    return false;
+  }
+  return true
+}
 
 function increaseAPICall(req,res,next) {
   let ip = req.socket.remoteAddress
@@ -214,6 +242,9 @@ function increaseAPICall(req,res,next) {
     return false
   }
   API_CALLS[ip]++;
+
+  if(!increaseAccountAPICall(req,res))return false; //can't forget account-based ratelimits
+
   if(next)next()
   return true
 }
@@ -517,7 +548,9 @@ router.get("/*", (request, response, next) => {
 
 
 router.post("/register",async function(req,res) {
-  if(!increaseAPICall(req,res))return;
+  for (let i = 0; i < 10; i++) { //don't want people spam registering
+    if(!increaseAPICall(req,res))return;
+  }
   res.status(200)
   let username = req.body.user.toString()
   username = username.replace(/\s/gi,"")

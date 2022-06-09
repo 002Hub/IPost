@@ -80,7 +80,11 @@ async function main(){
   if(!user){
     user = await (await fetch("/api/getuser")).json()
     username = user.username
-    if(!username)username = user.error
+    if(!username){
+      document.getElementById("noaccount").style=""
+    } else {
+      document.getElementById("loading").style="display:none;" 
+    }
     document.getElementById("username-self").innerText = username
   }
 
@@ -166,3 +170,6 @@ if(window.location.href.includes("mention=")) {
 if(window.location.href.includes("message=")) {
   document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
 }
+
+
+document.getElementById("scriptonly").style = ""

@@ -11,13 +11,26 @@
     <script type="text/javascript" src="/js/markdown.js"></script>
   </head>
   <body>
-    <div class="self">
-      Username: <span class="Username" id="username-self"></span> <br>
-      <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
-      <br>
-      <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
+    <div id="loading">
+      <h1>Loading...</h1>
+      Please allow us up to 5 seconds to load in your requested content. <br>
+      If this takes longer than usual, please refresh the page or contact support. <br>
     </div>
-    <div class="posts" id="posts"></div>
+    <div id="noaccount" style="display:none;">
+      <h1>Error</h1>
+      <h2>You have to be logged in to view this content</h2>
+      To log in, please visit <a href="/login">The login page</a> <br>
+      If you are new to here, please visit <a href="/register">The register page</a> <br>
+    </div>
+    <div id="scriptonly" style="display:none;">
+      <div class="self">
+        Username: <span class="Username" id="username-self"></span> <br>
+        <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
+        <br>
+        <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
+      </div>
+      <div class="posts" id="posts"></div>
+    </div>
     <script type="text/javascript" src="/js/posts.js"></script>
   </body>
 </html>

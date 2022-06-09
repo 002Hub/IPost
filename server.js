@@ -19,7 +19,10 @@ const config = JSON.parse(fs.readFileSync("server_config.json"))
 const time = Date.now()
 const original_log = console.log
 function log_info(level, ...info) {
-
+  if(...info == undefined) {
+    ...info = level
+    level = 5
+  }
   if(config["logs"] && config["logs"]["level"] && config["logs"]["level"] >= level) {
     tolog = `[INFO] [${Date.now()}] : ${util.format(...info)} \n`
     ensureExists(__dirname + '/logs/', function(err) {

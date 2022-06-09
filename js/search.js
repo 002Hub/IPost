@@ -21,7 +21,7 @@ async function submit() {
   for (let i = 0; i < res.length; i++) {
     let obj = res[i]
     if(type=="user") {
-      createPost(obj.User_Name,obj.User_Bio || "wow such empty",0)
+      createPost(decodeURIComponent(obj.User_Name || ""),decodeURIComponent(obj.User_Bio || "wow such empty"),0)
     } else {
       createPost(decodeURIComponent(obj.post_user_name),decodeURIComponent(obj.post_text),obj.post_time,obj.post_special_text,obj.post_id)
     }

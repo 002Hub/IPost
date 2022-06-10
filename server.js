@@ -274,17 +274,6 @@ app.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 app.use(clientErrorHandler);
 app.use(cookieParser(cookiesecret));
 
-
-// app.use("/*",function(req,res,next){
-//   if(req.get("User-Agent").search("python") != -1) {
-//     res.status(400)
-//     res.send("illegal user agent")
-//     return
-//   }
-//   next()
-// })
-//maybe someone wants it?
-
 var blocked_headers = [
   'HTTP_VIA',
   'HTTP_X_FORWARDED_FOR',
@@ -403,7 +392,6 @@ router.get("/api/getalluserinformation",async function(req,res) {
 })
 
 router.get("/api/getotheruser",async function(req,res) {
-  //already counted due to the /api/* handler
   let username = req.query.user
 
   let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=?;`
@@ -445,18 +433,6 @@ router.post("/api/post", async function(req,res) {
   });
 })
 
-// router.get("/api/getPosts/*", async function(req,res) {
-//
-//   let sql = `select post_user_name,post_text,post_time,post_special_text from zerotwohub.posts where post_id >= ? and post_id <= ? order by post_id desc;`
-//   let id = parseInt(req.originalUrl.replace("/api/getPosts/"))
-//   if(isNaN(id))id=0
-//   let values = [id,id+100]
-//   con.query(sql, values, function (err, result) {
-//     if (err) throw err;
-//     res.json(result)
-//   });
-// })
-
 router.get("/api/getPosts/*", async function(req,res) {
   res.redirect("/api/getPosts")
 })
@@ -497,7 +473,7 @@ router.post("/api/changePW", async function(req,res) {
     res.json({"error":"password is too short"})
     return
   }
-  //let values = [req.body.currentPW,req.body.newPW]
+
   let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
   let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
 
@@ -710,7 +686,6 @@ router.post("/login",async function(req,res) {
   });
 })
 
-
 app.use(router)
 
 const httpServer = http.createServer(app);
@@ -742,13 +717,3 @@ const wss = new WebSocket({
     threshold: 1024 * 16
   }
 });
-
-// wss.on("connection", function connection(ws) {
-//   // ws.isAlive = true;
-//   ws.on("close", function close() {
-//
-//   })
-//   ws.on("message", function incoming(message) {
-//     //message = message.toString()
-//   })
-// })

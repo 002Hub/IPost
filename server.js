@@ -320,8 +320,16 @@ START /API/*
 
 router.use("/api/*",async function(req,res,next) {
   if(!increaseAPICall(req,res))return;
-  let unsigned = getunsigned(req,res)
-  if(!unsigned)return
+  let unsigned;
+  if(req.body.user == undefined || req.body.pass == undefined) {
+    unsigned = getunsigned(req,res)
+    if(!unsigned)return
+  } else {
+    unsigned = `${req.body.user} ${SHA256(req.body.pass,req.body.user,HASHES_COOKIE)}`
+    //basically we generate the unsigned cookie
+
+    res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  }
   let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)

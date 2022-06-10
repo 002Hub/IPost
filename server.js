@@ -150,8 +150,6 @@ function unsign(text,req,res) {
   let ip = req.socket.remoteAddress
   let unsigned = signature.unsign(text,cookiesecret+ip)
   if(!unsigned) {
-    res.status(400)
-    res.json({"error":"Bad auth cookie set"})
     return false
   }
   return unsigned
@@ -165,7 +163,13 @@ function getunsigned(req,res) {
     return
   }
   let unsigned = unsign(cookie,req,res)
-  if(!unsigned)return
+  if(!unsigned){
+    try {
+      res.status(400)
+      res.json({"error":"Bad auth cookie set"})
+    } catch (ignored) {} //sometimes it errors, gotta debug soon
+    return false
+  }
   return decodeURIComponent(unsigned)
 }
 
@@ -281,8 +285,36 @@ app.use(cookieParser(cookiesecret));
 // })
 //maybe someone wants it?
 
+var blocked_headers = [
+  'HTTP_VIA',
+  'HTTP_X_FORWARDED_FOR',
+  'HTTP_FORWARDED_FOR',
+  'HTTP_X_FORWARDED',
+  'HTTP_FORWARDED',
+  'HTTP_CLIENT_IP',
+  'HTTP_FORWARDED_FOR_IP',
+  'VIA',
+  'X_FORWARDED_FOR',
+  'FORWARDED_FOR',
+  'X_FORWARDED',
+  'FORWARDED',
+  'CLIENT_IP',
+  'FORWARDED_FOR_IP',
+  'HTTP_PROXY_CONNECTION'
+]
+
+if(!config.disallow_proxies_by_headers) {
+  blocked_headers = []
+}
+
 app.use("/*",function(req,res,next){
   res.set("x-powered-by","ZeroTwoHub")
+  for (let i = 0; i < blocked_headers.length; i++) {
+    if(req.header(blocked_headers[i])!=undefined) {
+      res.json({"error":"we don't allow proxies on our website."})
+      return
+    }
+  }
   next()
 })
 

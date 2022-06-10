@@ -23,5 +23,6 @@
   },
   "logs": {
     "level": 5
-  }
+  },
+  "disallow_proxies_by_headers": true
 }

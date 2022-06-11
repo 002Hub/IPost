@@ -357,7 +357,7 @@ router.get("/api/search", async function(req,res) {
   let type = req.query.type
   let arg = encodeURIComponent(req.query.selector)
   if(type=="user") {
-    let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name like ?;`
+    let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name like ? limit 10;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0] && result[0].User_Name) {
@@ -367,7 +367,7 @@ router.get("/api/search", async function(req,res) {
       }
     });
   }else if (type=="post") {
-    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? order by post_id desc;`
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? order by post_id desc limit 20;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0]) {

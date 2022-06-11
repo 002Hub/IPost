@@ -414,17 +414,10 @@ router.post("/api/setavatar",function(req,res) {
         con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
           if (err) throw err;
           res.json({"success":"updated avatar"})
+          fs.unlinkSync(avatars+"temp_"+filename)
         });
       })
     })
-    // gm(avatar,"avatar.png").resize(100, 100,'!').noProfile().write(avatars + filename, function (err) {
-    //   if (err) throw err;
-    //   let sql = `update zerotwohub.users set User_Avatar=? where User_Name=?`
-    //   con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
-    //     if (err) throw err;
-    //     res.json({"success":"updated avatar"})
-    //   });
-    // });
   })
 })
 

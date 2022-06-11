@@ -32,6 +32,12 @@
   padding-bottom: 2px;
 }
 
+.avatar {
+  margin-right: 5px;
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
 .mention {
   color: blue;
 }

@@ -33,13 +33,29 @@ function spacerTextNode() {
   return document.createTextNode(" | ")
 }
 
-function createPost(username,text,time,specialtext,postid) {
+const user_cache = {}
+async function getavatar(username) {
+  let user = user_cache[username]
+  if(user == undefined) {
+    user = (await (await fetch("/api/getotheruser?user="+encodeURIComponent(username))).json())["avatar"]
+    if(user) {
+      user = "/avatars/"+user
+    } else {
+      user = "/default_avatar.png"
+    }
+    user_cache[username]=user
+  }
+  return user
+}
+
+async function createPost(username,text,time,specialtext,postid) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
   const newA = document.createElement("a");
   const newSpan2 = document.createElement("span");
   const newSpan3 = document.createElement("span");
+  const avatar = document.createElement("img");
 
   const newUsername = document.createTextNode(username);
   let timedate = new Date(time)
@@ -54,6 +70,14 @@ function createPost(username,text,time,specialtext,postid) {
   newDiv.classList.add("post");
   newSpan3.classList.add("specialtext")
 
+
+  avatar.width=25;
+  avatar.height=25;
+  avatar.classList.add("avatar")
+
+  avatar.src = await getavatar(username)
+
+  newA.appendChild(avatar)
   newA.appendChild(newUsername)
 
   newA.href = `/users/${username}`
@@ -90,13 +114,14 @@ async function main(){
   }
 
   let index = 0
-  let last_10_posts = await (await fetch(`/api/getPosts/${index}`)).json()
-  if(!last_10_posts)return;
+  let all_posts = await (await fetch(`/api/getPosts/${index}`)).json()
+  if(!all_posts)return;
   document.getElementById("posts").innerHTML = ""
-  last_10_posts.forEach((item, i) => {
-    createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id)
-  });
-
+  for(i in all_posts) {
+    let item = all_posts[i]
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id)
+  }
+  
   let links = document.getElementsByClassName("insertedlink")
   for (let i = 0; i < links.length; i++) {
     links[i].innerText = links[i].innerText.split("\/\/")[1].split("\/")[0]

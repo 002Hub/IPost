@@ -700,6 +700,14 @@
     "newPW" : {
       "type" : "string",
       "example" : "this is an example new password"
+    },
+    "user" : {
+      "type" : "string",
+      "example" : "TestUser123"
+    },
+    "pass" : {
+      "type" : "string",
+      "example" : "Password_Of_TestUser123"
     }
   }
 };
@@ -710,6 +718,14 @@
     "message" : {
       "type" : "string",
       "example" : "this posting api is cool"
+    },
+    "user" : {
+      "type" : "string",
+      "example" : "TestUser123"
+    },
+    "pass" : {
+      "type" : "string",
+      "example" : "Password_Of_TestUser123"
     }
   }
 };
@@ -720,6 +736,14 @@
     "Bio" : {
       "type" : "string",
       "example" : "this bio api is cool"
+    },
+    "user" : {
+      "type" : "string",
+      "example" : "TestUser123"
+    },
+    "pass" : {
+      "type" : "string",
+      "example" : "Password_Of_TestUser123"
     }
   }
 };
@@ -897,7 +921,7 @@
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">sets the pw of the currently logged in user (identified via cookie)
+                        <p class="marked">sets the pw of the current user
 also sets the AUTH_COOKIE cookie to the new one
 </p>
                         <p></p>
@@ -2286,6 +2310,7 @@ except ApiException as e:
                         <div class="clearfix"></div>
                         <p></p>
                         <p class="marked">posts a message on the public chat
+has to be logged in either by cookie or given user and password
 </p>
                         <p></p>
                         <br />
@@ -3165,7 +3190,7 @@ except ApiException as e:
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">sets the bio of the currently logged in user (identified via cookie)</p>
+                        <p class="marked">sets the bio of the currently logged in user (identified via cookie, or given user+password)</p>
                         <p></p>
                         <br />
                         <pre class="prettyprint language-html prettyprinted" data-type="post"><code><span class="pln">/api/setBio</span></code></pre>

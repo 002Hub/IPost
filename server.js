@@ -505,8 +505,14 @@ router.post("/api/setBio", async function(req,res) {
     res.json({"error":"no bio set!"})
     return
   }
+  bio = encodeURIComponent(bio)
+  if(100 < bio.length) {
+    res.status(400)
+    res.json({"error":"the bio is too long!"})
+    return
+  }
   let sql = `update zerotwohub.users set User_Bio=? where User_Name=?`
-  con.query(sql, [encodeURIComponent(bio),encodeURIComponent(res.locals.username)], function (err, result) {
+  con.query(sql, [bio,encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json({"success":"updated bio"})
   });

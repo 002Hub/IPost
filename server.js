@@ -58,6 +58,7 @@ const signature = require('cookie-signature')
 const mysql = require('mysql');
 const csurf = require("csurf");
 const WebSocket = require("ws").Server;
+const Jimp = require('jimp');
 
 const router = express.Router();
 const app = express();
@@ -105,7 +106,10 @@ function RNG(seed) {
 
   this.random = function(min,max) {
     if(!min)min=0
-    if(!max)max=1
+    if(!max){
+      max=min
+      min=0
+    }
     this.seed += Math.log(Math.abs(Math.sin(this.seed))*100)
     return Math.abs(Math.sin(this.seed))*max + min
   }
@@ -330,15 +334,17 @@ router.use("/api/*",async function(req,res,next) {
 
     res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   }
-  let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=? and User_PW=?;`
+  let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   res.locals.bio = ""
+  res.locals.avatar = ""
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
       res.locals.username = values[0];
       res.locals.bio = result[0].User_Bio || ""
+      res.locals.avatar = result[0].User_Avatar || ""
       next()
     } else {
       res.status(400)
@@ -351,7 +357,7 @@ router.get("/api/search", async function(req,res) {
   let type = req.query.type
   let arg = encodeURIComponent(req.query.selector)
   if(type=="user") {
-    let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name like ?;`
+    let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name like ?;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0] && result[0].User_Name) {
@@ -375,9 +381,55 @@ router.get("/api/search", async function(req,res) {
   }
 })
 
+router.post("/api/setavatar",function(req,res) {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded. (req.files)');
+  }
+  let avatar = req.files.avatar;
+  if(!avatar) {
+    return res.status(400).send('No files were uploaded. (req.files.)');
+  }
+  const avatars = __dirname + '/avatars/'
+  ensureExists(avatars, function(err) {
+    if(err) {
+      return res.status(500).json({"error":"there's been an internal server error."})
+    }
+    if(res.locals.avatar) {
+      fs.unlinkSync(avatars + res.locals.avatar)
+    }
+    let filename = genstring(96) + ".png"
+    while(fs.existsSync(avatars + "/" + filename) || filename == ".png") {
+      console.log(5,"already have file: ",filename);
+      original_log("already have file: ",filename)
+      filename = genstring(96) + ".png"
+    }
+    avatar.mv(avatars+"temp_"+filename,function(err) {
+      if(err) {
+        return res.status(500).json({"error":"there's been an internal server error."})
+      }
+      Jimp.read(avatars+"temp_"+filename).then(function(image){
+        image.resize(100, 100)
+        image.write(avatars+filename)
+        let sql = `update zerotwohub.users set User_Avatar=? where User_Name=?`
+        con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
+          if (err) throw err;
+          res.json({"success":"updated avatar"})
+        });
+      })
+    })
+    // gm(avatar,"avatar.png").resize(100, 100,'!').noProfile().write(avatars + filename, function (err) {
+    //   if (err) throw err;
+    //   let sql = `update zerotwohub.users set User_Avatar=? where User_Name=?`
+    //   con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
+    //     if (err) throw err;
+    //     res.json({"success":"updated avatar"})
+    //   });
+    // });
+  })
+})
 
 router.get("/api/getuser",async function(req,res) {
-  res.json({"username":res.locals.username,"bio":res.locals.bio})
+  res.json({"username":res.locals.username,"bio":res.locals.bio,"avatar":res.locals.avatar})
 })
 
 router.get("/api/getalluserinformation",async function(req,res) {
@@ -402,11 +454,11 @@ router.get("/api/getalluserinformation",async function(req,res) {
 router.get("/api/getotheruser",async function(req,res) {
   let username = req.query.user
 
-  let sql = `select User_Name,User_Bio from zerotwohub.users where User_Name=?;`
+  let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=?;`
   con.query(sql, [username], function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
-      res.json({"username":username,"bio":result[0].User_Bio})
+      res.json({"username":username,"bio":result[0].User_Bio,"avatar":result[0].User_Avatar})
     } else {
       res.json({"error":"there is no such user!"})
     }
@@ -595,6 +647,18 @@ router.get("/js/*", (request, response) => {
   }
   return;
 });
+
+router.get("/avatars/*", (request, response, next) => {
+  if(!increaseUSERCall(request,response))return
+  let originalUrl = request.originalUrl.split("?").shift()
+  if(fs.existsSync(dir + originalUrl + ".png")) {
+    return response.sendFile(dir + originalUrl + ".png");
+  }
+  if(fs.existsSync(dir + originalUrl)) {
+    return response.sendFile(dir + originalUrl);
+  }
+  response.status(404).send("No avatar with that name found")
+})
 
 router.get("/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return

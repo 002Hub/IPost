@@ -15,6 +15,7 @@
     </header>
     <main>
         <div class="info_div">
+          <img id="avatar" width=100 height=100> <br>
           <h4 id="userBio">Bio: </h4>
           <button id="mentionClick" onclick="mention()">Mention this User in Posts!</button>
         </div>
@@ -31,6 +32,13 @@
         document.getElementById('userName').innerText = `${(!user["error"] && "User: "+user.username) || "Error: "+user["error"]}`
         document.getElementById('userBio').innerText = `${(!user["error"] && "Bio: " + decodeURIComponent(user.bio)) || ""}`
         document.title = `${(!user["error"] && user.username+"'s Page") || "No such User!"}`
+        let avatar = user["avatar"]
+        if(avatar) {
+          avatar = "/avatars/"+avatar
+        } else {
+          avatar = "/default_avatar.png"
+        }
+        document.getElementById("avatar").src = avatar
         if(user["error"]) {
           document.body.removeChild(document.getElementById("mentionClick"))
         }

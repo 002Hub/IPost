@@ -31,3 +31,7 @@ a:link, a:visited {
 a:hover {
     color: red;
 }
+
+footer {
+  color: white;
+}

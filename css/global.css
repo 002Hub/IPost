@@ -3,7 +3,7 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color: #303034;
 }
 
 li {
@@ -23,13 +23,13 @@ li a:hover {
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 a:link, a:visited {
-    color: green;
+  color: green;
 }
 a:hover {
-    color: red;
+  color: red;
 }
 
 footer {

@@ -7,7 +7,7 @@
 }
 
 .self {
-  color: gray;
+  color: white;
 }
 
 #username-self {
@@ -27,7 +27,7 @@
 }
 
 #posts > div {
-  background-color: darkgray;
+  background-color: #303034;
   padding-left: 5px;
   padding-bottom: 2px;
 }
@@ -51,15 +51,15 @@
 }
 
 body {
-  background-color: black;
+  background-color: #1B1B1E;
 }
 
 textarea {
-  background-color: gray;
+  background-color: #1B1B1E;
 }
 
 button {
-  background-color: gray;
+  background-color: #587291;
 }
 
 * {
@@ -67,6 +67,7 @@ button {
 }
 
 .post,.self,.status {
+  color: #ECEAF1;
   width: 50%;
   margin-left: 25%;
   margin-right: 25%;

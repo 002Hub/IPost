@@ -339,12 +339,16 @@ router.use("/api/*",async function(req,res,next) {
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   res.locals.bio = ""
   res.locals.avatar = ""
+  res.locals.publicKey = ""
+  res.locals.privateKey = ""
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
       res.locals.username = values[0];
       res.locals.bio = result[0].User_Bio || ""
       res.locals.avatar = result[0].User_Avatar || ""
+      res.locals.publicKey = result[0].User_PublicKey || ""
+      res.locals.privateKey = result[0].User_PrivateKey || ""
       next()
     } else {
       res.status(400)
@@ -367,7 +371,7 @@ router.get("/api/search", async function(req,res) {
       }
     });
   }else if (type=="post") {
-    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? order by post_id desc limit 20;`
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? and (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc limit 20;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0]) {
@@ -468,13 +472,16 @@ router.post("/api/post", async function(req,res) {
     return
   }
   req.body.message = encodeURIComponent(req.body.message.trim())
+  req.body.receiver = encodeURIComponent(req.body.receiver||"")
+  if(req.body.receiver == "")req.body.receiver="everyone"
+
   if(!req.body.message) {
     res.json({"error":"no message to post"})
     return
   }
 
-  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time) values (?,?,?);`
-  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now()]
+  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name) values (?,?,?,?);`
+  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
 
@@ -724,16 +731,34 @@ router.post("/register",async function(req,res) {
       res.redirect("/register?success=false&reason=already_exists")
       return
     }
-    let hashed_pw = SHA256(password,username,HASHES_DB)
+    let less_hashed_pw = SHA256(password,username,HASHES_DIFF)
+    let hashed_pw = SHA256(less_hashed_pw,username,HASHES_COOKIE)
     let ip = req.socket.remoteAddress
     let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
     let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     ip = SHA256(ip,setTo,HASHES_DB)
-    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip]
-    let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP) VALUES (?, ?, ?, ? ,?);`
+    const {
+      publicKey,
+      privateKey,
+    } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem',
+        cipher: 'aes-256-cbc',
+        passphrase: password
+      }
+    });
+    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip, publicKey.toString(), privateKey.toString()]
+    let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey) VALUES (?, ?, ?, ?, ?, ?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+      res.cookie("priv_key",privateKey.toString(), { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
       res.redirect("/user?success=true")
     });
   })
@@ -784,26 +809,50 @@ router.post("/login",async function(req,res) {
     res.send("no password given")
     return
   }
+  let less_hashed_pw = SHA256(password,username,HASHES_DIFF)
+  let hashed_pw = SHA256(less_hashed_pw,username,HASHES_COOKIE)
 
-  let hashed_pw = SHA256(password,username,HASHES_DB)
-
-  let userexistssql = `SELECT User_Name,User_PW,User_LastIP from zerotwohub.users where User_Name = ? and User_PW = ?;`
+  let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[encodeURIComponent(username),hashed_pw],function(error,result) {
     if(result && result[0]) {
       let ip = req.socket.remoteAddress
       let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-      res.redirect("/user?success=true")
 
       ip = SHA256(ip,setTo,HASHES_DB)
-
+      if(result[0].User_PublicKey == null) {
+        const {
+          publicKey,
+          privateKey,
+        } = crypto.generateKeyPairSync('rsa', {
+          modulusLength: 4096,
+          publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+          },
+          privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem',
+            cipher: 'aes-256-cbc',
+            passphrase: password
+          }
+        });
+        res.cookie("priv_key",privateKey.toString(), { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
+        let sql = `update zerotwohub.users set User_PublicKey=?,User_PrivateKey=? where User_Name = ?;`
+        con.query(sql,[publicKey.toString(),privateKey.toString(),encodeURIComponent(username)],function(error,result) {
+          if(error)throw error
+        })
+      } else {
+        res.cookie("priv_key",result[0].User_PrivateKey, { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
+      }
       if(result[0].User_LastIP != ip) {
         let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
         con.query(sql,[ip,encodeURIComponent(username)],function(error,result) {
           if(error)throw error
         })
       }
+      res.redirect("/user?success=true")
     } else {
       res.redirect("/login?success=false?reason=noUser")
     }

@@ -12,9 +12,11 @@ CREATE TABLE `users` (
   `User_LastIP` varchar(45) NOT NULL DEFAULT 'None',
   `User_Bio` varchar(100) DEFAULT 'wow such empty',
   `User_Avatar` varchar(100) DEFAULT NULL,
+  `User_PublicKey` varchar(830) DEFAULT NULL,
   PRIMARY KEY (`User_ID`,`User_Name`),
   UNIQUE KEY `User_Name_UNIQUE` (`User_Name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `posts` (
   `post_id` bigint NOT NULL AUTO_INCREMENT,

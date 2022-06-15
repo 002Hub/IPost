@@ -89,11 +89,11 @@ async function bioChanger() {
   if(document.getElementById("bio").disabled) {
     let response = await sendBio(document.getElementById("bio").value)
     console.log(response);
-    document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 0px solid black; color:white;}'
+    document.getElementById("userstyle").innerHTML = '::placeholder {color: white;} #bio {border: 0px solid black; color:white;}'
   }
   else
   {
-    document.querySelector('style').innerHTML = '::placeholder {color: white;} #bio {border: 2px solid gray; color:white;}'
+    document.getElementById("userstyle").innerHTML = '::placeholder {color: white;} #bio {border: 2px solid gray; color:white;}'
   }
 }
 

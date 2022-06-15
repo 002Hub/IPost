@@ -322,7 +322,15 @@ START /API/*
 
 */
 
+router.options("/api/post",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  res.set("Access-Control-Allow-Methods","POST")
+  res.set("Access-Control-Allow-Headers","Content-Type")
+  res.status(200).send("")
+})
+
 router.use("/api/*",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   if(!increaseAPICall(req,res))return;
   let unsigned;
   if(req.body.user == undefined || req.body.pass == undefined) {
@@ -331,8 +339,6 @@ router.use("/api/*",async function(req,res,next) {
   } else {
     unsigned = `${req.body.user} ${SHA256(req.body.pass,req.body.user,HASHES_COOKIE)}`
     //basically we generate the unsigned cookie
-
-    res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   }
   let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
@@ -358,6 +364,7 @@ router.use("/api/*",async function(req,res,next) {
 })
 
 router.get("/api/search", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   let type = req.query.type
   let arg = encodeURIComponent(req.query.selector)
   if(type=="user") {
@@ -386,6 +393,7 @@ router.get("/api/search", async function(req,res) {
 })
 
 router.post("/api/setavatar",function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded. (req.files)');
   }
@@ -430,6 +438,7 @@ router.get("/api/getuser",async function(req,res) {
 })
 
 router.get("/api/getalluserinformation",async function(req,res) {
+  res.set("Access-Control-Allow-Origin","") //we don't want that here
   let unsigned = getunsigned(req,res)
   if(!unsigned)return
   unsigned = decodeURIComponent(unsigned)
@@ -449,6 +458,7 @@ router.get("/api/getalluserinformation",async function(req,res) {
 })
 
 router.get("/api/getotheruser",async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   let username = req.query.user
 
   let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=?;`
@@ -486,7 +496,7 @@ router.post("/api/post", async function(req,res) {
     if (err) throw err;
 
     wss.clients.forEach(function(ws) {
-      ws.send("new_post " + res.locals.username)
+      ws.send(`new_post ${res.locals.username} ${req.body.message}`)
     });
     res.json({"success":"successfully posted message"})
     console.log(5,`posted new message by ${res.locals.username} : ${req.body.message}`);
@@ -494,18 +504,30 @@ router.post("/api/post", async function(req,res) {
 })
 
 router.get("/api/getPosts/*", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   res.redirect("/api/getPosts")
 })
 
 router.get("/api/getPosts", async function(req,res) {
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts order by post_id desc;`
+  res.set("Access-Control-Allow-Origin","")
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
   });
 })
 
+router.get("/api/getPersonalPosts", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
+  con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
+    if (err) throw err;
+    res.json(result)
+  });
+})
+
 router.post("/api/setBio", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   let bio = req.body.Bio
   if(!bio){
     res.status(400)
@@ -526,6 +548,7 @@ router.post("/api/setBio", async function(req,res) {
 })
 
 router.post("/api/changePW", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   if((typeof req.body.newPW) != "string") {
     res.json({"error":"incorrect password"})
     return
@@ -567,6 +590,7 @@ router.post("/api/changePW", async function(req,res) {
 })
 
 router.post("/api/changeUsername", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","")
   if((typeof req.body.newUsername) != "string") {
     res.json({"error":"incorrect username"})
     return

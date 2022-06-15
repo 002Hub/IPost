@@ -1,5 +1,5 @@
 #posts > div > p > span:first-child {
-  color: green;
+  color: #BFE7D4;
 }
 
 .status {
@@ -11,7 +11,7 @@
 }
 
 #username-self {
-  color: lightgreen;
+  color: #036D19;
 }
 
 .specialtext {
@@ -23,7 +23,7 @@
 }
 
 .greentext {
-  color: green;
+  color: #BFE7D4;
 }
 
 #posts > div {
@@ -43,7 +43,7 @@
 }
 
 .user-mention {
-  color: lightgreen;
+  color: #036D19;
 }
 
 .everyone-mention {
@@ -78,6 +78,7 @@ button {
 }
 
 #post-text, button {
+  color: #ECEAF1;
   border-radius: 5px;
   resize: none;
   overflow-wrap: break-word;

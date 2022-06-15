@@ -1,4 +1,4 @@
-const navbar = `<ul class="navbar">
+const navbar = `<ul class="navbar noselect">
   <li><a href="/">Home</a></li>
   <li><a href="/user" id="hide_user">Profile</a></li>
   <li><a href="/posts" id="hide_posts">Posts</a></li>

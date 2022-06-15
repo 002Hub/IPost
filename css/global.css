@@ -1,9 +1,21 @@
+:root {
+  --green: #C2F9BB;
+  --fg-color: #303034;
+  --bg-color: #1B1B1E;
+  --text-color: #ECEAF1;
+  --blue-ish: #587291;
+}
+
+.noselect {
+  user-select: none;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #303034;
+  background-color: var(--fg-color);
 }
 
 li {
@@ -26,7 +38,7 @@ a {
   text-decoration: none;
 }
 a:link, a:visited {
-  color: #C2F9BB;
+  color: var(--green);
 }
 a:hover {
   color: red;

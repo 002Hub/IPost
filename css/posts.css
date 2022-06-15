@@ -3,11 +3,11 @@
 }
 
 .status {
-  color: white;
+  color: var(--text-color);
 }
 
 .self {
-  color: white;
+  color: var(--text-color);
 }
 
 #username-self {
@@ -23,11 +23,11 @@
 }
 
 .greentext {
-  color: #BFE7D4;
+  color: var(--green);
 }
 
 #posts > div {
-  background-color: #303034;
+  background-color: var(--fg-color);
   padding-left: 5px;
   padding-bottom: 2px;
 }
@@ -51,15 +51,15 @@
 }
 
 body {
-  background-color: #1B1B1E;
+  background-color: var(--bg-color);
 }
 
 textarea {
-  background-color: #1B1B1E;
+  background-color: var(--bg-color);
 }
 
 button {
-  background-color: #587291;
+  background-color: var(--blue-ish);
 }
 
 * {
@@ -67,7 +67,7 @@ button {
 }
 
 .post,.self,.status {
-  color: #ECEAF1;
+  color: var(--text-color);
   width: 50%;
   margin-left: 25%;
   margin-right: 25%;
@@ -78,7 +78,7 @@ button {
 }
 
 #post-text, button {
-  color: #ECEAF1;
+  color: var(--text-color);
   border-radius: 5px;
   resize: none;
   overflow-wrap: break-word;

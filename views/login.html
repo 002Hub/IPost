@@ -2,10 +2,11 @@
 <html lang="en" dir="ltr">
 <head>
   <link rel="stylesheet" href="/css/logon.css">
+  <script src="/js/warn_message.js" charset="utf-8"></script>
   <script type="text/javascript">
     function login() {
       const pw = document.getElementById("pass").value
-      localStorage.setItem("decryption_key",pw) 
+      localStorage.setItem("decryption_key",pw)
       //yes I know this is not secure, but at this point I think it'd be better to trust the client for end-to-end encryption
     }
   </script>

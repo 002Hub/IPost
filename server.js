@@ -20,21 +20,20 @@ const time = Date.now()
 const original_log = console.log
 function log_info(level, ...info) {
   let text = info
-  if(text == undefined) {
+  if(text == undefined || text.length == 0) {
     text = level
     level = 5
   }
   if(config["logs"] && config["logs"]["level"] && config["logs"]["level"] >= level) {
-    tolog = `[INFO] [${Date.now()}] : ${util.format(text)} \n`
+    let tolog = `[INFO] [${Date.now()}] : ${util.format(text)} \n`
+    original_log(tolog) //still has some nicer colors
     ensureExists(__dirname + '/logs/', function(err) {
         if(err) {
           process.stderr.write(tolog) //just write it to stderr
         } else {
           fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
             if(err){
-              process.stderr.write(tolog)
-            } else {
-              original_log(tolog) //still has some nicer colors
+              process.stderr.write(err)
             }
           })
         }
@@ -510,7 +509,7 @@ router.get("/api/getPosts/*", async function(req,res) {
 })
 
 router.get("/api/getPosts", async function(req,res) {
-  res.set("Access-Control-Allow-Origin","")
+  res.set("Access-Control-Allow-Origin","*")
   let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;

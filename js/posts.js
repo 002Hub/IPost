@@ -95,7 +95,6 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   if(specialtext != "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan3)
   if(isbot==1){
-    console.log(boticon);
     newP.appendChild(spacerTextNode())
     newP.appendChild(boticon)
   }

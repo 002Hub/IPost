@@ -41,14 +41,14 @@ async function getavatar(username) {
     if(user) {
       user = "/avatars/"+user
     } else {
-      user = "/default_avatar.png"
+      user = "/images/default_avatar.png"
     }
     user_cache[username]=user
   }
   return user
 }
 
-async function createPost(username,text,time,specialtext,postid) {
+async function createPost(username,text,time,specialtext,postid,isbot) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
@@ -56,6 +56,11 @@ async function createPost(username,text,time,specialtext,postid) {
   const newSpan2 = document.createElement("span");
   const newSpan3 = document.createElement("span");
   const avatar = document.createElement("img");
+  const boticon = document.createElement("img")
+  boticon.src = "/images/bot.png"
+  boticon.height = 25
+  boticon.width = 25
+  boticon.classList.add("boticon")
 
   const newUsername = document.createTextNode(username);
   let timedate = new Date(time)
@@ -66,7 +71,6 @@ async function createPost(username,text,time,specialtext,postid) {
   if(timedate=="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time="unknown time"
   const newTime = document.createTextNode(time)
   const newSpecialText = document.createTextNode(specialtext)
-
   newDiv.classList.add("post");
   newSpan3.classList.add("specialtext")
 
@@ -90,6 +94,11 @@ async function createPost(username,text,time,specialtext,postid) {
   newP.appendChild(newSpan2)
   if(specialtext != "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan3)
+  if(isbot==1){
+    console.log(boticon);
+    newP.appendChild(spacerTextNode())
+    newP.appendChild(boticon)
+  }
   newP.appendChild(spacerTextNode())
   // |\>.</|
   newP.innerHTML += `<button onclick="reply('${username}')">Reply to this Post</button>`
@@ -119,9 +128,9 @@ async function main(){
   document.getElementById("posts").innerHTML = ""
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id)
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot)
   }
-  
+
   let links = document.getElementsByClassName("insertedlink")
   for (let i = 0; i < links.length; i++) {
     links[i].innerText = links[i].innerText.split("\/\/")[1].split("\/")[0]

@@ -339,6 +339,7 @@ router.use("/api/*",async function(req,res,next) {
   } else {
     unsigned = `${req.body.user} ${SHA256(req.body.pass,req.body.user,HASHES_COOKIE)}`
     //basically we generate the unsigned cookie
+    res.locals.isbot = true //only bots use user+pass
   }
   let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
@@ -490,8 +491,8 @@ router.post("/api/post", async function(req,res) {
     return
   }
 
-  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name) values (?,?,?,?);`
-  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver]
+  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot) values (?,?,?,?,?);`
+  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
 
@@ -510,7 +511,7 @@ router.get("/api/getPosts/*", async function(req,res) {
 
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -519,7 +520,7 @@ router.get("/api/getPosts", async function(req,res) {
 
 router.get("/api/getPersonalPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
   con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -669,6 +670,16 @@ router.get("/css/*", (request, response) => {
 });
 
 router.get("/js/*", (request, response) => {
+  if(!increaseUSERCall(request,response))return
+  if(fs.existsSync(__dirname + request.originalUrl)){
+    response.sendFile(__dirname + request.originalUrl);
+  } else {
+    response.status(404).send("no file with that name found")
+  }
+  return;
+});
+
+router.get("/images/*", (request, response) => {
   if(!increaseUSERCall(request,response))return
   if(fs.existsSync(__dirname + request.originalUrl)){
     response.sendFile(__dirname + request.originalUrl);

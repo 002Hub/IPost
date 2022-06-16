@@ -24,6 +24,7 @@ CREATE TABLE `posts` (
   `post_text` varchar(4000) NOT NULL,
   `post_time` bigint NOT NULL,
   `post_special_text` varchar(100) DEFAULT NULL,
-  `post_ip` varchar(12) DEFAULT NULL,
+  `post_receiver_name` varchar(100) DEFAULT NULL,
+  `post_from_bot` tinyint DEFAULT '0',
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

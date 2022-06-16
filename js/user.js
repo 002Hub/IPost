@@ -72,7 +72,7 @@ async function setuser() {
   if(avatar) {
     avatar = "/avatars/"+avatar
   } else {
-    avatar = "default_avatar.png"
+    avatar = "/images/default_avatar.png"
   }
   document.getElementById("user").innerText = `User: ${username}`;
   document.getElementById("bio").placeholder = decodeURIComponent(bio);

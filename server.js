@@ -701,6 +701,11 @@ router.get("/avatars/*", (request, response, next) => {
   response.status(404).send("No avatar with that name found")
 })
 
+router.get("/logout",async function(req,res) {
+  res.cookie("AUTH_COOKIE","", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS })
+  res.redirect("/")
+})
+
 router.get("/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return
   let originalUrl = request.originalUrl.split("?").shift()
@@ -718,8 +723,6 @@ router.get("/*", (request, response, next) => {
   }
   response.status(404).send("No file with that name found")
 })
-
-
 
 router.post("/register",async function(req,res) {
   for (let i = 0; i < 10; i++) { //don't want people spam registering

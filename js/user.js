@@ -54,6 +54,12 @@ function setCookie(cname, cvalue, exdays) {
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
+function logout() {
+  localStorage.setItem("priv_key","")
+  localStorage.setItem("decryption_key","")
+  location.assign('/logout')
+}
+
 async function setuser() {
   if(getCookie("priv_key") != "") {
     localStorage.setItem("priv_key",getCookie("priv_key"))

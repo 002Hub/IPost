@@ -28,5 +28,9 @@
     "privateKey": "/etc/letsencrypt/live/ipost.tk/privkey.pem",
     "certificate" : "/etc/letsencrypt/live/ipost.tk/cert.pem"
   },
+  "ports": {
+    "http": 80,
+    "https": 443
+  },
   "disallow_proxies_by_headers": true
 }

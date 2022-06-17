@@ -899,7 +899,7 @@ router.post("/login",async function(req,res) {
 app.use(router)
 
 const httpServer = http.createServer(app);
-httpServer.listen(25567);
+httpServer.listen(config["ports"]["http"]);
 
 const privateKey = fs.readFileSync(config["ssl"]["privateKey"]).toString()
 const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
@@ -907,7 +907,7 @@ const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
 const credentials = {key: privateKey, cert: certificate};
 
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(25566);
+httpsServer.listen(config["ports"]["https"]);
 
 const wss = new WebSocket({
   server: httpsServer,

@@ -5,6 +5,8 @@ const wss_server = "wss://ipost.tk"
 const wss_port = "443"
 const wss_URI = wss_server + ":" + wss_port
 
+var reply_id = -1
+
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", function (event) {
   if(wss_server == event.origin) {
@@ -25,7 +27,7 @@ async function postMessage() {
     alert(`Error, your message cant contain more than 1000 characters! (${len})`)
     return
   }
-  let r = await post("/api/post",{"message":document.getElementById("post-text").value})
+  let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id})
   if(window.location.href.split("?mention=")[1])location.replace('/posts');
   document.getElementById("post-text").value=""
 }
@@ -103,7 +105,7 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   }
   newP.appendChild(spacerTextNode())
   // |\>.</|
-  newP.innerHTML += `<button onclick="reply('${username}')">Reply to this Post</button>`
+  newP.innerHTML += `<button onclick="reply('${username}',${postid},'${post_text}')">Reply to this Post</button>`
 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
@@ -124,8 +126,7 @@ async function main(){
     document.getElementById("username-self").innerText = username
   }
 
-  let index = 0
-  let all_posts = await (await fetch(`/api/getPosts/${index}`)).json()
+  let all_posts = await (await fetch(`/api/getPosts`)).json()
   if(!all_posts)return;
   document.getElementById("posts").innerHTML = ""
   for(i in all_posts) {
@@ -162,9 +163,17 @@ async function main(){
   document.getElementById("scriptonly").style = ""
 }
 
-function reply(username) {
-  if(document.getElementById("post-text").value.length >= 5)document.getElementById("post-text").value += "\n"
-  document.getElementById("post-text").value += `_@_${username} `
+function reply(username,postid,posttext) {
+  document.getElementById("reply").style = ""
+  document.getElementById("reply_username").innerText = username
+  document.getElementById("reply_text").innerHTML = filterPost(text)
+  // if(document.getElementById("post-text").value.length >= 5)document.getElementById("post-text").value += "\n"
+  // document.getElementById("post-text").value += `_@_${username} `
+}
+
+function unreply() {
+  document.getElementById("reply").style = "display:none;"
+  reply_id = -1
 }
 
 main()

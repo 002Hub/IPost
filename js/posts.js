@@ -1,9 +1,11 @@
 let user
 let username
 
-const wss_server = "wss://ipost.tk:443"
+const wss_server = "wss://ipost.tk"
+const wss_port = "443"
+const wss_URI = wss_server + ":" + wss_port
 
-let socket = new WebSocket(wss_server);
+let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", function (event) {
   if(wss_server == event.origin) {
     let data = event.data;

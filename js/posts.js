@@ -1,10 +1,11 @@
 let user
 let username
 
-let socket = new WebSocket("wss://ws.zerotwohub.tk:25566");
-socket.addEventListener("message", function (event) {
-  if("wss://ws.zerotwohub.tk:25566" == event.origin) {
+const wss_server = "wss://ipost.tk:443"
 
+let socket = new WebSocket(wss_server);
+socket.addEventListener("message", function (event) {
+  if(wss_server == event.origin) {
     let data = event.data;
     let ds = data.split(" ")
     let message = ds[0]

@@ -481,6 +481,12 @@ router.post("/api/post", async function(req,res) {
     res.json({"error":"no message to post"})
     return
   }
+  let reply_id
+  if(!req.body.reply_id) {
+    reply_id = -1
+  } else {
+    reply_id = req.body.reply_id
+  }
   req.body.message = encodeURIComponent(req.body.message.trim())
   req.body.receiver = encodeURIComponent(req.body.receiver||"")
   if(req.body.receiver == "")req.body.receiver="everyone"
@@ -490,8 +496,8 @@ router.post("/api/post", async function(req,res) {
     return
   }
 
-  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot) values (?,?,?,?,?);`
-  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot]
+  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id) values (?,?,?,?,?,?);`
+  let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot,reply_id]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
 
@@ -510,7 +516,7 @@ router.get("/api/getPosts/*", async function(req,res) {
 
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -519,7 +525,7 @@ router.get("/api/getPosts", async function(req,res) {
 
 router.get("/api/getPersonalPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
   con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json(result)

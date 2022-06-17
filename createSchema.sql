@@ -13,6 +13,7 @@ CREATE TABLE `users` (
   `User_Bio` varchar(100) DEFAULT 'wow such empty',
   `User_Avatar` varchar(100) DEFAULT NULL,
   `User_PublicKey` varchar(830) DEFAULT NULL,
+  `User_PrivateKey` blob,
   PRIMARY KEY (`User_ID`,`User_Name`),
   UNIQUE KEY `User_Name_UNIQUE` (`User_Name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -26,5 +27,6 @@ CREATE TABLE `posts` (
   `post_special_text` varchar(100) DEFAULT NULL,
   `post_receiver_name` varchar(100) DEFAULT NULL,
   `post_from_bot` tinyint DEFAULT '0',
+  `post_reply_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`post_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

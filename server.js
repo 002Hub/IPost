@@ -901,8 +901,8 @@ app.use(router)
 const httpServer = http.createServer(app);
 httpServer.listen(25567);
 
-const privateKey = fs.readFileSync("C:/Certbot/live/ws.zerotwohub.tk/privkey.pem").toString()
-const certificate = fs.readFileSync("C:/Certbot/live/ws.zerotwohub.tk/cert.pem").toString()
+const privateKey = fs.readFileSync(config["ssl"]["privateKey"]).toString()
+const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
 
 const credentials = {key: privateKey, cert: certificate};
 

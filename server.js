@@ -510,7 +510,7 @@ router.get("/api/getPosts/*", async function(req,res) {
 
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)

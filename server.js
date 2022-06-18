@@ -482,8 +482,8 @@ router.post("/api/post", async function(req,res) {
     return
   }
   let reply_id
-  if(!req.body.reply_id) {
-    reply_id = -1
+  if(!req.body.reply_id || req.body.reply_id < 0) {
+    reply_id = 0
   } else {
     reply_id = req.body.reply_id
   }

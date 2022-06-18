@@ -5,7 +5,7 @@ const wss_server = "wss://ipost.tk"
 const wss_port = "443"
 const wss_URI = wss_server + ":" + wss_port
 
-var reply_id = -1
+var reply_id = 0
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", function (event) {
@@ -173,7 +173,7 @@ function reply(username,postid,posttext) {
 
 function unreply() {
   document.getElementById("reply").style = "display:none;"
-  reply_id = -1
+  reply_id = 0
 }
 
 main()

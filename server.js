@@ -181,6 +181,7 @@ var API_CALLS_ACCOUNT = {}
 var USER_CALLS = {}
 var SESSIONS = {}
 var REVERSE_SESSIONS = {}
+var INDIVIDUAL_CALLS = {}
 function clear_api_calls() {
   API_CALLS = {}
 }
@@ -193,6 +194,32 @@ function clear_user_calls() {
 setInterval(clear_api_calls, config.rate_limits.api.reset_time)
 setInterval(clear_account_api_calls, config.rate_limits.api.reset_time)
 setInterval(clear_user_calls, config.rate_limits.user.reset_time)
+
+function increaseIndividualCall(url,req) { //true = continue, false = ratelimit
+  let conf = config["rate_limits"]["individual"][url]
+  if(!conf) {
+    console.log(5,"uri not in individual ratelimiter",url);
+    return true;
+  }
+  if(!conf["enabled"])return true;
+  let ip = req.socket.remoteAddress
+  if(INDIVIDUAL_CALLS[ip]==undefined)INDIVIDUAL_CALLS[ip] = {}
+  if(INDIVIDUAL_CALLS[ip][url]==undefined)INDIVIDUAL_CALLS[ip][url] = 0
+  if(INDIVIDUAL_CALLS[ip][url] == 0) {
+    setTimeout(function(){
+      INDIVIDUAL_CALLS[ip][url] = 0
+    },conf["reset_time"])
+  }
+
+  INDIVIDUAL_CALLS[ip][url]++;
+
+  if(INDIVIDUAL_CALLS[ip][url] >= conf["max"]){
+    console.log(5,"ratelimiting someone on", url, INDIVIDUAL_CALLS[ip][url],conf["max"]);
+    return false;
+  }
+
+  return true;
+}
 
 function increaseAccountAPICall(req,res) {
   let cookie = req.cookies.AUTH_COOKIE
@@ -307,6 +334,16 @@ app.use("/*",function(req,res,next){
       return
     }
   }
+  let fullurl = req.baseUrl + req.path
+  if(fullurl != "/") {
+    fullurl = fullurl.substring(0,fullurl.length-1)
+  }
+  if(!increaseIndividualCall(fullurl,req)){
+    res.status(429)
+    res.json({"error":"you are sending too many requests!"})
+    return
+  }
+
   next()
 })
 

@@ -11,14 +11,101 @@
   },
   "rate_limits": {
     "api": {
-      "reset_time": 10000,
-      "max_without_session": 20,
-      "max_with_session": 60,
-      "max_per_account": 30
+      "reset_time": 40000,
+      "max_without_session": 30,
+      "max_with_session": 120,
+      "max_per_account": 200
     },
     "user": {
       "reset_time": 30000,
       "max": 60
+    },
+    "individual": {
+      "/" : {
+        "enabled": true,
+        "max": 4,
+        "reset_time": 10000
+      },
+      "/js/warn_message.js" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 5000
+      },
+      "/js/addnavbar.js" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 5000
+      },
+      "/css/logon.css" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 5000
+      },
+      "/css/global.css" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 5000
+      },
+      "/api/getuser" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 10000
+      },
+      "/api/getotheruser" : {
+        "enabled": true,
+        "max": 60,
+        "reset_time": 10000
+      },
+      "/login" : {
+        "enabled": true,
+        "max": 6,
+        "reset_time": 10000
+      },
+      "/images/default_avatar.png" : {
+        "enabled": true,
+        "max": 20,
+        "reset_time": 10000
+      },
+      "/images/bot.png" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 10000
+      },
+      "/js/markdown.js" : {
+        "enabled": true,
+        "max": 5,
+        "reset_time": 10000
+      },
+      "/posts" : {
+        "enabled": true,
+        "max": 5,
+        "reset_time": 10000
+      },
+      "/js/httppost.js" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 10000
+      },
+      "/js/htmlescape.js" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 10000
+      },
+      "/api/getPosts" : {
+        "enabled": true,
+        "max": 10,
+        "reset_time": 20000
+      },
+      "/api/setBio": {
+        "enabled": true,
+        "max": 3,
+        "reset_time": 20000
+      },
+      "/api/setavatar": {
+        "enabled": true,
+        "max": 6,
+        "reset_time": 120000
+      }
     }
   },
   "logs": {

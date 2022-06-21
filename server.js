@@ -374,7 +374,7 @@ router.options("/api/getotheruser",async function(req,res,next) {
 
 router.use("/api/*",async function(req,res,next) {
   res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
-  if(config["allow_getotheruser_without_cookie"] && req.url == "/api/getotheruser") {
+  if(config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
     next()
     return
   }
@@ -506,7 +506,7 @@ router.get("/api/getalluserinformation",async function(req,res) {
 })
 
 router.get("/api/getotheruser",async function(req,res) {
-  res.set("Access-Control-Allow-Origin","")
+  res.set("Access-Control-Allow-Origin","*")
   let username = req.query.user
 
   let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=?;`

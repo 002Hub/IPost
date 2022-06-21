@@ -1,4 +1,5 @@
 {
+  "allow_getotheruser_without_cookie": true,
   "mysql": {
     "connections":1000,
     "host":"localhost",

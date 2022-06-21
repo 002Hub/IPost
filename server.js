@@ -365,8 +365,19 @@ router.options("/api/post",async function(req,res,next) {
   res.status(200).send("")
 })
 
+router.options("/api/getotheruser",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  res.set("Access-Control-Allow-Methods","GET")
+  res.set("Access-Control-Allow-Headers","Content-Type")
+  res.status(200).send("")
+})
+
 router.use("/api/*",async function(req,res,next) {
   res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  if(config["allow_getotheruser_without_cookie"] && req.url == "/api/getotheruser") {
+    next()
+    return
+  }
   if(!increaseAPICall(req,res))return;
   let unsigned;
   if(req.body.user == undefined || req.body.pass == undefined) {

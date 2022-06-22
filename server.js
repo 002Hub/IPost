@@ -598,9 +598,9 @@ router.get("/api/getPost", async function(req,res) {
   let arg = req.query.id
   let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=?;`
   con.query(sql, [arg], function (err, result) {
-    console.log(result);
     if (err) throw err;
     if(result[0]) {
+      res.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
       res.json(result[0])
     } else {
       res.json({"error":"there is no such post!"})

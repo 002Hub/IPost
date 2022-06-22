@@ -386,6 +386,13 @@ router.options("/api/getotheruser",async function(req,res,next) {
   res.status(200).send("")
 })
 
+router.options("/api/getPost",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  res.set("Access-Control-Allow-Methods","GET")
+  res.set("Access-Control-Allow-Headers","Content-Type")
+  res.status(200).send("")
+})
+
 router.use("/api/*",async function(req,res,next) {
   res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   if(config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
@@ -582,6 +589,20 @@ router.get("/api/getPosts", async function(req,res) {
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
+  });
+})
+
+router.get("/api/getPost", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","*")
+  let arg = req.query.id
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=? limit 1;`
+  con.query(sql, [`%${arg}%`], function (err, result) {
+    if (err) throw err;
+    if(result[0] && result[0].User_Name) {
+      res.json(result)
+    } else {
+      res.json({"error":"there is no such post!"})
+    }
   });
 })
 

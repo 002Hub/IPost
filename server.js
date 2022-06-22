@@ -569,10 +569,11 @@ router.post("/api/post", async function(req,res) {
   let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot,reply_id]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
-
-    wss.clients.forEach(function(ws) {
-      ws.send(`new_post ${res.locals.username} ${req.body.message}`)
-    });
+    if(req.body.receiver == "everyone") {
+      wss.clients.forEach(function(ws) {
+        ws.send(`new_post ${res.locals.username} ${req.body.message}`)
+      });
+    }
     res.json({"success":"successfully posted message"})
     console.log(5,`posted new message by ${res.locals.username} : ${req.body.message}`);
   });
@@ -598,7 +599,7 @@ router.get("/api/getPost", async function(req,res) {
   let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=? limit 1;`
   con.query(sql, [`%${arg}%`], function (err, result) {
     if (err) throw err;
-    if(result[0] && result[0].User_Name) {
+    if(result[0]) {
       res.json(result)
     } else {
       res.json({"error":"there is no such post!"})

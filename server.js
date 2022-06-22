@@ -596,11 +596,12 @@ router.get("/api/getPosts", async function(req,res) {
 router.get("/api/getPost", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let arg = req.query.id
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=? limit 1;`
-  con.query(sql, [`%${arg}%`], function (err, result) {
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=?;`
+  con.query(sql, [arg], function (err, result) {
+    console.log(result);
     if (err) throw err;
     if(result[0]) {
-      res.json(result)
+      res.json(result[0])
     } else {
       res.json({"error":"there is no such post!"})
     }

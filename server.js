@@ -744,6 +744,7 @@ router.get("/images/*", (request, response) => {
 
 router.get("/avatars/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return
+  res.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
   let originalUrl = request.originalUrl.split("?").shift()
   if(fs.existsSync(dir + originalUrl + ".png")) {
     return response.sendFile(dir + originalUrl + ".png");

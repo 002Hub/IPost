@@ -326,6 +326,20 @@ if(!config.disallow_proxies_by_headers) {
   blocked_headers = []
 }
 
+if(DID_I_FINALLY_ADD_HTTPS) {
+
+  //auto redirect to https
+  app.use((req, res, next) => {
+      if(req.secure){
+        //already secure
+        next()
+      } else {
+        //redirect to https
+        res.redirect('https://' + req.headers.host + req.url)
+      }
+  })
+}
+
 app.use("/*",function(req,res,next){
   res.set("x-powered-by","ZeroTwoHub")
   for (let i = 0; i < blocked_headers.length; i++) {

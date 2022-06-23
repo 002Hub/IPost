@@ -105,7 +105,7 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   }
   newP.appendChild(spacerTextNode())
   // |\>.</|
-  newP.innerHTML += `<button onclick="reply('${username}',${postid},'${htmlesc(htmlesc(text).replace("'","\\\\'"))}')">Reply to this Post</button>`
+  newP.innerHTML += `<button onclick="reply('${username}',${postid},'${htmlesc(htmlesc(text))}')">Reply to this Post</button>`
 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
@@ -166,7 +166,7 @@ async function main(){
 function reply(username,postid,posttext) {
   document.getElementById("reply").style = ""
   document.getElementById("reply_username").innerText = username
-  document.getElementById("reply_text").innerHTML = filterPost(posttext)
+  document.getElementById("reply_text").innerHTML = filterPost(unescape(posttext))
   // if(document.getElementById("post-text").value.length >= 5)document.getElementById("post-text").value += "\n"
   // document.getElementById("post-text").value += `_@_${username} `
 }

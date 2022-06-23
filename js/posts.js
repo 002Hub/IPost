@@ -167,8 +167,7 @@ function reply(username,postid,posttext) {
   document.getElementById("reply").style = ""
   document.getElementById("reply_username").innerText = username
   document.getElementById("reply_text").innerHTML = filterPost(unescape(posttext))
-  // if(document.getElementById("post-text").value.length >= 5)document.getElementById("post-text").value += "\n"
-  // document.getElementById("post-text").value += `_@_${username} `
+  reply_id = postid
 }
 
 function unreply() {

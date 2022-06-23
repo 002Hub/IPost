@@ -556,6 +556,12 @@ router.post("/api/post", async function(req,res) {
   } else {
     reply_id = req.body.reply_id
   }
+
+  if(req.body.message.length > 1000) {
+    res.json({"error":"message too long"})
+    return
+  }
+
   req.body.message = encodeURIComponent(req.body.message.trim())
   req.body.receiver = encodeURIComponent(req.body.receiver||"")
   if(req.body.receiver == "")req.body.receiver="everyone"

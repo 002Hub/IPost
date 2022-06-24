@@ -155,17 +155,11 @@ async function main(){
 
   let all_posts = await (await fetch(`/api/getPosts`)).json()
   if(!all_posts)return;
-  let old_posts = document.getElementById("posts")
-  old_posts.id = "old_posts"
-  let posts = document.createElement("div")
-  posts.id = "posts"
-  posts.classList.add("posts")
+  document.getElementById("post").innerHTML = ""
   for(i in all_posts) {
     let item = all_posts[i]
     await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)
   }
-
-  old_posts.outerHTML = ""
 
   let links = document.getElementsByClassName("insertedlink")
   for (let i = 0; i < links.length; i++) {
@@ -178,17 +172,6 @@ async function main(){
       mentions[i].classList.add("user-mention");
       mentions[i].classList.remove("mention");
       i--;
-    }
-    if(mentions[i]!=undefined && (mentions[i].innerText == "@everyone" || mentions[i].innerText == "@here")) {
-      mentions[i].classList.add("everyone-mention");
-      mentions[i].classList.remove("mention");
-      i--;
-    }
-  }
-  let replies = document.getElementsByClassName("reply")
-  for (let i = 0; i < replies.length; i++) {
-    if(replies[i]!=undefined && replies[i].innerText == username) {
-      replies[i].style="color: red;"
     }
   }
 
@@ -229,7 +212,7 @@ async function mainNoti(user) {
     await askNotiPerms()
   } else {
     if(cansendNoti) {
-      let notification = new Notification('ZTH Board', { body: "new message posted from " + user });
+      let notification = new Notification('IPost', { body: "new message posted from " + user });
       notification = await notification
       console.log(notification);
     }

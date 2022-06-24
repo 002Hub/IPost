@@ -115,21 +115,23 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
   newP.innerHTML += `<button onclick="reply('${username}',${postid},\`${htmlesc(htmlesc(text))}\`)">Reply to this Post</button>`
 
   if(reply_id != 0) {
-    const reply_obj = await fetch(`/api/getPost?id=${reply_id}`)
-    const reply_username = decodeURIComponent(reply_obj.post_user_name)
-    const reply_username_text = document.createTextNode(reply_username)
-    const reply_text = decodeURIComponent(reply_obj.post_text)
-    replyAvatar.width=10;
-    replyAvatar.height=10;
-    replyAvatar.classList.add("avatar")
-    replyAvatar.src = await getavatar(reply_username)
+    try {
+      const reply_obj = await fetch(`/api/getPost?id=${reply_id}`)
+      const reply_username = decodeURIComponent(reply_obj.post_user_name)
+      const reply_username_text = document.createTextNode(reply_username)
+      const reply_text = decodeURIComponent(reply_obj.post_text)
+      replyAvatar.width=10;
+      replyAvatar.height=10;
+      replyAvatar.classList.add("avatar")
+      replyAvatar.src = await getavatar(reply_username)
 
-    replyDiv.appendChild(replyAvatar)
-    replyDiv.appendChild(reply_username_text)
-    replyDiv.appendChild(spacerTextNode())
-    replyDiv.appendChild(filterPost(reply_text))
-    replyDiv.appendChild(replyBr)
-    newDiv.appendChild(replyDiv)
+      replyDiv.appendChild(replyAvatar)
+      replyDiv.appendChild(reply_username_text)
+      replyDiv.appendChild(spacerTextNode())
+      replyDiv.innerHTML += filterPost(reply_text)
+      replyDiv.appendChild(replyBr)
+      newDiv.appendChild(replyDiv)
+    } catch (ignored) {}
   }
 
   newDiv.appendChild(newP)

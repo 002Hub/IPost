@@ -155,7 +155,7 @@ async function main(){
 
   let all_posts = await (await fetch(`/api/getPosts`)).json()
   if(!all_posts)return;
-  document.getElementById("post").innerHTML = ""
+  document.getElementById("posts").innerHTML = ""
   for(i in all_posts) {
     let item = all_posts[i]
     await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)

@@ -36,7 +36,7 @@ function filterPost(text) {
   text = htmlesc(text)
   text = newlineify(text)
   text = urlify(text)
-  text = filterReplies(text)
+  //text = filterReplies(text)
   text = filterMentions(text)
   text = crossout(text)
   text = boldify(text)

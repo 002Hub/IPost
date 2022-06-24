@@ -105,7 +105,7 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   }
   newP.appendChild(spacerTextNode())
   // |\>.</|
-  newP.innerHTML += `<button onclick="reply('${username}',${postid},'${htmlesc(htmlesc(text))}')">Reply to this Post</button>`
+  newP.innerHTML += `<button onclick="reply('${username}',${postid},\`${htmlesc(htmlesc(text))}\`)">Reply to this Post</button>`
 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)

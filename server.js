@@ -530,11 +530,11 @@ router.get("/api/getotheruser",async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let username = req.query.user
 
-  let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=?;`
+  let sql = `select User_Name,User_Bio,User_Avatar,User_PublicKey from zerotwohub.users where User_Name=?;`
   con.query(sql, [username], function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
-      res.json({"username":username,"bio":result[0].User_Bio,"avatar":result[0].User_Avatar})
+      res.json({"username":username,"bio":result[0].User_Bio,"avatar":result[0].User_Avatar,"publicKey": result[0].User_PublicKey})
     } else {
       res.json({"error":"there is no such user!"})
     }

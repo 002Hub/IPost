@@ -726,6 +726,10 @@
     "pass" : {
       "type" : "string",
       "example" : "Password_Of_TestUser123"
+    },
+    "reply_id" : {
+      "type" : "number",
+      "example" : 1
     }
   }
 };
@@ -795,6 +799,28 @@
   }
 };
             defs["inline_response_200_2"] = {
+  "required" : [ "avatar", "bio", "publicKey", "username" ],
+  "type" : "object",
+  "properties" : {
+    "username" : {
+      "type" : "string",
+      "example" : "Code002Lover"
+    },
+    "bio" : {
+      "type" : "string",
+      "example" : "wow such empty"
+    },
+    "avatar" : {
+      "type" : "string",
+      "example" : "_By2Se7gPTk_KfPQYx3QYy2Rc5nTk_LaJQKgQWr9IcLB3sUn_Bn_C8eNKMXFzTj_OOQJjRd6jSe7hQYy1Sf9cMAAWE8KJkSg"
+    },
+    "publicKey" : {
+      "type" : "string",
+      "example" : "-----BEGIN PUBLIC KEY-----\n MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAo6LMtHoh7jkd/nR6ESqS\n TY/UwXCEdhfvBAPMH1MxJ17jYGfRM90GrtBumtYoSDIttejsF6oxtI0aKK6e2DKU\n ayT3nRdx14TrjZ4NYvRW6Z/gPdQz3H4Gxx/A8CjtiYcHTfzuosu5TbJOB1RoiP09\n /NjxyUB7g1xIr+5cvY9UygTeiNNHZzDyJNUUzqL77vO48l8ArdfqPMj/6Ie4bV9W\n 92pfObcNGH5gdwF2xPSLh0hHvcMXv5wOtS1fPtfe+zAKuh43dUEwXea0sqjG6wy/\n ZK+AA4MEjuEAnU2xm8wZcft9KXHqkED6EBZxo1moFVL27Eahb8nYTYudW3DEDeqL\n h2FydoXCfr+YEaqdeAhsRLRdPcnFefeGPi1chxNwYKBI3JMYVycihXXxKU3krTiF\n 2TwWfagA+WH1+hh0F84taDiy8lWay3vLH6SJiYSIas4b7UoICh5l11TiVu6d/pAq\n fA5R04viZhzeACt736eJm1BCV0wWYSZ1w20tdsPHYhRpkz8EI29EzrIg8ZR0zw6/\n abKh9dp7wv44jAGuOn9qLt8X3oS3/FYe4ZZsJdM7MlOkCRNsAtFTF8g2rvGillZK\n P+d/+bDDMYq8qkrUeqpVaD0hxhzf5hIp+1oYiAY7c5iGchwHS8bn5hPWUB2Yfp64\n HtJoNwwxs0NrfJoc7K9kVWkCAwEAAQ==\n -----END PUBLIC KEY-----\n"
+    }
+  }
+};
+            defs["inline_response_200_3"] = {
   "type" : "object",
   "properties" : {
     "post_user_name" : {
@@ -813,7 +839,19 @@
       "type" : "string",
       "example" : "First post"
     },
+    "post_receiver_name" : {
+      "type" : "string",
+      "example" : "everyone"
+    },
+    "post_from_bot" : {
+      "type" : "boolean",
+      "example" : false
+    },
     "post_id" : {
+      "type" : "number",
+      "example" : 1
+    },
+    "post_reply_id" : {
       "type" : "number",
       "example" : 1
     }
@@ -863,9 +901,19 @@
             -->
             <li class="nav-fixed nav-header active" data-group="_"><a href="#api-_">API Summary</a></li>
 
+                  <li class="nav-header" data-group="CORS"><a href="#api-CORS">API Methods - CORS</a></li>
+                    <li data-group="CORS" data-name="getPost" class="">
+                      <a href="#api-CORS-getPost">getPost</a>
+                    </li>
+                    <li data-group="CORS" data-name="getotheruser" class="">
+                      <a href="#api-CORS-getotheruser">getotheruser</a>
+                    </li>
                   <li class="nav-header" data-group="Everyone"><a href="#api-Everyone">API Methods - Everyone</a></li>
                     <li data-group="Everyone" data-name="changePW" class="">
                       <a href="#api-Everyone-changePW">changePW</a>
+                    </li>
+                    <li data-group="Everyone" data-name="getPost" class="">
+                      <a href="#api-Everyone-getPost">getPost</a>
                     </li>
                     <li data-group="Everyone" data-name="getPosts" class="">
                       <a href="#api-Everyone-getPosts">getPosts</a>
@@ -910,6 +958,623 @@
           </div>
         </div>
         <div id="sections">
+                <section id="api-CORS">
+                  <h1>CORS</h1>
+                    <div id="api-CORS-getPost">
+                      <article id="api-CORS-getPost-0" data-group="User" data-name="getPost" data-version="0">
+                        <div class="pull-left">
+                          <h1>getPost</h1>
+                          <p>returns post with the given id</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">returns information about the post
+
+username and post text are URI Encoded
+</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/api/getPost</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-CORS-getPost-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-java">Java</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-CORS-getPost-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-CORS-getPost-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-CORS-getPost-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-CORS-getPost-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-CORS-getPost-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-CORS-getPost-0-curl">
+                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+-H "Accept: application/json"\
+"https://ipost.tk/api/getPost?id="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-CORS-getPost-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.CORSApi;
+
+import java.io.File;
+import java.util.*;
+
+public class CORSApiExample {
+
+    public static void main(String[] args) {
+        
+        CORSApi apiInstance = new CORSApi();
+        BigDecimal id = 1.2; // BigDecimal | the id of the post
+        try {
+            inline_response_200_3 result = apiInstance.getPost(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CORSApi#getPost");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-CORS-getPost-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.CORSApi;
+
+public class CORSApiExample {
+
+    public static void main(String[] args) {
+        CORSApi apiInstance = new CORSApi();
+        BigDecimal id = 1.2; // BigDecimal | the id of the post
+        try {
+            inline_response_200_3 result = apiInstance.getPost(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CORSApi#getPost");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-CORS-getPost-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-CORS-getPost-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">BigDecimal *id = 1.2; // the id of the post
+
+CORSApi *apiInstance = [[CORSApi alloc] init];
+
+// returns post with the given id
+[apiInstance getPostWith:id
+              completionHandler: ^(inline_response_200_3 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getPost-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var SimplePostsaccountApi = require('simple_postsaccount_api');
+
+var api = new SimplePostsaccountApi.CORSApi()
+var id = 1.2; // {{BigDecimal}} the id of the post
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getPost(id, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-CORS-getPost-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-CORS-getPost-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class getPostExample
+    {
+        public void main()
+        {
+
+            var apiInstance = new CORSApi();
+            var id = 1.2;  // BigDecimal | the id of the post
+
+            try
+            {
+                // returns post with the given id
+                inline_response_200_3 result = apiInstance.getPost(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling CORSApi.getPost: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getPost-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\ApiCORSApi();
+$id = 1.2; // BigDecimal | the id of the post
+
+try {
+    $result = $api_instance->getPost($id);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling CORSApi->getPost: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getPost-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::CORSApi;
+
+my $api_instance = WWW::SwaggerClient::CORSApi->new();
+my $id = 1.2; # BigDecimal | the id of the post
+
+eval { 
+    my $result = $api_instance->getPost(id => $id);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling CORSApi->getPost: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getPost-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.CORSApi()
+id = 1.2 # BigDecimal | the id of the post
+
+try: 
+    # returns post with the given id
+    api_response = api_instance.get_post(id)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling CORSApi->getPost: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">id*</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getPost_id">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    BigDecimal
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        the id of the post
+                                                    </div>
+                                            </div>
+                                                <div class="inner required">
+                                                    Required
+                                                </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - successfully got information
+ </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getPost-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getPost-200-schema">
+                                  <div id='responses-getPost-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "successfully got information\n",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200_3"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getPost-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getPost-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getPost-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - no or bad login cookie </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-CORS-getotheruser">
+                      <article id="api-CORS-getotheruser-0" data-group="User" data-name="getotheruser" data-version="0">
+                        <div class="pull-left">
+                          <h1>getotheruser</h1>
+                          <p>returns information about any user</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">returns information about any user
+</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/api/getotheruser</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-CORS-getotheruser-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-java">Java</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-CORS-getotheruser-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-CORS-getotheruser-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-CORS-getotheruser-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-CORS-getotheruser-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-CORS-getotheruser-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-CORS-getotheruser-0-curl">
+                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+-H "Accept: application/json"\
+"https://ipost.tk/api/getotheruser?user="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-CORS-getotheruser-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.CORSApi;
+
+import java.io.File;
+import java.util.*;
+
+public class CORSApiExample {
+
+    public static void main(String[] args) {
+        
+        CORSApi apiInstance = new CORSApi();
+        String user = user_example; // String | pass the username of the user you want to get information on
+        try {
+            inline_response_200_2 result = apiInstance.getotheruser(user);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CORSApi#getotheruser");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-CORS-getotheruser-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.CORSApi;
+
+public class CORSApiExample {
+
+    public static void main(String[] args) {
+        CORSApi apiInstance = new CORSApi();
+        String user = user_example; // String | pass the username of the user you want to get information on
+        try {
+            inline_response_200_2 result = apiInstance.getotheruser(user);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CORSApi#getotheruser");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-CORS-getotheruser-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">String *user = user_example; // pass the username of the user you want to get information on
+
+CORSApi *apiInstance = [[CORSApi alloc] init];
+
+// returns information about any user
+[apiInstance getotheruserWith:user
+              completionHandler: ^(inline_response_200_2 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var SimplePostsaccountApi = require('simple_postsaccount_api');
+
+var api = new SimplePostsaccountApi.CORSApi()
+var user = user_example; // {{String}} pass the username of the user you want to get information on
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getotheruser(user, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-CORS-getotheruser-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class getotheruserExample
+    {
+        public void main()
+        {
+
+            var apiInstance = new CORSApi();
+            var user = user_example;  // String | pass the username of the user you want to get information on
+
+            try
+            {
+                // returns information about any user
+                inline_response_200_2 result = apiInstance.getotheruser(user);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling CORSApi.getotheruser: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\ApiCORSApi();
+$user = user_example; // String | pass the username of the user you want to get information on
+
+try {
+    $result = $api_instance->getotheruser($user);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling CORSApi->getotheruser: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::CORSApi;
+
+my $api_instance = WWW::SwaggerClient::CORSApi->new();
+my $user = user_example; # String | pass the username of the user you want to get information on
+
+eval { 
+    my $result = $api_instance->getotheruser(user => $user);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling CORSApi->getotheruser: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-CORS-getotheruser-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.CORSApi()
+user = user_example # String | pass the username of the user you want to get information on
+
+try: 
+    # returns information about any user
+    api_response = api_instance.getotheruser(user)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling CORSApi->getotheruser: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">user*</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getotheruser_user">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    String
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        pass the username of the user you want to get information on
+                                                    </div>
+                                            </div>
+                                                <div class="inner required">
+                                                    Required
+                                                </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - successfully got information
+ </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getotheruser-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getotheruser-200-schema">
+                                  <div id='responses-getotheruser-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "successfully got information\n",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200_2"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getotheruser-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getotheruser-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getotheruser-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - no or bad login cookie </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
+                  </section>
                 <section id="api-Everyone">
                   <h1>Everyone</h1>
                     <div id="api-Everyone-changePW">
@@ -948,7 +1613,7 @@ also sets the AUTH_COOKIE cookie to the new one
                           <div class="tab-pane active" id="examples-Everyone-changePW-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Content-Type: application/json"\
-"https://ws.zerotwohub.tk:25566/api/changePW"</code></pre>
+"https://ipost.tk/api/changePW"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-changePW-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1184,6 +1849,314 @@ except ApiException as e:
                         </article>
                       </div>
                       <hr>
+                    <div id="api-Everyone-getPost">
+                      <article id="api-Everyone-getPost-0" data-group="User" data-name="getPost" data-version="0">
+                        <div class="pull-left">
+                          <h1>getPost</h1>
+                          <p>returns post with the given id</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">returns information about the post
+
+username and post text are URI Encoded
+</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/api/getPost</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Everyone-getPost-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Everyone-getPost-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Everyone-getPost-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Everyone-getPost-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Everyone-getPost-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Everyone-getPost-0-python">Python</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Everyone-getPost-0-curl">
+                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+-H "Accept: application/json"\
+"https://ipost.tk/api/getPost?id="</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Everyone-getPost-0-java">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.EveryoneApi;
+
+import java.io.File;
+import java.util.*;
+
+public class EveryoneApiExample {
+
+    public static void main(String[] args) {
+        
+        EveryoneApi apiInstance = new EveryoneApi();
+        BigDecimal id = 1.2; // BigDecimal | the id of the post
+        try {
+            inline_response_200_3 result = apiInstance.getPost(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling EveryoneApi#getPost");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Everyone-getPost-0-android">
+                            <pre class="prettyprint"><code class="language-java">import io.swagger.client.api.EveryoneApi;
+
+public class EveryoneApiExample {
+
+    public static void main(String[] args) {
+        EveryoneApi apiInstance = new EveryoneApi();
+        BigDecimal id = 1.2; // BigDecimal | the id of the post
+        try {
+            inline_response_200_3 result = apiInstance.getPost(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling EveryoneApi#getPost");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Everyone-getPost-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">BigDecimal *id = 1.2; // the id of the post
+
+EveryoneApi *apiInstance = [[EveryoneApi alloc] init];
+
+// returns post with the given id
+[apiInstance getPostWith:id
+              completionHandler: ^(inline_response_200_3 output, NSError* error) {
+                            if (output) {
+                                NSLog(@"%@", output);
+                            }
+                            if (error) {
+                                NSLog(@"Error: %@", error);
+                            }
+                        }];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var SimplePostsaccountApi = require('simple_postsaccount_api');
+
+var api = new SimplePostsaccountApi.EveryoneApi()
+var id = 1.2; // {{BigDecimal}} the id of the post
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getPost(id, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Everyone-getPost-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class getPostExample
+    {
+        public void main()
+        {
+
+            var apiInstance = new EveryoneApi();
+            var id = 1.2;  // BigDecimal | the id of the post
+
+            try
+            {
+                // returns post with the given id
+                inline_response_200_3 result = apiInstance.getPost(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling EveryoneApi.getPost: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new Swagger\Client\ApiEveryoneApi();
+$id = 1.2; // BigDecimal | the id of the post
+
+try {
+    $result = $api_instance->getPost($id);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling EveryoneApi->getPost: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::SwaggerClient::Configuration;
+use WWW::SwaggerClient::EveryoneApi;
+
+my $api_instance = WWW::SwaggerClient::EveryoneApi->new();
+my $id = 1.2; # BigDecimal | the id of the post
+
+eval { 
+    my $result = $api_instance->getPost(id => $id);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling EveryoneApi->getPost: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Everyone-getPost-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import swagger_client
+from swagger_client.rest import ApiException
+from pprint import pprint
+
+# create an instance of the API class
+api_instance = swagger_client.EveryoneApi()
+id = 1.2 # BigDecimal | the id of the post
+
+try: 
+    # returns post with the given id
+    api_response = api_instance.get_post(id)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling EveryoneApi->getPost: %s\n" % e)</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">id*</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getPost_id">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    BigDecimal
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        the id of the post
+                                                    </div>
+                                            </div>
+                                                <div class="inner required">
+                                                    Required
+                                                </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3> Status: 200 - successfully got information
+ </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-getPost-200-schema">Schema</a>
+                                </li>
+
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                                <div class="tab-pane active" id="responses-getPost-200-schema">
+                                  <div id='responses-getPost-200-schema-200' style="padding: 30px; border-left: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee;">
+                                    <script>
+                                      $(document).ready(function() {
+                                        var schemaWrapper = {
+  "description" : "successfully got information\n",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/inline_response_200_3"
+      }
+    }
+  }
+};
+                                        var schema = schemaWrapper.content["application/json"].schema;
+                                        if (schema.$ref != null) {
+                                          schema = defsParser.$refs.get(schema.$ref);
+                                        } else {
+                                          schemaWrapper.components = {};
+                                          schemaWrapper.components.schemas = Object.assign({}, defs);
+                                          $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                            console.log(err);
+                                          });
+                                        }
+
+                                        //console.log(JSON.stringify(schema));
+                                        var view = new JSONSchemaView(schema, 3);
+                                        $('#responses-getPost-200-schema-data').val(stringify(schema));
+                                        var result = $('#responses-getPost-200-schema-200');
+                                        result.empty();
+                                        result.append(view.render());
+                                      });
+                                    </script>
+                                  </div>
+                                  <input id='responses-getPost-200-schema-data' type='hidden' value=''></input>
+                                </div>
+                            </div>
+
+                            <h3> Status: 400 - no or bad login cookie </h3>
+
+                            <ul class="nav nav-tabs nav-tabs-examples" >
+                            </ul>
+
+                            <div class="tab-content" style='margin-bottom: 10px;'>
+                            </div>
+
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Everyone-getPosts">
                       <article id="api-Everyone-getPosts-0" data-group="User" data-name="getPosts" data-version="0">
                         <div class="pull-left">
@@ -1221,7 +2194,7 @@ username and post text are URI Encoded
                           <div class="tab-pane active" id="examples-Everyone-getPosts-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
 -H "Accept: application/json"\
-"https://ws.zerotwohub.tk:25566/api/getPosts"</code></pre>
+"https://ipost.tk/api/getPosts"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-getPosts-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1238,7 +2211,7 @@ public class EveryoneApiExample {
         
         EveryoneApi apiInstance = new EveryoneApi();
         try {
-            array[inline_response_200_2] result = apiInstance.getPosts();
+            array[inline_response_200_3] result = apiInstance.getPosts();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling EveryoneApi#getPosts");
@@ -1256,7 +2229,7 @@ public class EveryoneApiExample {
     public static void main(String[] args) {
         EveryoneApi apiInstance = new EveryoneApi();
         try {
-            array[inline_response_200_2] result = apiInstance.getPosts();
+            array[inline_response_200_3] result = apiInstance.getPosts();
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling EveryoneApi#getPosts");
@@ -1275,7 +2248,7 @@ EveryoneApi *apiInstance = [[EveryoneApi alloc] init];
 
 // returns all posts
 [apiInstance getPostsWithCompletionHandler: 
-              ^(array[inline_response_200_2] output, NSError* error) {
+              ^(array[inline_response_200_3] output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1323,7 +2296,7 @@ namespace Example
             try
             {
                 // returns all posts
-                array[inline_response_200_2] result = apiInstance.getPosts();
+                array[inline_response_200_3] result = apiInstance.getPosts();
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1416,7 +2389,7 @@ except ApiException as e:
       "schema" : {
         "type" : "array",
         "items" : {
-          "$ref" : "#/components/schemas/inline_response_200_2"
+          "$ref" : "#/components/schemas/inline_response_200_3"
         },
         "x-content-type" : "application/json"
       }
@@ -1493,7 +2466,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-getotheruser-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
 -H "Accept: application/json"\
-"https://ws.zerotwohub.tk:25566/api/getotheruser?user="</code></pre>
+"https://ipost.tk/api/getotheruser?user="</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-getotheruser-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -1511,7 +2484,7 @@ public class EveryoneApiExample {
         EveryoneApi apiInstance = new EveryoneApi();
         String user = user_example; // String | pass the username of the user you want to get information on
         try {
-            inline_response_200_1 result = apiInstance.getotheruser(user);
+            inline_response_200_2 result = apiInstance.getotheruser(user);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling EveryoneApi#getotheruser");
@@ -1530,7 +2503,7 @@ public class EveryoneApiExample {
         EveryoneApi apiInstance = new EveryoneApi();
         String user = user_example; // String | pass the username of the user you want to get information on
         try {
-            inline_response_200_1 result = apiInstance.getotheruser(user);
+            inline_response_200_2 result = apiInstance.getotheruser(user);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling EveryoneApi#getotheruser");
@@ -1550,7 +2523,7 @@ EveryoneApi *apiInstance = [[EveryoneApi alloc] init];
 
 // returns information about any user
 [apiInstance getotheruserWith:user
-              completionHandler: ^(inline_response_200_1 output, NSError* error) {
+              completionHandler: ^(inline_response_200_2 output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1601,7 +2574,7 @@ namespace Example
             try
             {
                 // returns information about any user
-                inline_response_200_1 result = apiInstance.getotheruser(user);
+                inline_response_200_2 result = apiInstance.getotheruser(user);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1724,7 +2697,7 @@ except ApiException as e:
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/inline_response_200_1"
+        "$ref" : "#/components/schemas/inline_response_200_2"
       }
     }
   }
@@ -1773,7 +2746,7 @@ except ApiException as e:
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
                         <p></p>
-                        <p class="marked">When a valid cookie is set, the API will return information about the current user
+                        <p class="marked">When a valid information is set, the API will return information about the current user
 </p>
                         <p></p>
                         <br />
@@ -1799,7 +2772,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-getuser-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
 -H "Accept: application/json"\
-"https://ws.zerotwohub.tk:25566/api/getuser"</code></pre>
+"https://ipost.tk/api/getuser"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-getuser-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -2065,7 +3038,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-login-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Content-Type: application/json"\
-"https://ws.zerotwohub.tk:25566/login"</code></pre>
+"https://ipost.tk/login"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-login-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -2336,7 +3309,7 @@ has to be logged in either by cookie or given user and password
                           <div class="tab-pane active" id="examples-Everyone-post-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Content-Type: application/json"\
-"https://ws.zerotwohub.tk:25566/api/post"</code></pre>
+"https://ipost.tk/api/post"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-post-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -2606,7 +3579,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-register-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Content-Type: application/json"\
-"https://ws.zerotwohub.tk:25566/register"</code></pre>
+"https://ipost.tk/register"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-register-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -2876,7 +3849,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-search-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
 -H "Accept: application/json"\
-"https://ws.zerotwohub.tk:25566/api/search?type=&selector="</code></pre>
+"https://ipost.tk/api/search?type=&selector="</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-search-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -3215,7 +4188,7 @@ except ApiException as e:
                           <div class="tab-pane active" id="examples-Everyone-setBio-0-curl">
                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
 -H "Content-Type: application/json"\
-"https://ws.zerotwohub.tk:25566/api/setBio"</code></pre>
+"https://ipost.tk/api/setBio"</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Everyone-setBio-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;

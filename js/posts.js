@@ -116,7 +116,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
 
   if(reply_id != 0) {
     try {
-      const reply_obj = await fetch(`/api/getPost?id=${reply_id}`)
+      const reply_obj = await (await fetch(`/api/getPost?id=${reply_id}`)).json()
       const reply_username = decodeURIComponent(reply_obj.post_user_name)
       const reply_username_text = document.createTextNode(reply_username)
       const reply_text = decodeURIComponent(reply_obj.post_text)
@@ -155,11 +155,17 @@ async function main(){
 
   let all_posts = await (await fetch(`/api/getPosts`)).json()
   if(!all_posts)return;
-  document.getElementById("posts").innerHTML = ""
+  let old_posts = document.getElementById("posts")
+  old_posts.id = "old_posts"
+  let posts = document.createElement("div")
+  posts.id = "posts"
+  posts.classList.add("posts")
   for(i in all_posts) {
     let item = all_posts[i]
     await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)
   }
+
+  old_posts.outerHTML = ""
 
   let links = document.getElementsByClassName("insertedlink")
   for (let i = 0; i < links.length; i++) {

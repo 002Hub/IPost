@@ -53,7 +53,7 @@ async function getavatar(username) {
   return user
 }
 
-async function createPost(username,text,time,specialtext,postid,isbot) {
+async function createPost(username,text,time,specialtext,postid,isbot,reply_id) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
@@ -61,7 +61,14 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   const newSpan2 = document.createElement("span");
   const newSpan3 = document.createElement("span");
   const avatar = document.createElement("img");
-  const boticon = document.createElement("img")
+  const boticon = document.createElement("img");
+
+  const replyDiv = document.createElement("div");
+  const replyA = document.createElement("a");
+  const replyAvatar = document.createElement("img");
+  const replySpan = document.createElement("span");
+  const replyBr = document.createElement("br");
+
   boticon.src = "/images/bot.png"
   boticon.height = 25
   boticon.width = 25
@@ -107,6 +114,24 @@ async function createPost(username,text,time,specialtext,postid,isbot) {
   // |\>.</|
   newP.innerHTML += `<button onclick="reply('${username}',${postid},\`${htmlesc(htmlesc(text))}\`)">Reply to this Post</button>`
 
+  if(reply_id != 0) {
+    const reply_obj = await fetch(`/getPost?id=${reply_id}`)
+    const reply_username = decodeURIComponent(reply_obj.post_user_name)
+    const reply_username_text = document.createTextNode(reply_username)
+    const reply_text = decodeURIComponent(reply_obj.post_text)
+    replyAvatar.width=10;
+    replyAvatar.height=10;
+    replyAvatar.classList.add("avatar")
+    replyAvatar.src = await getavatar(reply_username)
+
+    replyDiv.appendChild(replyAvatar)
+    replyDiv.appendChild(reply_username_text)
+    replyDiv.appendChild(spacerTextNode())
+    replyDiv.appendChild(filterPost(reply_text))
+    replyDiv.appendChild(replyBr)
+    newDiv.appendChild(replyDiv)
+  }
+
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
   newDiv.id = postid
@@ -131,7 +156,7 @@ async function main(){
   document.getElementById("posts").innerHTML = ""
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot)
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)
   }
 
   let links = document.getElementsByClassName("insertedlink")

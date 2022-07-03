@@ -33,9 +33,9 @@ const cape = m => unes[m];
 const unescape = un => replace.call(un, es, cape);
 
 function escape_special(str) {
-  return str.replace("\\","\\\\").replace("`","\\`")
+  return str.replace(/\\/g,"\\\\").replace(/`/g,"\\`")
 }
 
 function unescape_special(str) {
-  return str.replace("\\\\","\\").replace("\\`","`")
+  return str.replace(/\\\\/g,"\\").replace(/\\`/,"`")
 }

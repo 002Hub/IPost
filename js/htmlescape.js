@@ -1,7 +1,7 @@
 const {replace} = '';
 
-const es = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34|\\\\|`);/g;
-const ca = /[&<>'"\\\\`]/g;
+const es = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34);/gi;
+const ca = /[&<>'"]/g;
 
 const esca = {
 '&': '&amp;',

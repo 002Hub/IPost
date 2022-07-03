@@ -8,7 +8,7 @@ async function setUser() {
 
 setUser()
 
-document.getElementById("submit").addEventListener("click",async function(){
+async function changePW(){
   if(window.confirm("Are you sure that you want to change your Password?")){
     let re = await (await post("/api/changePW",{"currentPW":document.getElementById("currentPW").value,"newPW":document.getElementById("newPW").value})).json()
     document.getElementById("response").innerText = re["error"] || re["success"]
@@ -19,4 +19,4 @@ document.getElementById("submit").addEventListener("click",async function(){
     document.getElementById("currentPW").value = ""
     document.getElementById("newPW").value = ""
   }
-})
+}

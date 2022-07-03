@@ -326,6 +326,11 @@ if(!config.disallow_proxies_by_headers) {
   blocked_headers = []
 }
 
+app.use(function(req,res,next) {
+  res.set("X-XSS-Protection","1; mode=block")
+  next()
+})
+
 if(DID_I_FINALLY_ADD_HTTPS) {
 
   //auto redirect to https

@@ -1,9 +1,9 @@
 :root {
-  --green: #C2F9BB;
-  --fg-color: #303034;
-  --bg-color: #1B1B1E;
-  --text-color: #ECEAF1;
-  --blue-ish: #587291;
+  --green: #C2F9BB; /* links etc */
+  --fg-color: #303034; /* post background */
+  --bg-color: #1B1B1E; /* page background etc */
+  --text-color: #ECEAF1; /* text */
+  --blue-ish: #587291; /* buttons etc */
 }
 
 .noselect {

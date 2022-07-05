@@ -112,7 +112,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
   }
   newP.appendChild(spacerTextNode())
   // |\>.</|
-  newP.innerHTML += `<button onclick="reply('${username}',${postid},\`${htmlesc(htmlesc(escape_special(escape_special(text))))}\`)">Reply to this Post</button>`
+  newP.innerHTML += `<button onclick="reply(${postid})">Reply to this Post</button>`
 
   if(reply_id != 0) {
     try {
@@ -179,10 +179,13 @@ async function main(){
   document.getElementById("scriptonly").style = ""
 }
 
-function reply(username,postid,posttext) {
+async function reply(postid) {
+  let post = await(await fetch("/api/getPost?id="+postid)).json()
+  let username = post.post_user_name
+  let posttext = post.post_text
   document.getElementById("reply").style = ""
-  document.getElementById("reply_username").innerText = username
-  document.getElementById("reply_text").innerHTML = filterPost(unescape(unescape_special(unescape_special(posttext))))
+  document.getElementById("reply_username").innerText = decodeURIComponent(username)
+  document.getElementById("reply_text").innerHTML = filterPost(decodeURIComponent(posttext))
   reply_id = postid
 }
 

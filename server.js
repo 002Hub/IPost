@@ -1,6 +1,14 @@
 const fs = require("fs");
 const util = require('util');
 
+
+/**
+ * makes sure that a given folder exists, if it doesn't it creates one for you
+ * @param  {string}   path               the path of the folder
+ * @param  {permission}   mask               permission mask for the new folder to have
+ * @param  {Function} cb                 callback, gives null if the folder exists, otherwise gives the error
+ * @return {undefined}        see: callback
+ */
 function ensureExists(path, mask, cb) {
     if (typeof mask == 'function') { // Allow the `mask` parameter to be optional
         cb = mask;
@@ -18,6 +26,14 @@ const config = JSON.parse(fs.readFileSync("server_config.json"))
 
 const time = Date.now()
 const original_log = console.log
+
+
+/**
+ * custom logging function
+ * @param  {number} level               importance level if information
+ * @param  {any} info                information to format + log
+ * @return {undefined}       returns nothing
+ */
 function log_info(level, ...info) {
   let text = info
   if(text == undefined || text.length == 0) {
@@ -81,6 +97,13 @@ const dir = __dirname + "/"
 
 const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
 
+/**
+ * hashes with the secure hashing algorithm 256
+ * @param       {string} str   string to hash
+ * @param       {any} salt  salt to apply to string
+ * @param       {number} num   amount of times to hash, defaults to 1
+ * @returns     {string}    base64 digested hash
+ */
 function SHA256(str,salt,num) {
   if(!num && num!==0)num=1;
   if(!str)return;
@@ -94,11 +117,22 @@ function SHA256(str,salt,num) {
   return ret;
 }
 
+
+/**
+ * quick function to convert data to base64
+ * @param  {any} data               data to encode in base64
+ * @return {string}      base64 encoded data
+ */
 function b64(data) {
   let buff = Buffer.from(data);
   return buff.toString('base64');
 }
 
+/**
+ * custom, bad random number generator
+ * @param       {number} seed  seed for the number generator, defaults to current timestamp
+ * @constructor
+ */
 function RNG(seed) {
   if(!seed)seed = Date.now();
   this.seed = seed
@@ -117,6 +151,11 @@ function RNG(seed) {
   }
 }
 
+/**
+ * waits x ms
+ * @param  {number} ms               amount of ms to sleep for
+ * @return {promise}    promise that gets resolved after x ms
+ */
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -125,6 +164,11 @@ const rand = new RNG()
 const genstring_characters =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 const genstring_charactersLength = genstring_characters.length;
+/**
+ * generates a semi-random string
+ * @param  {number} length               length of string to generate
+ * @return {string}        semi-random string generated
+ */
 function genstring(length) {
   let result = "";
   for (let i = 0; i < length; i++) {
@@ -133,6 +177,10 @@ function genstring(length) {
   return result;
 }
 
+
+/**
+ * handles client errors, used by expressJS
+ */
 function clientErrorHandler(err, req, res, next) {
   if(err) {
     if (req.xhr) {
@@ -145,10 +193,23 @@ function clientErrorHandler(err, req, res, next) {
   }
 }
 
+/**
+ * utility function to get a key by its value in an object
+ * @param  {object} object               object to get key from
+ * @param  {any} value                value to get key from
+ * @return {any}        key to the given value inside the object
+ */
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
 
+/**
+ * usignes a string
+ * @param  {string} text               text to unsign
+ * @param  {request} req                request object, used for getting the ip for unsigning
+ * @param  {response} res                response object
+ * @return {string/boolean}      unsigned text, or if unsigning was unsuccessful, false
+ */
 function unsign(text,req,res) {
   let ip = req.socket.remoteAddress
   let unsigned = signature.unsign(text,cookiesecret+ip)
@@ -158,6 +219,12 @@ function unsign(text,req,res) {
   return unsigned
 }
 
+/**
+ * unsignes the auth cookie of a request, also sends json response if auth cookie was invalid
+ * @param  {request} req               request object
+ * @param  {response} res               response object
+ * @return {string/boolean}     unsigned cookie, or if unsigning was unsuccessful, false
+ */
 function getunsigned(req,res) {
   let cookie = req.cookies.AUTH_COOKIE
   if(!cookie){
@@ -182,12 +249,24 @@ var USER_CALLS = {}
 var SESSIONS = {}
 var REVERSE_SESSIONS = {}
 var INDIVIDUAL_CALLS = {}
+/**
+ * clears current api call list (per IP)
+ * @return {undefined} returns nothing
+ */
 function clear_api_calls() {
   API_CALLS = {}
 }
+/**
+ * clears current api account call list (per account)
+ * @return {undefined} returns nothing
+ */
 function clear_account_api_calls() {
   API_CALLS_ACCOUNT = {}
 }
+/**
+ * clears current user file call list (per IP)
+ * @return {undefined} returns nothing
+ */
 function clear_user_calls() {
   USER_CALLS = {}
 }
@@ -831,6 +910,16 @@ router.post("/register",async function(req,res) {
     if(!increaseAPICall(req,res))return;
   }
   res.status(200)
+
+  if((typeof req.body.user) != "string") {
+    res.json({"error":"incorrect username"})
+    return
+  }
+  if((typeof req.body.pass) != "string") {
+    res.json({"error":"incorrect password"})
+    return
+  }
+
   let username = req.body.user.toString()
   username = username.replace(/\s/gi,"")
   let password = req.body.pass.toString()

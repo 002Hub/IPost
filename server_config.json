@@ -27,6 +27,11 @@
         "max": 4,
         "reset_time": 10000
       },
+      "/favicon.ico": {
+        "enabled": true,
+        "max": 5,
+        "reset_time": 5000
+      },
       "/js/warn_message.js" : {
         "enabled": true,
         "max": 10,
@@ -35,6 +40,11 @@
       "/js/addnavbar.js" : {
         "enabled": true,
         "max": 10,
+        "reset_time": 5000
+      },
+      "/css/style.css" {
+        "enabled": true,
+        "max": 5,
         "reset_time": 5000
       },
       "/css/logon.css" : {
@@ -61,6 +71,11 @@
         "enabled": true,
         "max": 6,
         "reset_time": 10000
+      },
+      "/settings" : {
+        "enabled": true,
+        "max": 4,
+        "reset_time": 5000
       },
       "/images/default_avatar.png" : {
         "enabled": true,

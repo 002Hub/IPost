@@ -60,6 +60,10 @@ footer {
   padding: 6px 14px;
 }
 
+.pd-great {
+  padding: 10px 30px;
+}
+
 .bg-light {
   background-color: var(--fg-color);
 }

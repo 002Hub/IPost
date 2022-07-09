@@ -6,6 +6,10 @@
   --blue-ish: #587291; /* buttons etc */
 }
 
+.right {
+  float: right;
+}
+
 .noselect {
   user-select: none;
 }

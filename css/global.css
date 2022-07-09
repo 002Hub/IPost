@@ -50,6 +50,8 @@ a:hover {
 
 footer {
   color: white;
+  margin-top: 100px;
+  background-color: var(--fg-color);
 }
 
 .right {

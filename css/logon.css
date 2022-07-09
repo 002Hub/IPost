@@ -3,7 +3,7 @@
   margin: 0px;
 }
 body {
-  background-color: lightgreen;
+  background-color: var(--bg-color);
 }
 header {
   background-color: black;

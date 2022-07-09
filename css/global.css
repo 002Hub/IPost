@@ -59,3 +59,11 @@ footer {
 .less_padding {
   padding: 6px 14px;
 }
+
+.bg-light {
+  background-color: var(--fg-color);
+}
+
+.bg-dark {
+  background-color: var(--bg-color);
+}

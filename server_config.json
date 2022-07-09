@@ -42,7 +42,7 @@
         "max": 10,
         "reset_time": 5000
       },
-      "/css/style.css" {
+      "/css/style.css" : {
         "enabled": true,
         "max": 5,
         "reset_time": 5000

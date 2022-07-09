@@ -48,6 +48,6 @@ async function setuser() {
     avatar = "/images/default_avatar.png"
   }
   document.getElementById("user").innerText = `User: ${username}`;
-  document.getElementById("userBio").placeholder = "Bio: " + decodeURIComponent(bio);
+  document.getElementById("userBio").innerText = "Bio: " + decodeURIComponent(bio);
   document.getElementById("avatarimg").src = avatar;
 }

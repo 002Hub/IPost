@@ -104,7 +104,10 @@ async function bioChanger() {
 }
 
 async function sendBio(str) {
-  return await post("/api/setBio",{"Bio":str})
+  if(document.getElementById("bio").placeholder != str) {
+    document.getElementById("bio").placeholder = str
+    return await post("/api/setBio",{"Bio":str})
+  }
 }
 
 

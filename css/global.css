@@ -30,6 +30,10 @@ li a {
   text-decoration: none;
 }
 
+.totib {
+  margin-top: 6.5%;
+}
+
 li a:hover {
   background-color: #111;
 }
@@ -53,5 +57,5 @@ footer {
 }
 
 .less_padding {
-  padding: 16px 16px;
+  padding: 6px 14px;
 }

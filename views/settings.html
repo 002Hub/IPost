@@ -30,9 +30,36 @@
       <span class="bio">Bio: <input type="text" id="bio" disabled placeholder="wow such empty"></span>
       <button id="changeBio" onclick="bioChanger()">Change Bio</button>
       <br>
-      <button onclick="location.assign('/changePW')">Want to change your password?</button>
-      <br>
-      <button onclick="location.assign('/changeUsername')">Want to change your username?</button>
+      <div>
+        <h3>Change your password</h3>
+        <label for="currentPW_pw">Current Password:</label>
+        <input id="currentPW_pw" placeholder="Current Password" type="password">
+        <br>
+        <br>
+        <label for="newPW">New Password:</label>
+        <input id="newPW" placeholder="New Password" type="password">
+        <br>
+        <br>
+        <button onclick="changePW()">Change Password</button>
+        <br> 
+        <span id="response_pw"></span>
+      </div>
+      <div>
+        <h3>Change your Username</h3>
+        <br>
+        <h1 id="username">Current User: USER</h1>
+        <label for="currentPW_us">Password:</label>
+        <input id="currentPW_us" placeholder="Current Password" type="password">
+        <br>
+        <br>
+        <label for="newUsername">New Username:</label>
+        <input id="newUsername" placeholder="New Username" type="text">
+        <br>
+        <br>
+        <button onclick="changeUsername()">Change Username</button>
+        <br>
+        <span id="response_us"></span>
+      </div>
     </div>
   </main>
   <footer>

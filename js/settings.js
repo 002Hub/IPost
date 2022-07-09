@@ -106,3 +106,33 @@ async function bioChanger() {
 async function sendBio(str) {
   return await post("/api/setBio",{"Bio":str})
 }
+
+
+async function changePW() {
+  if(window.confirm("Are you sure that you want to change your Password?")){
+    let re = await (await post("/api/changePW",{"currentPW":document.getElementById("currentPW_pw").value,"newPW":document.getElementById("newPW").value})).json()
+    document.getElementById("response_pw").innerText = re["error"] || re["success"]
+    document.getElementById("response_pw").style="color:green"
+    if(re["error"]) {
+      document.getElementById("response_pw").style="color:red"
+    }
+    document.getElementById("currentPW").value = ""
+    document.getElementById("newPW").value = ""
+
+    setuser()
+  }
+}
+
+async function changeUsername() {
+  if(window.confirm("Are you sure that you want to change your Username?")){
+    let re = await (await post("/api/changeUsername",{"currentPW":document.getElementById("currentPW_us").value.toString(),"newUsername":document.getElementById("newUsername").value})).json()
+    document.getElementById("response_us").innerText = re["error"] || re["success"]
+    document.getElementById("response_us").style="color:green"
+    if(re["error"]) {
+      document.getElementById("response_us").style="color:red"
+    }
+    document.getElementById("currentPW").value = ""
+    document.getElementById("newUsername").value = ""
+    setuser()
+  }
+}

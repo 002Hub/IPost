@@ -44,6 +44,11 @@ a {
 a:link:not(.no-link-style), a:visited:not(.no-link-style) {
   color: var(--green);
 }
+
+.no-link-style:visited {
+  color: var(--text-color);
+}
+
 a:hover {
   color: red;
 }

@@ -6,6 +6,10 @@
   --blue-ish: #587291; /* buttons etc */
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .noselect {
   user-select: none;
 }

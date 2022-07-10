@@ -32,12 +32,33 @@ function filterReplies(text) {
   return text.replace(textregex,`<span><a href="/users/$1" class="reply" style="color: pink;">$1</a></span> `)
 }
 
+/**
+ * filter out html, as well as render some markdown into html
+ * @param  {string} text               text to filter/format
+ * @return {string}      html that represents the filtered text
+ */
 function filterPost(text) {
   text = htmlesc(text)
   text = newlineify(text)
   text = urlify(text)
   //text = filterReplies(text)
   text = filterMentions(text)
+  text = crossout(text)
+  text = boldify(text)
+  text = italicify(text)
+
+  return text
+}
+
+/**
+ * filter out html, as well as render some markdown into html, but without mentions
+ * @param  {string} text               text to filter/format
+ * @return {string}      html that represents the filtered text
+ */
+function filterReply(text) {
+  text = htmlesc(text)
+  text = newlineify(text)
+  text = urlify(text)
   text = crossout(text)
   text = boldify(text)
   text = italicify(text)

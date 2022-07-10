@@ -130,7 +130,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
       replyA.appendChild(replyAvatar)
       replyA.appendChild(reply_username_text)
       replyA.appendChild(spacerTextNode())
-      replyA.innerHTML += filterPost(reply_text.replace("\n"," ").substring(0,20))
+      replyA.innerHTML += filterReply(reply_text.replace("\n"," ").substring(0,20))
       replyA.appendChild(replyBr)
 
       replyA.classList.add("no-link-style")

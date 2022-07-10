@@ -41,7 +41,7 @@ li a:hover {
 a {
   text-decoration: none;
 }
-a:link, a:visited {
+a:link:not(.no-link-style), a:visited:not(.no-link-style) {
   color: var(--green);
 }
 a:hover {

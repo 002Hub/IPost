@@ -7,14 +7,16 @@ const wss_URI = wss_server + ":" + wss_port
 
 var reply_id = 0
 
+var highest_id
+
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
   if(wss_server == event.origin) {
     let data = event.data;
     let ds = JSON.parse(data)
     let message = ds.message
-    let post = ds.data
-    let username = post.post_user_name
+    let item = ds.data
+    let username = decodeURIComponent(item.post_user_name)
     if(message == "new_post") {
       await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id)
       if(user["username"]!=username)mainNoti(username)
@@ -26,6 +28,7 @@ socket.addEventListener("message", async function (event) {
           return;
         }
       }
+      highest_id++;
     }
   }
 })
@@ -173,6 +176,7 @@ async function main(){
   let all_posts = await (await fetch(`/api/getPosts`)).json()
   if(!all_posts)return;
   document.getElementById("posts").innerHTML = ""
+  highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
     await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)

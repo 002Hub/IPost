@@ -125,11 +125,16 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
       replyAvatar.classList.add("avatar")
       replyAvatar.src = await getavatar(reply_username)
 
-      replyDiv.appendChild(replyAvatar)
-      replyDiv.appendChild(reply_username_text)
-      replyDiv.appendChild(spacerTextNode())
-      replyDiv.innerHTML += filterPost(reply_text)
-      replyDiv.appendChild(replyBr)
+      replyA.href = "#"+reply_id
+
+      replyA.appendChild(replyAvatar)
+      replyA.appendChild(reply_username_text)
+      replyA.appendChild(spacerTextNode())
+      replyA.innerHTML += filterPost(reply_text.replace("\n"," ").substring(0,20))
+      replyA.appendChild(replyBr)
+
+      replyDiv.appendChild(replyA)
+
       newDiv.appendChild(replyDiv)
     } catch (ignored) {}
   }

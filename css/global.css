@@ -49,7 +49,7 @@ a:link:not(.no-link-style), a:visited:not(.no-link-style) {
   color: var(--green);
 }
 
-.no-link-style:visited {
+.no-link-style:visited, .no-link-style:link {
   color: var(--text-color);
 }
 

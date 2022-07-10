@@ -18,7 +18,7 @@ socket.addEventListener("message", async function (event) {
     let item = ds.data
     let username = decodeURIComponent(item.post_user_name)
     if(message == "new_post") {
-      await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id)
+      await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
       if(user["username"]!=username)mainNoti(username)
 
       let highest_known_posts = await (await fetch("/api/getPostsLowerThan?id="+(highest_id+28))).json()
@@ -66,7 +66,7 @@ async function getavatar(username) {
   return user
 }
 
-async function createPost(username,text,time,specialtext,postid,isbot,reply_id) {
+async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
   const newP = document.createElement("p");
@@ -157,7 +157,12 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id) 
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
   newDiv.id = postid
-  document.getElementById("posts").appendChild(newDiv)
+  let posts_div = document.getElementById("posts")
+  if(add_on_top) {
+    posts_div.insertBefore(newDiv, posts_div.children[0]);
+  } else {
+    posts_div.appendChild(newDiv)
+  }
 }
 
 async function main(){
@@ -179,7 +184,7 @@ async function main(){
   highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id)
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false)
   }
 
   let links = document.getElementsByClassName("insertedlink")

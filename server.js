@@ -477,6 +477,13 @@ router.options("/api/getPost",async function(req,res,next) {
   res.status(200).send("")
 })
 
+router.options("/api/getPostsLowerThan",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  res.set("Access-Control-Allow-Methods","GET")
+  res.set("Access-Control-Allow-Headers","Content-Type")
+  res.status(200).send("")
+})
+
 router.use("/api/*",async function(req,res,next) {
   res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   if(config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
@@ -678,6 +685,15 @@ router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
   con.query(sql, [], function (err, result) {
+    if (err) throw err;
+    res.json(result)
+  });
+})
+
+router.get("/api/getPostsLowerThan", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","*")
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where ((post_receiver_name is null or post_receiver_name = 'everyone') and (post_id < ?)) group by post_id order by post_id desc limit 30;`
+  con.query(sql, [req.query.id], function (err, result) {
     if (err) throw err;
     res.json(result)
   });

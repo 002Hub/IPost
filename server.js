@@ -667,8 +667,23 @@ router.post("/api/post", async function(req,res) {
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(req.body.receiver == "everyone") {
+      let post_obj = {
+        post_user_name: encodeURIComponent(res.locals.username),
+        post_text: req.body.message,
+        post_time: Date.now(),
+        post_special_text: "",
+        post_receiver_name: "everyone",
+        post_from_bot: res.locals.isbot,
+        post_reply_id: reply_id
+      }
+
+      let message = {
+        message: "new_post",
+        data: post_obj
+      }
+      let messagestr = JSON.stringify(message)
       wss.clients.forEach(function(ws) {
-        ws.send(`new_post ${res.locals.username} ${req.body.message}`)
+        ws.send(messagestr)
       });
     }
     res.json({"success":"successfully posted message"})

@@ -8,14 +8,24 @@ const wss_URI = wss_server + ":" + wss_port
 var reply_id = 0
 
 let socket = new WebSocket(wss_URI);
-socket.addEventListener("message", function (event) {
+socket.addEventListener("message", async function (event) {
   if(wss_server == event.origin) {
     let data = event.data;
-    let ds = data.split(" ")
-    let message = ds[0]
+    let ds = JSON.parse(data)
+    let message = ds.message
+    let post = ds.data
+    let username = post.post_user_name
     if(message == "new_post") {
-      main()
-      if(user["username"]!=ds[1])mainNoti(ds[1])
+      await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id)
+      if(user["username"]!=username)mainNoti(username)
+
+      let highest_known_posts = await (await fetch("/api/getPostsLowerThan?id="+(highest_id+28))).json()
+      for (let i = 0; i < highest_known_posts.length; i++) {
+        if(document.getElementById(highest_known_posts[i].post_id) == undefined) {
+          main()
+          return;
+        }
+      }
     }
   }
 })

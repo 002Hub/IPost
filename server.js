@@ -425,7 +425,7 @@ if(DID_I_FINALLY_ADD_HTTPS) {
 }
 
 app.use("/*",function(req,res,next){
-  res.set("x-powered-by","ZeroTwoHub")
+  res.set("x-powered-by","ipost")
   for (let i = 0; i < blocked_headers.length; i++) {
     if(req.header(blocked_headers[i])!=undefined) {
       res.json({"error":"we don't allow proxies on our website."})
@@ -500,7 +500,7 @@ router.use("/api/*",async function(req,res,next) {
     //basically we generate the unsigned cookie
     res.locals.isbot = true //only bots use user+pass
   }
-  let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name=? and User_PW=?;`
+  let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   res.locals.bio = ""
@@ -528,7 +528,7 @@ router.get("/api/search", async function(req,res) {
   let type = req.query.type
   let arg = encodeURIComponent(req.query.selector)
   if(type=="user") {
-    let sql = `select User_Name,User_Bio,User_Avatar from zerotwohub.users where User_Name like ? limit 10;`
+    let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name like ? limit 10;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0] && result[0].User_Name) {
@@ -538,7 +538,7 @@ router.get("/api/search", async function(req,res) {
       }
     });
   }else if (type=="post") {
-    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from zerotwohub.posts where post_text like ? and (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc limit 20;`
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id from ipost.posts where post_text like ? and (post_receiver_name is null or post_receiver_name = 'everyone') order by post_id desc limit 20;`
     con.query(sql, [`%${arg}%`], function (err, result) {
       if (err) throw err;
       if(result[0]) {
@@ -582,7 +582,7 @@ router.post("/api/setavatar",function(req,res) {
       Jimp.read(avatars+"temp_"+filename).then(function(image){
         image.resize(100, 100)
         image.write(avatars+filename)
-        let sql = `update zerotwohub.users set User_Avatar=? where User_Name=?`
+        let sql = `update ipost.users set User_Avatar=? where User_Name=?`
         con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
           if (err) throw err;
           res.json({"success":"updated avatar"})
@@ -602,7 +602,7 @@ router.get("/api/getalluserinformation",async function(req,res) {
   let unsigned = getunsigned(req,res)
   if(!unsigned)return
   unsigned = decodeURIComponent(unsigned)
-  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  let sql = `select * from ipost.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
   values[1] = SHA256(values[1],values[0],HASHES_DIFF)
   con.query(sql, values, function (err, result) {
@@ -621,7 +621,7 @@ router.get("/api/getotheruser",async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let username = req.query.user
 
-  let sql = `select User_Name,User_Bio,User_Avatar,User_PublicKey from zerotwohub.users where User_Name=?;`
+  let sql = `select User_Name,User_Bio,User_Avatar,User_PublicKey from ipost.users where User_Name=?;`
   con.query(sql, [username], function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == username) {
@@ -662,7 +662,7 @@ router.post("/api/post", async function(req,res) {
     return
   }
 
-  let sql = `insert into zerotwohub.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id) values (?,?,?,?,?,?);`
+  let sql = `insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id) values (?,?,?,?,?,?);`
   let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot,reply_id]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
@@ -698,7 +698,7 @@ router.get("/api/getPosts/*", async function(req,res) {
 
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -707,7 +707,7 @@ router.get("/api/getPosts", async function(req,res) {
 
 router.get("/api/getPostsLowerThan", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where ((post_receiver_name is null or post_receiver_name = 'everyone') and (post_id < ?)) group by post_id order by post_id desc limit 30;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where ((post_receiver_name is null or post_receiver_name = 'everyone') and (post_id < ?)) group by post_id order by post_id desc limit 30;`
   con.query(sql, [req.query.id], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -717,7 +717,7 @@ router.get("/api/getPostsLowerThan", async function(req,res) {
 router.get("/api/getPost", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let arg = req.query.id
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where post_id=?;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where post_id=?;`
   con.query(sql, [arg], function (err, result) {
     if (err) throw err;
     if(result[0]) {
@@ -731,7 +731,7 @@ router.get("/api/getPost", async function(req,res) {
 
 router.get("/api/getPersonalPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from zerotwohub.posts where (post_receiver_name = ?) order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name = ?) order by post_id desc;`
   con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json(result)
@@ -752,7 +752,7 @@ router.post("/api/setBio", async function(req,res) {
     res.json({"error":"the bio is too long!"})
     return
   }
-  let sql = `update zerotwohub.users set User_Bio=? where User_Name=?`
+  let sql = `update ipost.users set User_Bio=? where User_Name=?`
   con.query(sql, [bio,encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json({"success":"updated bio"})
@@ -778,12 +778,12 @@ router.post("/api/changePW", async function(req,res) {
   let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
   let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
 
-  let sql = `select * from zerotwohub.users where User_Name=? and User_PW=?;`
+  let sql = `select * from ipost.users where User_Name=? and User_PW=?;`
   let values = [res.locals.username,hashed_pw]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
-      let sql = `update zerotwohub.users set User_PW=? where User_Name=? and User_PW=?;`
+      let sql = `update ipost.users set User_PW=? where User_Name=? and User_PW=?;`
       let values = [hashed_new_pw,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
@@ -827,12 +827,12 @@ router.post("/api/changeUsername", async function(req,res) {
   let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
   let hashed_new_pw = SHA256(req.body.currentPW,req.body.newUsername,HASHES_DB)
 
-  let sql = `select * from zerotwohub.users where User_Name=?;`
+  let sql = `select * from ipost.users where User_Name=?;`
   let values = [res.locals.username]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_PW == hashed_pw) {
-      let sql = `update zerotwohub.users set User_PW=?,User_Name=? where User_Name=? and User_PW=?;`
+      let sql = `update ipost.users set User_PW=?,User_Name=? where User_Name=? and User_PW=?;`
       let values = [hashed_new_pw,req.body.newUsername,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
@@ -841,7 +841,7 @@ router.post("/api/changeUsername", async function(req,res) {
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
         //updated username in the users table, but not yet on posts
-        let sql = `update zerotwohub.posts set post_user_name=? where post_user_name=?;`
+        let sql = `update ipost.posts set post_user_name=? where post_user_name=?;`
         let values = [req.body.newUsername,res.locals.username,hashed_pw]
         con.query(sql, values, function (err, result) {
           res.json({"success":"successfully changed username"})
@@ -984,7 +984,7 @@ router.post("/register",async function(req,res) {
     res.redirect("/register?success=false&reason=password")
     return
   }
-  let userexistssql = `SELECT User_Name from zerotwohub.users where User_Name = ?`
+  let userexistssql = `SELECT User_Name from ipost.users where User_Name = ?`
   con.query(userexistssql,[encodeURIComponent(username)],function(error,result) {
     if(result && result[0] && result[0].User_Name) {
       res.status(400)
@@ -1014,7 +1014,7 @@ router.post("/register",async function(req,res) {
       }
     });
     let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip, publicKey.toString(), privateKey.toString()]
-    let sql = `INSERT INTO zerotwohub.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey) VALUES (?, ?, ?, ?, ?, ?, ?);`
+    let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey) VALUES (?, ?, ?, ?, ?, ?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -1072,7 +1072,7 @@ router.post("/login",async function(req,res) {
   let less_hashed_pw = SHA256(password,username,HASHES_DIFF)
   let hashed_pw = SHA256(less_hashed_pw,username,HASHES_COOKIE)
 
-  let userexistssql = `SELECT * from zerotwohub.users where User_Name = ? and User_PW = ?;`
+  let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[encodeURIComponent(username),hashed_pw],function(error,result) {
     if(result && result[0]) {
       let ip = req.socket.remoteAddress
@@ -1099,7 +1099,7 @@ router.post("/login",async function(req,res) {
           }
         });
         res.cookie("priv_key",privateKey.toString(), { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
-        let sql = `update zerotwohub.users set User_PublicKey=?,User_PrivateKey=? where User_Name = ?;`
+        let sql = `update ipost.users set User_PublicKey=?,User_PrivateKey=? where User_Name = ?;`
         con.query(sql,[publicKey.toString(),privateKey.toString(),encodeURIComponent(username)],function(error,result) {
           if(error)throw error
         })
@@ -1107,7 +1107,7 @@ router.post("/login",async function(req,res) {
         res.cookie("priv_key",result[0].User_PrivateKey, { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
       }
       if(result[0].User_LastIP != ip) {
-        let sql = `update zerotwohub.users set User_LastIP = ? where User_Name = ?;`
+        let sql = `update ipost.users set User_LastIP = ? where User_Name = ?;`
         con.query(sql,[ip,encodeURIComponent(username)],function(error,result) {
           if(error)throw error
         })

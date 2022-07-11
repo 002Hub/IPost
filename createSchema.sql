@@ -1,7 +1,7 @@
-drop schema if exists zerotwohub;
+drop schema if exists ipost;
 
-create schema zerotwohub;
-use zerotwohub;
+create schema ipost;
+use ipost;
 
 CREATE TABLE `users` (
   `User_ID` bigint NOT NULL AUTO_INCREMENT,

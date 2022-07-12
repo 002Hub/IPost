@@ -267,6 +267,7 @@ async function loadChannels() {
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
     let channelname = channels[i].post_receiver_name
+    if(channelname == "")continue;
     let channelp = document.createElement("p")
     channelp.classList.add("channel")
     let textnode = document.createTextNode(channelname)

@@ -89,7 +89,9 @@ button {
 }
 
 .channelTab {
-  text-align: left;
+  color: var(--text-color);
+  background-color: var(--fg-color);
+  text-align: center;
   float: left;
   padding-right: 20px
 }

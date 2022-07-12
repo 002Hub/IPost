@@ -220,8 +220,6 @@ function unreply() {
   reply_id = 0
 }
 
-main()
-
 var cansendNoti = false
 
 async function askNotiPerms() {
@@ -233,8 +231,6 @@ async function firstAsk() {
     await askNotiPerms()
   }
 }
-
-firstAsk()
 
 async function mainNoti(user) {
   if(Notification.permission === 'denied' || Notification.permission === 'default') {
@@ -262,3 +258,27 @@ if(window.location.href.includes("mention=")) {
 if(window.location.href.includes("message=")) {
   document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
 }
+
+async function loadChannels() {
+  //        <!-- <p class="channel">- Channel Name -</p> -->
+
+  let channels = await (await fetch("/api/getChannels")).json()
+  let tab = document.getElementById("channelTab")
+  tab.innerHTML = ""
+  for (let i = 0; i < channels.length; i++) {
+    let channelname = channels[i].post_receiver_name
+    let channelp = document.createElement("p")
+    channelp.classList.add("channel")
+    let textnode = document.createTextNode(channelname)
+    channelp.appendChild(textnode)
+    tab.appendChild(channelp)
+  }
+}
+
+function init() {
+  main()
+  firstAsk()
+  loadChannels()
+}
+
+init()

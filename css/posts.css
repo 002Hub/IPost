@@ -39,7 +39,7 @@
 }
 
 .boticon {
-  
+
 }
 
 .mention {
@@ -86,4 +86,14 @@ button {
   border-radius: 5px;
   resize: none;
   overflow-wrap: break-word;
+}
+
+.channelTab {
+  text-align: left;
+  float: left;
+  padding-right: 20px
+}
+
+#scriptonly {
+  margin: auto;
 }

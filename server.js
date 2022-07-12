@@ -740,7 +740,7 @@ router.get("/api/getPersonalPosts", async function(req,res) {
 
 router.get("/api/getChannels", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_receiver_name from ipost.posts where post_is_private = false group by post_receiver_name order by post_id desc;`
+  let sql = `select post_receiver_name from ipost.posts where post_is_private = '0' group by post_receiver_name;`
   con.query(sql, [], function (err, result) {
     if (err) throw err;
     res.json(result)

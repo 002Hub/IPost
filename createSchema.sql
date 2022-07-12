@@ -26,6 +26,7 @@ CREATE TABLE `posts` (
   `post_time` bigint NOT NULL,
   `post_special_text` varchar(100) DEFAULT NULL,
   `post_receiver_name` varchar(100) DEFAULT NULL,
+  `post_is_private` tinyint DEFAULT '0',
   `post_from_bot` tinyint DEFAULT '0',
   `post_reply_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`post_id`)

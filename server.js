@@ -738,6 +738,15 @@ router.get("/api/getPersonalPosts", async function(req,res) {
   });
 })
 
+router.get("/api/getChannels", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","*")
+  let sql = `select post_receiver_name from ipost.posts where post_is_private = false group by post_receiver_name order by post_id desc;`
+  con.query(sql, [], function (err, result) {
+    if (err) throw err;
+    res.json(result)
+  });
+})
+
 router.post("/api/setBio", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
   let bio = req.body.Bio

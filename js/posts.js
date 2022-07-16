@@ -9,6 +9,8 @@ var reply_id = 0
 
 var highest_id
 
+var currentChannel = "everyone"
+
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
   if(wss_server == event.origin) {
@@ -21,7 +23,7 @@ socket.addEventListener("message", async function (event) {
       await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
       if(user["username"]!=username)mainNoti(username)
 
-      let highest_known_posts = await (await fetch("/api/getPostsLowerThan?id="+(highest_id+28))).json()
+      let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
       for (let i = 0; i < highest_known_posts.length; i++) {
         if(document.getElementById(highest_known_posts[i].post_id) == undefined) {
           main()
@@ -178,7 +180,7 @@ async function main(){
     document.getElementById("username-self").innerText = username
   }
 
-  let all_posts = await (await fetch(`/api/getPosts`)).json()
+  let all_posts = await (await fetch(`/api/getPosts?channel=${currentChannel}`)).json()
   if(!all_posts)return;
   document.getElementById("posts").innerHTML = ""
   highest_id = all_posts[0].post_id
@@ -272,6 +274,11 @@ async function loadChannels() {
     channelp.classList.add("channel")
     let textnode = document.createTextNode(channelname)
     channelp.appendChild(textnode)
+    channelp.addEventListener("click",function(){
+      currentChannel = channelname
+      socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
+      main()
+    })
     tab.appendChild(channelp)
   }
 }

@@ -698,20 +698,36 @@ router.get("/api/getPosts/*", async function(req,res) {
 
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
-  con.query(sql, [], function (err, result) {
-    if (err) throw err;
-    res.json(result)
-  });
+  if(req.query.channel != undefined) {
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where post_receiver_name = ? group by post_id order by post_id desc limit 30;`
+    con.query(sql, [req.query.channel], function (err, result) {
+      if (err) throw err;
+      res.json(result)
+    });
+  } else { //fallback
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
+    con.query(sql, [], function (err, result) {
+      if (err) throw err;
+      res.json(result)
+    });
+  }
 })
 
 router.get("/api/getPostsLowerThan", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where ((post_receiver_name is null or post_receiver_name = 'everyone') and (post_id < ?)) group by post_id order by post_id desc limit 30;`
-  con.query(sql, [req.query.id], function (err, result) {
-    if (err) throw err;
-    res.json(result)
-  });
+  if(req.query.channel != undefined) {
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where ((post_receiver_name = ?) and (post_id < ?)) group by post_id order by post_id desc limit 30;`
+    con.query(sql, [req.query.channel,req.query.id], function (err, result) {
+      if (err) throw err;
+      res.json(result)
+    });
+  } else { //fallback
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where ((post_receiver_name is null or post_receiver_name = 'everyone') and (post_id < ?)) group by post_id order by post_id desc limit 30;`
+    con.query(sql, [req.query.id], function (err, result) {
+      if (err) throw err;
+      res.json(result)
+    });
+  }
 })
 
 router.get("/api/getPost", async function(req,res) {

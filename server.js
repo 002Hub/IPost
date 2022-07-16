@@ -666,26 +666,26 @@ router.post("/api/post", async function(req,res) {
   let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),req.body.receiver,res.locals.isbot,reply_id]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
-    if(req.body.receiver == "everyone") {
-      let post_obj = {
-        post_user_name: encodeURIComponent(res.locals.username),
-        post_text: req.body.message,
-        post_time: Date.now(),
-        post_special_text: "",
-        post_receiver_name: "everyone",
-        post_from_bot: res.locals.isbot,
-        post_reply_id: reply_id
-      }
-
-      let message = {
-        message: "new_post",
-        data: post_obj
-      }
-      let messagestr = JSON.stringify(message)
-      wss.clients.forEach(function(ws) {
-        ws.send(messagestr)
-      });
+    let post_obj = {
+      post_user_name: encodeURIComponent(res.locals.username),
+      post_text: req.body.message,
+      post_time: Date.now(),
+      post_special_text: "",
+      post_receiver_name: req.body.receiver,
+      post_from_bot: res.locals.isbot,
+      post_reply_id: reply_id
     }
+
+    let message = {
+      message: "new_post",
+      data: post_obj
+    }
+    let messagestr = JSON.stringify(message)
+    wss.clients.forEach(function(ws) {
+      if(ws.channel == req.body.receiver) {
+        ws.send(messagestr)
+      }
+    });
     res.json({"success":"successfully posted message"})
     console.log(5,`posted new message by ${res.locals.username} : ${req.body.message}`);
   });
@@ -1159,3 +1159,13 @@ const wss = new WebSocket({
     threshold: 1024 * 16
   }
 });
+
+wss.on("connection", function connection(ws) {
+  ws.channel = "everyone"
+  ws.on("message", function incoming(message) {
+    message = JSON.parse(message)
+    if(message.id == "switchChannel") {
+      ws.channel = message.data
+    }
+  })
+})

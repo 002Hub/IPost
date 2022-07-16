@@ -42,7 +42,7 @@ async function postMessage() {
     alert(`Error, your message cant contain more than 1000 characters! (${len})`)
     return
   }
-  let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id})
+  let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel})
   if(window.location.href.split("?mention=")[1])location.replace('/posts');
   document.getElementById("post-text").value=""
 }

@@ -9,6 +9,15 @@
       localStorage.setItem("decryption_key",pw)
       //yes I know this is not secure, but at this point I think it'd be better to trust the client for end-to-end encryption
     }
+
+    const input = document.getElementById('pass');
+    input.addEventListener('input', () => {
+        if (input.value.length < 10) {
+          input.style.borderColor = 'red';
+          return;
+        }
+        input.style.borderColor = 'green';
+    });
   </script>
   <script src="/js/addnavbar.js" charset="utf-8"></script>
   <link rel="stylesheet" href="/css/global.css">

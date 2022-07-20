@@ -614,18 +614,15 @@ router.get("/api/getPosts/*", async function(req,res) {
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   if(req.query.channel != undefined) {
-    console.log(5,req.query.channel);
     let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where post_receiver_name = ? group by post_id order by post_id desc limit 30;`
     con.query(sql, [req.query.channel], function (err, result) {
       if (err) throw err;
-      console.log(5,result);
       res.json(result)
     });
   } else { //fallback
     let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
     con.query(sql, [], function (err, result) {
       if (err) throw err;
-      console.log(5,result);
       res.json(result)
     });
   }
@@ -747,12 +744,13 @@ router.post("/api/changePW", async function(req,res) {
 router.post("/api/changeUsername", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
   if((typeof req.body.newUsername) != "string") {
+    res.status(400)
     res.json({"error":"incorrect username"})
     return
   }
   if((typeof req.body.currentPW) != "string") {
-    res.json({"error":"incorrect password..."})
-    console.log(typeof req.body.currentPW);
+    res.status(400)
+    res.json({"error":"incorrect password"})
     return
   }
   if(100 < req.body.newUsername.length) {
@@ -793,7 +791,6 @@ router.post("/api/changeUsername", async function(req,res) {
       })
     } else {
       res.json({"error":"invalid password"})
-      console.log(result);
     }
   });
 })

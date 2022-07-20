@@ -97,25 +97,7 @@ const dir = __dirname + "/"
 
 const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
 
-/**
- * hashes with the secure hashing algorithm 256
- * @param       {string} str   string to hash
- * @param       {any} salt  salt to apply to string
- * @param       {number} num   amount of times to hash, defaults to 1
- * @returns     {string}    base64 digested hash
- */
-function SHA256(str,salt,num) {
-  if(!num && num!==0)num=1;
-  if(!str)return;
-  let ret = str;
-  for (let i = 0; i < num; i++) {
-    ret = crypto
-      .createHash("sha256")
-      .update(ret+salt)
-      .digest("base64");
-  }
-  return ret;
-}
+const SHA = require("./extra_modules/SHA.js")
 
 
 /**
@@ -203,45 +185,7 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
 
-/**
- * usignes a string
- * @param  {string} text               text to unsign
- * @param  {request} req                request object, used for getting the ip for unsigning
- * @param  {response} res                response object
- * @return {string/boolean}      unsigned text, or if unsigning was unsuccessful, false
- */
-function unsign(text,req,res) {
-  let ip = req.socket.remoteAddress
-  let unsigned = signature.unsign(text,cookiesecret+ip)
-  if(!unsigned) {
-    return false
-  }
-  return unsigned
-}
-
-/**
- * unsignes the auth cookie of a request, also sends json response if auth cookie was invalid
- * @param  {request} req               request object
- * @param  {response} res               response object
- * @return {string/boolean}     unsigned cookie, or if unsigning was unsuccessful, false
- */
-function getunsigned(req,res) {
-  let cookie = req.cookies.AUTH_COOKIE
-  if(!cookie){
-    res.status(400)
-    res.json({"error":"you are not logged in! (no cookie)"})
-    return
-  }
-  let unsigned = unsign(cookie,req,res)
-  if(!unsigned){
-    try {
-      res.status(400)
-      res.json({"error":"Bad auth cookie set"})
-    } catch (ignored) {} //sometimes it errors, gotta debug soon
-    return false
-  }
-  return decodeURIComponent(unsigned)
-}
+const unsign = require("./extra_modules/unsign.js")
 
 var API_CALLS = {}
 var API_CALLS_ACCOUNT = {}
@@ -305,7 +249,7 @@ function increaseAccountAPICall(req,res) {
   if(!cookie){
     return true;
   }
-  let unsigned = unsign(cookie,req,res)
+  let unsigned = unsign.unsign(cookie,req,res)
   if(!unsigned) {
 
     return true;//if there's no account, why not just ignore it
@@ -484,44 +428,15 @@ router.options("/api/getPostsLowerThan",async function(req,res,next) {
   res.status(200).send("")
 })
 
-router.use("/api/*",async function(req,res,next) {
-  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
-  if(config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
-    next()
-    return
-  }
-  if(!increaseAPICall(req,res))return;
-  let unsigned;
-  if(req.body.user == undefined || req.body.pass == undefined) {
-    unsigned = getunsigned(req,res)
-    if(!unsigned)return
-  } else {
-    unsigned = `${req.body.user} ${SHA256(req.body.pass,req.body.user,HASHES_COOKIE)}`
-    //basically we generate the unsigned cookie
-    res.locals.isbot = true //only bots use user+pass
-  }
-  let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name=? and User_PW=?;`
-  let values = unsigned.split(" ")
-  values[1] = SHA256(values[1],values[0],HASHES_DIFF)
-  res.locals.bio = ""
-  res.locals.avatar = ""
-  res.locals.publicKey = ""
-  res.locals.privateKey = ""
-  con.query(sql, values, function (err, result) {
-    if (err) throw err;
-    if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
-      res.locals.username = values[0];
-      res.locals.bio = result[0].User_Bio || ""
-      res.locals.avatar = result[0].User_Avatar || ""
-      res.locals.publicKey = result[0].User_PublicKey || ""
-      res.locals.privateKey = result[0].User_PrivateKey || ""
-      next()
-    } else {
-      res.status(400)
-      res.json({"error":"you cannot access the api without being logged in"})
-    }
-  });
-})
+const commonfunctions = {
+  increaseAPICall,
+  increaseUSERCall,
+  increaseAccountAPICall,
+  increaseIndividualCall
+}
+
+let apiALL = require("./routes/api/all.js")
+apiALL.setup(router,con,commonfunctions)
 
 router.get("/api/search", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
@@ -599,12 +514,12 @@ router.get("/api/getuser",async function(req,res) {
 
 router.get("/api/getalluserinformation",async function(req,res) {
   res.set("Access-Control-Allow-Origin","") //we don't want that here
-  let unsigned = getunsigned(req,res)
+  let unsigned = unsign.getunsigned(req,res)
   if(!unsigned)return
   unsigned = decodeURIComponent(unsigned)
   let sql = `select * from ipost.users where User_Name=? and User_PW=?;`
   let values = unsigned.split(" ")
-  values[1] = SHA256(values[1],values[0],HASHES_DIFF)
+  values[1] = SHA.SHA256(values[1],values[0],HASHES_DIFF)
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
@@ -699,15 +614,18 @@ router.get("/api/getPosts/*", async function(req,res) {
 router.get("/api/getPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   if(req.query.channel != undefined) {
+    console.log(5,req.query.channel);
     let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where post_receiver_name = ? group by post_id order by post_id desc limit 30;`
     con.query(sql, [req.query.channel], function (err, result) {
       if (err) throw err;
+      console.log(5,result);
       res.json(result)
     });
   } else { //fallback
     let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name is null or post_receiver_name = 'everyone') group by post_id order by post_id desc limit 30;`
     con.query(sql, [], function (err, result) {
       if (err) throw err;
+      console.log(5,result);
       res.json(result)
     });
   }
@@ -800,8 +718,8 @@ router.post("/api/changePW", async function(req,res) {
     return
   }
 
-  let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
-  let hashed_new_pw = SHA256(req.body.newPW,res.locals.username,HASHES_DB)
+  let hashed_pw = SHA.SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
+  let hashed_new_pw = SHA.SHA256(req.body.newPW,res.locals.username,HASHES_DB)
 
   let sql = `select * from ipost.users where User_Name=? and User_PW=?;`
   let values = [res.locals.username,hashed_pw]
@@ -813,7 +731,7 @@ router.post("/api/changePW", async function(req,res) {
       con.query(sql, values, function (err, result) {
         if (err) throw err;
         let ip = req.socket.remoteAddress
-        let setTo = res.locals.username + " " + SHA256(req.body.newPW,res.locals.username,HASHES_COOKIE)
+        let setTo = res.locals.username + " " + SHA.SHA256(req.body.newPW,res.locals.username,HASHES_COOKIE)
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
         res.json({"success":"successfully changed password"})
@@ -849,8 +767,8 @@ router.post("/api/changeUsername", async function(req,res) {
     return
   }
 
-  let hashed_pw = SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
-  let hashed_new_pw = SHA256(req.body.currentPW,req.body.newUsername,HASHES_DB)
+  let hashed_pw = SHA.SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
+  let hashed_new_pw = SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_DB)
 
   let sql = `select * from ipost.users where User_Name=?;`
   let values = [res.locals.username]
@@ -862,7 +780,7 @@ router.post("/api/changeUsername", async function(req,res) {
       con.query(sql, values, function (err, result) {
         if (err) throw err;
         let ip = req.socket.remoteAddress
-        let setTo = req.body.newUsername + " " + SHA256(req.body.currentPW,req.body.newUsername,HASHES_COOKIE)
+        let setTo = req.body.newUsername + " " + SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_COOKIE)
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
         //updated username in the users table, but not yet on posts
@@ -1016,12 +934,12 @@ router.post("/register",async function(req,res) {
       res.redirect("/register?success=false&reason=already_exists")
       return
     }
-    let less_hashed_pw = SHA256(password,username,HASHES_DIFF)
-    let hashed_pw = SHA256(less_hashed_pw,username,HASHES_COOKIE)
+    let less_hashed_pw = SHA.SHA256(password,username,HASHES_DIFF)
+    let hashed_pw = SHA.SHA256(less_hashed_pw,username,HASHES_COOKIE)
     let ip = req.socket.remoteAddress
-    let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
+    let setTo = username + " " + SHA.SHA256(password,username,HASHES_COOKIE)
     let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-    ip = SHA256(ip,setTo,HASHES_DB)
+    ip = SHA.SHA256(ip,setTo,HASHES_DB)
     const {
       publicKey,
       privateKey,
@@ -1094,18 +1012,18 @@ router.post("/login",async function(req,res) {
     res.send("no password given")
     return
   }
-  let less_hashed_pw = SHA256(password,username,HASHES_DIFF)
-  let hashed_pw = SHA256(less_hashed_pw,username,HASHES_COOKIE)
+  let less_hashed_pw = SHA.SHA256(password,username,HASHES_DIFF)
+  let hashed_pw = SHA.SHA256(less_hashed_pw,username,HASHES_COOKIE)
 
   let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[encodeURIComponent(username),hashed_pw],function(error,result) {
     if(result && result[0]) {
       let ip = req.socket.remoteAddress
-      let setTo = username + " " + SHA256(password,username,HASHES_COOKIE)
+      let setTo = username + " " + SHA.SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
 
-      ip = SHA256(ip,setTo,HASHES_DB)
+      ip = SHA.SHA256(ip,setTo,HASHES_DB)
       if(result[0].User_PublicKey == null) {
         const {
           publicKey,
@@ -1154,8 +1072,14 @@ const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
 
 const credentials = {key: privateKey, cert: certificate};
 
-const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(config["ports"]["https"]);
+var httpsServer
+if(DID_I_FINALLY_ADD_HTTPS) {
+  httpsServer = https.createServer(credentials, app);
+  httpsServer.listen(config["ports"]["https"]);
+} else {
+  httpsServer = httpServer
+}
+
 
 const wss = new WebSocket({
   server: httpsServer,

@@ -45,6 +45,7 @@ async function postMessage() {
   let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel})
   if(window.location.href.split("?mention=")[1])location.replace('/posts');
   document.getElementById("post-text").value=""
+  unreply()
 }
 
 document.getElementById("post-btn").addEventListener("click",postMessage)

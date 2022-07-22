@@ -10,6 +10,6 @@
 
 ## Reporting a Vulnerability
 
-If a vulnerability is found, please contact security@ipost.tk
+If a vulnerability is found, please contact ipost@duck.com
 
 Usually, we will try to respond within 3 to 5 business days.

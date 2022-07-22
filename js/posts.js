@@ -240,8 +240,11 @@ async function mainNoti(user) {
     await askNotiPerms()
   } else {
     if(cansendNoti) {
-      let notification = new Notification('IPost', { body: "new message posted from " + user });
+      let notification = new Notification('IPost', { body: "new message posted from " + user , tag: "new_post"});
       notification = await notification
+      notification.addEventListener("click",function(){
+        notification.close()
+      })
       console.log(notification);
     }
   }

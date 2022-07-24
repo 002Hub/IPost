@@ -561,11 +561,13 @@ router.get("/api/pid", async function(req,res) {
   let pid = genstring(10) //collision chance is low enough, but we'll check anyways
   while (PIDS[pid] != undefined){
     pid = genstring(10)
+    console.log(5,"pid collision");
   }
   PIDS[pid] = true
   setTimeout(function() {
     PIDS[pid]=undefined
   },40000)
+  res.json({"pid":pid})
 })
 
 router.post("/api/post", async function(req,res) {

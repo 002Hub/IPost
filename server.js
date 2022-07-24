@@ -1065,7 +1065,9 @@ router.post("/login",async function(req,res) {
 app.use(router)
 
 const httpServer = http.createServer(app);
-httpServer.listen(config["ports"]["http"]);
+httpServer.listen(config["ports"]["http"],function(){
+  console.log(5,"HTTP Server is listening")
+});
 
 const privateKey = fs.readFileSync(config["ssl"]["privateKey"]).toString()
 const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
@@ -1075,7 +1077,9 @@ const credentials = {key: privateKey, cert: certificate};
 var httpsServer
 if(DID_I_FINALLY_ADD_HTTPS) {
   httpsServer = https.createServer(credentials, app);
-  httpsServer.listen(config["ports"]["https"]);
+  httpsServer.listen(config["ports"]["https"],function(){
+    console.log(5,"HTTPS Server is listening")
+  });
 } else {
   httpsServer = httpServer
 }

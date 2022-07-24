@@ -59,7 +59,8 @@ async function postMessage() {
 }
 
 async function update_pid() {
-  let r = (await fetch("/api/pid")).json()
+  let r = await (await fetch("/api/pid")).json()
+  console.log("new pid info: ",r)
   if(r.error) {
     //an error occurred
     if(r.error == "you cannot access the api without being logged in") {

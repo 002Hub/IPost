@@ -400,6 +400,13 @@ START /API/*
 
 */
 
+router.options("/api/pid",async function(req,res,next) {
+  res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
+  res.set("Access-Control-Allow-Methods","GET")
+  res.set("Access-Control-Allow-Headers","Content-Type")
+  res.status(200).send("")
+})
+
 router.options("/api/post",async function(req,res,next) {
   res.set("Access-Control-Allow-Origin","*") //we'll allow it for now
   res.set("Access-Control-Allow-Methods","POST")
@@ -547,6 +554,20 @@ router.get("/api/getotheruser",async function(req,res) {
   });
 })
 
+const PIDS = {} //[pid]: true/"already_used"
+
+router.get("/api/pid", async function(req,res) {
+  res.set("Access-Control-Allow-Origin","*")
+  let pid = genstring(10) //collision chance is low enough, but we'll check anyways
+  while (PIDS[pid] != undefined){
+    pid = genstring(10)
+  }
+  PIDS[pid] = true
+  setTimeout(function() {
+    PIDS[pid]=undefined
+  },40000)
+})
+
 router.post("/api/post", async function(req,res) {
   if(!req.body.message) {
     res.json({"error":"no message to post"})
@@ -556,6 +577,16 @@ router.post("/api/post", async function(req,res) {
     res.json({"error":"no message to post"})
     return
   }
+  if((typeof req.body.pid) != "string") {
+    res.json({"error":"no pid given"})
+    return
+  }
+  if(req.body.pid.length != 10 || PIDS[req.body.pid] !== true) {
+    res.json({"error":"invalid pid given"})
+    return
+  }
+  PIDS[req.body.pid] = "already_used"
+
   let reply_id
   if(!req.body.reply_id || req.body.reply_id < 0) {
     reply_id = 0

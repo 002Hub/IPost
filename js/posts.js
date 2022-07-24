@@ -34,18 +34,47 @@ socket.addEventListener("message", async function (event) {
     }
   }
 })
-
+var posting_id = undefined;
+var cd = true //inversed "cooldown"
 
 async function postMessage() {
   let len = document.getElementById("post-text").value.length
   if(len >= 1001) {
-    alert(`Error, your message cant contain more than 1000 characters! (${len})`)
+    alert(`Your message cant contain more than 1000 characters! (${len})`)
     return
   }
-  let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel})
-  if(window.location.href.split("?mention=")[1])location.replace('/posts');
-  document.getElementById("post-text").value=""
-  unreply()
+  if(cd && posting_id!=undefined) {
+    let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel,"pid": posting_id})
+    update_pid()
+    if(window.location.href.split("?mention=")[1])location.replace('/posts');
+    document.getElementById("post-text").value=""
+    unreply()
+    cd = false
+    setTimeout(function(){
+      cd = true
+    },200)
+  } else {
+    alert("Please wait a tiny bit before posting again")
+  }
+}
+
+async function update_pid() {
+  let r = (await fetch("/api/pid")).json()
+  if(r.error) {
+    //an error occurred
+    if(r.error == "you cannot access the api without being logged in") {
+      //account error, go to login page
+      location.replace("/")
+      return
+    }
+
+    //possibly more errors coming soon :tm: ?
+
+
+    return
+  }
+  posting_id = r.pid
+  console.log("Updated pid",posting_id)
 }
 
 document.getElementById("post-btn").addEventListener("click",postMessage)
@@ -288,6 +317,8 @@ async function loadChannels() {
 }
 
 function init() {
+  setInterval(update_pid,30000)
+  update_pid()
   main()
   firstAsk()
   loadChannels()

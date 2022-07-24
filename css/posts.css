@@ -38,10 +38,6 @@
   margin-left: 5px;
 }
 
-.boticon {
-
-}
-
 .mention {
   color: blue;
 }
@@ -64,10 +60,6 @@ textarea {
 
 button {
   background-color: var(--blue-ish);
-}
-
-* {
-  font-family: 'system-ui';
 }
 
 .post,.self,.status {

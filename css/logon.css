@@ -16,7 +16,6 @@ header {
 }
 h1 {
   letter-spacing: 1.5vw;
-  font-family: 'system-ui';
   text-transform: uppercase;
   text-align: center;
 }
@@ -34,7 +33,6 @@ main {
   padding: 40px;
   border-radius: 8px;
   background-color: white;
-  font-family: 'system-ui';
   box-shadow: 5px 5px 10px rgb(0,0,0,0.3);
 }
 .form_div {
@@ -60,7 +58,6 @@ main {
   text-indent: 6px;
   margin-top: 10px;
   margin-bottom: 20px;
-  font-family: 'system-ui';
   font-size: 0.9rem;
   letter-spacing: 2px;
 }
@@ -69,7 +66,6 @@ main {
   border-radius: 5px;
   background-color: #FFE6D4;
   padding: 8px 20px;
-  font-family: 'system-ui';
   text-transform: uppercase;
   letter-spacing: .8px;
   display: block;
@@ -89,7 +85,6 @@ footer {
 }
 footer > p {
   text-align: center;
-  font-family: 'system-ui';
   letter-spacing: 3px;
 }
 footer > p > a {

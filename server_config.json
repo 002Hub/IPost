@@ -126,6 +126,11 @@
         "enabled": true,
         "max": 40,
         "reset_time": 30000
+      },
+      "/api/pid": {
+        "enabled": true,
+        "max": 30,
+        "reset_time": 30000
       }
     }
   },

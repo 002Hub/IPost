@@ -312,6 +312,13 @@ async function loadChannels() {
       currentChannel = channelname
       socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
       main()
+
+      let settings = await(await fetch("/api/settings")).json()
+      if(settings != "null") {
+        if(settings.ACCR == false) {
+          unreply()
+        }
+      }
     })
     tab.appendChild(channelp)
   }

@@ -1,3 +1,7 @@
+const allowed_settings = { //"settingname":["validtypes"]
+    "ACCR": ["boolean"]
+}
+
 module.exports = {
     "setup": function(router,con,server) {
         router.get("/api/settings",function(req,res) {
@@ -14,7 +18,7 @@ module.exports = {
                 res.json({"error":"no setting to change"})
                 return
             }
-            if((typeof req.body.value) != "string") {
+            if(!((typeof req.body.value) in allowed_settings[req.body.setting])) {
                 res.json({"error":"no new setting value given"})
                 return
             }

@@ -139,3 +139,18 @@ async function changeUsername() {
     setuser()
   }
 }
+
+
+async function setAllowCCR() {
+  const ACCR = document.getElementById("ACCR_checkbox").checked
+  const settingname = "ACCR" //Allow Cross-Channel reply (see #22 )
+
+  let r = await(await post("/api/settings",{setting: settingname, value: ACCR})).json()
+
+  if(r.status == "error") {
+    alert("Couldn't change setting")
+    console.log(r.code)
+  } else if(r.status == "success") {
+    //changed setting
+  }
+}

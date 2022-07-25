@@ -24,13 +24,14 @@ module.exports = {
         //basically we generate the unsigned cookie
         res.locals.isbot = true //only bots use user+pass
       }
-      let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name=? and User_PW=?;`
+      let sql = `select User_Name,User_Bio,User_Avatar,User_Settings from ipost.users where User_Name=? and User_PW=?;`
       let values = unsigned.split(" ")
       values[1] = SHA.SHA256(values[1],values[0],HASHES_DIFF)
       res.locals.bio = ""
       res.locals.avatar = ""
       res.locals.publicKey = ""
       res.locals.privateKey = ""
+      res.locals.settings = {}
       con.query(sql, values, function (err, result) {
         if (err) throw err;
         if(result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
@@ -39,6 +40,7 @@ module.exports = {
           res.locals.avatar = result[0].User_Avatar || ""
           res.locals.publicKey = result[0].User_PublicKey || ""
           res.locals.privateKey = result[0].User_PrivateKey || ""
+          res.locals.settings = result[0].User_Settings || {}
           next()
         } else {
           res.status(400)

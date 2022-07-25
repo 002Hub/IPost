@@ -413,6 +413,11 @@ options.setup(router,con,commonfunctions)
 let apiALL = require("./routes/api/all.js")
 apiALL.setup(router,con,commonfunctions)
 
+let settingshandler = require("./routes/api/settingshandler.js")
+settingshandler.setup(router,con,commonfunctions)
+
+
+
 //TODO: loop through all files and load them in
 
 router.get("/api/search", async function(req,res) {

@@ -61,6 +61,10 @@ console.log = log_info
 
 
 
+console.log(5,"starting up")
+
+
+
 const http = require('http');
 const https = require('https');
 const crypto = require("crypto");
@@ -71,14 +75,13 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const signature = require('cookie-signature')
 const mysql = require('mysql');
-const csurf = require("csurf");
 const WebSocket = require("ws").Server;
 const Jimp = require('jimp');
 
+console.log(5,"loaded dependencies")
+
 const router = express.Router();
 const app = express();
-
-const csrfProtection = csurf({ cookie: true })
 
 const HASHES_DB = config.cookies.server_hashes
 const HASHES_COOKIE = config.cookies.client_hashes
@@ -320,6 +323,8 @@ function increaseUSERCall(req,res,next) {
   return true
 }
 
+console.log(5,"loading routes")
+
 app.use(useragent.express());
 app.use(fileUpload())
 app.use(bodyParser.json({ limit: "100mb" }));
@@ -393,6 +398,8 @@ router.get("/",function(req,res) {
   if(!increaseUSERCall(req,res))return
   res.sendFile(dir+"views/index.html")
 })
+
+console.log(5,"finished loading user routes, starting with api routes")
 
 /*
 
@@ -1067,6 +1074,8 @@ router.post("/login",async function(req,res) {
   });
 })
 
+console.log(5,"finished loading routes")
+
 app.use(router)
 
 const httpServer = http.createServer(app);
@@ -1118,3 +1127,5 @@ wss.on("connection", function connection(ws) {
     }
   })
 })
+
+console.log(5,"starting up all services")

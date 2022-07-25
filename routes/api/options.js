@@ -44,13 +44,13 @@ module.exports = {
         //     res.status(200).send("")
         // })
 
-        allowAllTraffic("/api/pid")
-        allowAllTraffic("/api/post","POST")
-        allowAllTraffic("/api/getotheruser")
-        allowAllTraffic("/api/getPost")
-        allowAllTraffic("/api/getPostsLowerThan")
-        allowAllTraffic("/api/settings")
-        allowAllTraffic("/api/settings","POST")
+        allowAllTraffic(router,"/api/pid")
+        allowAllTraffic(router,"/api/post","POST")
+        allowAllTraffic(router,"/api/getotheruser")
+        allowAllTraffic(router,"/api/getPost")
+        allowAllTraffic(router,"/api/getPostsLowerThan")
+        allowAllTraffic(router,"/api/settings")
+        allowAllTraffic(router,"/api/settings","POST")
         
 
     }

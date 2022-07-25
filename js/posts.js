@@ -313,7 +313,7 @@ async function loadChannels() {
       socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
       main()
 
-      let settings = await(await fetch("/api/settings")).json()
+      let settings = await (await fetch("/api/settings")).json()
       if(settings != "null") {
         if(settings.ACCR == false) {
           unreply()

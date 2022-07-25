@@ -19,6 +19,7 @@ module.exports = {
                 return
             }
             if(!((typeof req.body.value) in allowed_settings[req.body.setting])) {
+                console.log(5,"incorrect type given, received, expected", typeof req.body.value, allowed_settings[req.body.setting])
                 res.json({"error":"no new setting value given"})
                 return
             }

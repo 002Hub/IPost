@@ -314,6 +314,7 @@ async function loadChannels() {
       main()
 
       let settings = await (await fetch("/api/settings")).json()
+      console.log(settings)
       if(settings != "null") {
         if(settings.ACCR == false) {
           unreply()

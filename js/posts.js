@@ -308,7 +308,7 @@ async function loadChannels() {
     channelp.classList.add("channel")
     let textnode = document.createTextNode(channelname)
     channelp.appendChild(textnode)
-    channelp.addEventListener("click",function(){
+    channelp.addEventListener("click",async function(){
       currentChannel = channelname
       socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
       main()

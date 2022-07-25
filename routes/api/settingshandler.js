@@ -18,7 +18,17 @@ module.exports = {
                 res.json({"error":"no setting to change"})
                 return
             }
-            if(!((typeof req.body.value) in allowed_settings[req.body.setting])) {
+            
+            let types = allowed_settings[req.body.setting]
+            let allowed = false
+            let got = typeof req.body.value
+            for (let index = 0; index < types.length; index++) {
+                if(types[index] == got) {
+                    allowed = true;
+                    break;
+                }
+            }
+            if(!allowed) {
                 console.log(5,"incorrect type given, received, expected", typeof req.body.value, allowed_settings[req.body.setting])
                 res.json({"error":"no new setting value given"})
                 return

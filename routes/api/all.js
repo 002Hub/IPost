@@ -40,8 +40,10 @@ module.exports = {
           res.locals.avatar = result[0].User_Avatar || ""
           res.locals.publicKey = result[0].User_PublicKey || ""
           res.locals.privateKey = result[0].User_PrivateKey || ""
-          res.locals.settings = result[0].User_Settings || {}
+          res.locals.settings = JSON.parse(result[0].User_Settings)
+          if(res.locals.settings == "null")res.locals.settings = {}
           if(res.locals.settings == null)res.locals.settings = {}
+
           next()
         } else {
           res.status(400)

@@ -18,7 +18,7 @@ module.exports = {
                 res.json({"error":"no setting to change"})
                 return
             }
-            
+
             let types = allowed_settings[req.body.setting]
             let allowed = false
             let got = typeof req.body.value
@@ -41,7 +41,7 @@ module.exports = {
 
             console.log(5,"changing settings", setting_to_change, setting_new_value, res.locals.settings)
 
-            let sql = "update users set User_Settings=? where User_Name=?"
+            let sql = "update ipost.users set User_Settings=? where User_Name=?"
             let values = [res.locals.settings,res.locals.username]
             con.query(sql, values, function (err, result) {
                 if(err) {

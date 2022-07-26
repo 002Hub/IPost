@@ -663,7 +663,7 @@ router.get("/api/getPostsLowerThan", async function(req,res) {
 router.get("/api/getPost", async function(req,res) {
   res.set("Access-Control-Allow-Origin","*")
   let arg = req.query.id
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where post_id=?;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,post_receiver_name from ipost.posts where post_id=?;`
   con.query(sql, [arg], function (err, result) {
     if (err) throw err;
     if(result[0]) {

@@ -99,6 +99,28 @@ async function getavatar(username) {
   return user
 }
 
+async function reply_link_clicked(reply_channel,reply_id) {
+  console.log("clicked link")
+  if(reply_channel != currentChannel) {
+    console.log("reply is in another channel")
+    switchChannel(reply_channel)
+    console.log("switched channel")
+    await main()
+    console.log("loaded new messages")
+    let replied_msg = document.getElementById(reply_id)
+    if(replied_msg) {
+      console.log("found element")
+      replied_msg.scrollIntoView()
+    }
+  } else {
+    let replied_msg = document.getElementById(reply_id)
+    if(replied_msg) {
+      console.log("found element")
+      replied_msg.scrollIntoView()
+    }
+  }
+}
+
 async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top) {
   if(!specialtext)specialtext=""
   const newDiv = document.createElement("div");
@@ -172,8 +194,6 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyAvatar.classList.add("avatar")
       replyAvatar.src = await getavatar(reply_username)
 
-      replyA.href = "#"+reply_id
-
       replyA.appendChild(replyAvatar)
       replyA.appendChild(reply_username_text)
       replyA.appendChild(spacerTextNode())
@@ -181,23 +201,22 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyA.appendChild(replyBr)
 
       replyA.classList.add("no-link-style")
-
-      replyA.addEventListener("click",async function(event){
-        if(reply_channel != currentChannel) {
-          event.preventDefault()
-          switchChannel(reply_channel)
-          await main()
-          let replied_msg = document.getElementById(reply_id)
-          if(replied_msg) {
-            replied_msg.scrollIntoView()
-          }
-        }
-      })
+      // async function onclick(event) {
+      //   event.preventDefault()
+        
+      // }
+      // replyDiv.onclick = function() {
+      //   reply_link_clicked(reply_channel, reply_id)
+      // }
 
       replyDiv.appendChild(replyA)
 
       newDiv.appendChild(replyDiv)
-    } catch (ignored) {}
+
+      replyDiv.outerHTML = replyDiv.outerHTML.replace(/\>/im,` onclick="reply_link_clicked('${reply_channel}',${reply_id})" \>`)
+    } catch (ignored) {
+      console.log(ignored)
+    }
   }
 
   newDiv.appendChild(newP)

@@ -166,6 +166,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       const reply_username = decodeURIComponent(reply_obj.post_user_name)
       const reply_username_text = document.createTextNode(reply_username)
       const reply_text = decodeURIComponent(reply_obj.post_text)
+      const reply_channel = reply_obj.post_receiver_name
       replyAvatar.width=10;
       replyAvatar.height=10;
       replyAvatar.classList.add("avatar")
@@ -180,6 +181,18 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyA.appendChild(replyBr)
 
       replyA.classList.add("no-link-style")
+
+      replyA.addEventListener("click",async function(event){
+        if(reply_channel != currentChannel) {
+          event.preventDefault()
+          switchChannel(reply_channel)
+          await main()
+          let replied_msg = document.getElementById(reply_id)
+          if(replied_msg) {
+            replied_msg.scrollIntoView()
+          }
+        }
+      })
 
       replyDiv.appendChild(replyA)
 
@@ -288,11 +301,18 @@ document.addEventListener("visibilitychange", function() {
   }
 });
 
-if(window.location.href.includes("mention=")) {
+if(window.location.href.includes("mention=")) { //deprecated, use message instead
   document.getElementById("post-text").innerText = `@${decodeURIComponent(window.location.href.split("mention=")[1])} `
 }
+//TODO: remove mention
+
 if(window.location.href.includes("message=")) {
   document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
+}
+
+function switchChannel(channelname) {
+  currentChannel = channelname
+  socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 }
 
 async function loadChannels() {
@@ -309,8 +329,7 @@ async function loadChannels() {
     let textnode = document.createTextNode(channelname)
     channelp.appendChild(textnode)
     channelp.addEventListener("click",async function(){
-      currentChannel = channelname
-      socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
+      switchChannel(channelname)
       main()
 
       let settings = await (await fetch("/api/settings")).json()

@@ -421,7 +421,8 @@ var commonfunctions = {
 const toLoad = [
   "api/options.js",
   "api/all.js",
-  "api/settingshandler.js"
+  "api/settingshandler.js",
+  "api/post.js"
 ]
 
 for (let i = 0; i < toLoad.length; i++) {

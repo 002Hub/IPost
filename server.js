@@ -409,7 +409,7 @@ START /API/*
 
 var wss;
 
-const commonfunctions = {
+var commonfunctions = {
   increaseAPICall,
   increaseUSERCall,
   increaseAccountAPICall,
@@ -1054,5 +1054,7 @@ wss.on("connection", function connection(ws) {
     }
   })
 })
+
+commonfunctions.wss = wss
 
 console.log(5,"starting up all services")

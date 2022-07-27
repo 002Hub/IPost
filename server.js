@@ -578,6 +578,11 @@ router.post("/api/post", async function(req,res) {
     reply_id = req.body.reply_id
   }
 
+  if((typeof req.body.reply_id) != "number") {
+    res.json({"error":"no valid reply id given"})
+    return
+  }
+
   if(req.body.message.length > 1000) {
     res.json({"error":"message too long"})
     return

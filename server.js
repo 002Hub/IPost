@@ -478,10 +478,11 @@ router.post("/api/setavatar",function(req,res) {
   }
 
   let DOSbuf = Buffer.from( 'ffd8ffc1f151d800ff51d800ffdaffde', 'hex' ); //causes DOS
-  if(avatar.data.equals(DOSbuf)) {
+  if(avatar.data.includes(DOSbuf)) { 
     console.log(3,"DOS image was caught")
     return res.status(400).send('No files were uploaded. (req.files.)');
   }
+  //DOS introduced through jimp (uses jpeg-js)
 
   const avatars = __dirname + '/avatars/'
   ensureExists(avatars, function(err) {

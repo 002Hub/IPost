@@ -896,8 +896,11 @@ router.post("/register",async function(req,res) {
         passphrase: password
       }
     });
-    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip, publicKey.toString(), privateKey.toString()]
-    let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey) VALUES (?, ?, ?, ?, ?, ?, ?);`
+
+    const default_settings = {}
+
+    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip, publicKey.toString(), privateKey.toString(),JSON.stringify(default_settings)]
+    let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey, User_Settings) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });

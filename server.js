@@ -102,6 +102,16 @@ const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
 
 const SHA = require("./extra_modules/SHA.js")
 
+/**
+ * gets ip of a request
+ * @param {request} req 
+ * @returns ip of the given request, after taking preferred headers into account
+ */
+function getIP(req) {
+  let ip = req.socket.remoteAddress;
+  if(req.headers[config.preferred_ip_header] != undefined && ip == config.only_prefer_when_ip)ip = req.headers[config.preferred_ip_header]
+  return ip
+}
 
 /**
  * quick function to convert data to base64
@@ -228,7 +238,7 @@ function increaseIndividualCall(url,req) { //true = continue, false = ratelimit
     return true;
   }
   if(!conf["enabled"])return true;
-  let ip = req.socket.remoteAddress
+  let ip = getIP(req)
   if(INDIVIDUAL_CALLS[ip]==undefined)INDIVIDUAL_CALLS[ip] = {}
   if(INDIVIDUAL_CALLS[ip][url]==undefined)INDIVIDUAL_CALLS[ip][url] = 0
   if(INDIVIDUAL_CALLS[ip][url] == 0) {
@@ -271,7 +281,7 @@ function increaseAccountAPICall(req,res) {
 }
 
 function increaseAPICall(req,res,next) {
-  let ip = req.socket.remoteAddress
+  let ip = getIP(req)
   if(API_CALLS[ip]==undefined)API_CALLS[ip]=0
   if(API_CALLS[ip] >= config.rate_limits.api.max_without_session) {
     if(REVERSE_SESSIONS[ip] && req.cookies.session !== REVERSE_SESSIONS[ip]) { //expected a session, but didn't get one
@@ -310,7 +320,7 @@ function increaseAPICall(req,res,next) {
 }
 
 function increaseUSERCall(req,res,next) {
-  let ip = req.socket.remoteAddress
+  let ip = getIP(req)
   if(USER_CALLS[ip]==undefined)USER_CALLS[ip]=0
   if(USER_CALLS[ip] >= config.rate_limits.user.max) {
     res.status(429)
@@ -678,7 +688,7 @@ router.post("/api/changePW", async function(req,res) {
       let values = [hashed_new_pw,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
-        let ip = req.socket.remoteAddress
+        let ip = getIP(req)
         let setTo = res.locals.username + " " + SHA.SHA256(req.body.newPW,res.locals.username,HASHES_COOKIE)
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -728,7 +738,7 @@ router.post("/api/changeUsername", async function(req,res) {
       let values = [hashed_new_pw,req.body.newUsername,res.locals.username,hashed_pw]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
-        let ip = req.socket.remoteAddress
+        let ip = getIP(req)
         let setTo = req.body.newUsername + " " + SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_COOKIE)
         let cookiesigned = signature.sign(setTo, cookiesecret+ip);
         res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -884,7 +894,7 @@ router.post("/register",async function(req,res) {
     }
     let less_hashed_pw = SHA.SHA256(password,username,HASHES_DIFF)
     let hashed_pw = SHA.SHA256(less_hashed_pw,username,HASHES_COOKIE)
-    let ip = req.socket.remoteAddress
+    let ip = getIP(req)
     let setTo = username + " " + SHA.SHA256(password,username,HASHES_COOKIE)
     let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     ip = SHA.SHA256(ip,setTo,HASHES_DB)
@@ -969,7 +979,7 @@ router.post("/login",async function(req,res) {
   let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`
   con.query(userexistssql,[encodeURIComponent(username),hashed_pw],function(error,result) {
     if(result && result[0]) {
-      let ip = req.socket.remoteAddress
+      let ip = getIP(req)
       let setTo = username + " " + SHA.SHA256(password,username,HASHES_COOKIE)
       let cookiesigned = signature.sign(setTo, cookiesecret+ip);
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });

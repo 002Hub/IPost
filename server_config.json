@@ -1,5 +1,7 @@
 {
   "allow_getotheruser_without_cookie": true,
+  "preferred_ip_header": "X-REAL-IP",
+  "only_prefer_when_ip": "::ffff:192.168.0.1",
   "mysql": {
     "connections":1000,
     "host":"localhost",

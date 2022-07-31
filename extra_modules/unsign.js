@@ -1,6 +1,7 @@
 const signature = require('cookie-signature')
 const fs = require('fs');
 const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
+const getIP = require("./extra_modules/getip.js")
 /**
  * usignes a string
  * @param  {string} text               text to unsign
@@ -9,7 +10,7 @@ const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
  * @return {string/boolean}      unsigned text, or if unsigning was unsuccessful, false
  */
 function unsign(text,req,res) {
-  let ip = req.socket.remoteAddress
+  let ip = getIP(req)
   let unsigned = signature.unsign(text,cookiesecret+ip)
   if(!unsigned) {
     return false

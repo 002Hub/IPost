@@ -1,7 +1,7 @@
 const signature = require('cookie-signature')
 const fs = require('fs');
 const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
-const getIP = require("./extra_modules/getip.js")
+const getIP = require("./getip.js")
 /**
  * usignes a string
  * @param  {string} text               text to unsign

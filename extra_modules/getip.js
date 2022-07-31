@@ -1,3 +1,6 @@
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync("server_config.json"))
+
 /**
  * gets ip of a request
  * @param {request} req 

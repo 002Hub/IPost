@@ -341,7 +341,7 @@ async function loadChannels() {
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-    let channelname = channels[i].post_receiver_name
+    let channelname = decodeURIComponent(channels[i].post_receiver_name)
     if(channelname == "")continue;
     let channelp = document.createElement("p")
     channelp.classList.add("channel")

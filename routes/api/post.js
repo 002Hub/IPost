@@ -82,7 +82,7 @@ module.exports = {
                 }
                 let messagestr = JSON.stringify(message)
                 server.wss.clients.forEach(function(ws) {
-                    if(ws.channel == req.body.receiver) {
+                    if(ws.channel == decodeURIComponent(req.body.receiver)) {
                         ws.send(messagestr)
                     }
                 });

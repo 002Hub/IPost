@@ -1063,7 +1063,7 @@ wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message) {
     message = JSON.parse(message)
     if(message.id == "switchChannel") {
-      ws.channel = message.data
+      ws.channel = decodeURIComponent(message.data)
     }
   })
 })

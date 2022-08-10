@@ -17,7 +17,7 @@ CREATE TABLE `users` (
   `User_Settings` json NOT NULL,
   PRIMARY KEY (`User_ID`,`User_Name`),
   UNIQUE KEY `User_Name_UNIQUE` (`User_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 
@@ -32,4 +32,17 @@ CREATE TABLE `posts` (
   `post_from_bot` tinyint DEFAULT '0',
   `post_reply_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
+
+CREATE TABLE `dms` (
+  `post_id` bigint NOT NULL AUTO_INCREMENT,
+  `post_user_name` varchar(100) NOT NULL,
+  `post_text` varchar(4000) NOT NULL,
+  `post_time` bigint NOT NULL,
+  `post_special_text` varchar(100) DEFAULT NULL,
+  `post_receiver_name` varchar(100) DEFAULT NULL,
+  `post_is_private` tinyint DEFAULT '0',
+  `post_from_bot` tinyint DEFAULT '0',
+  `post_reply_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`post_id`)
+);

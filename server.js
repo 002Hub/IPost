@@ -614,7 +614,7 @@ router.get("/api/getPost", async function(req,res) {
 
 router.get("/api/getPersonalPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where (post_receiver_name = ?) order by post_id desc;`
+  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.dms where (post_receiver_name = ?) order by post_id desc;`
   con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
     if (err) throw err;
     res.json(result)

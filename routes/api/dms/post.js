@@ -45,7 +45,7 @@ module.exports = {
                 reply_id = req.body.reply_id
             }
 
-            if((typeof req.body.reply_id) != "number") {
+            if((typeof reply_id) != "number") {
                 res.json({"error":"no valid reply id given"})
                 return
             }
@@ -70,7 +70,7 @@ module.exports = {
                 return
             }
 
-            let sql = `insert into ipost.dms (dms_user_name,dms_text,dms_time,dms_receiver_name,dms_from_bot,dms_reply_id) values (?,?,?,?,?,?);`
+            let sql = `insert into ipost.dms (dms_user_name,dms_text,dms_time,dms_channel,dms_from_bot,dms_reply_id) values (?,?,?,?,?,?);`
             let values = [encodeURIComponent(res.locals.username),req.body.message,Date.now(),xor(encodeURIComponent(res.locals.username),otherperson),res.locals.isbot,reply_id]
             con.query(sql, values, function (err, result) {
                 if (err) throw err;

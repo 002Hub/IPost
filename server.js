@@ -614,8 +614,16 @@ router.get("/api/getPost", async function(req,res) {
 
 router.get("/api/getPersonalPosts", async function(req,res) {
   res.set("Access-Control-Allow-Origin","")
-  let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.dms where (post_receiver_name = ?) order by post_id desc;`
-  con.query(sql, [encodeURIComponent(res.locals.username)], function (err, result) {
+
+  let otherperson = req.query.otherperson
+
+  if(typeof otherperson != "string" || otherperson.length > 100) {
+    res.status(400).json({"error": "invalid otherperson given"})
+    return
+  }
+
+  let sql = `select dms_user_name,dms_text,dms_time,dms_special_text,dms_id,dms_from_bot,dms_reply_id from ipost.dms where (dms_channel = ?) order by dms_id desc;`
+  con.query(sql, [xor(encodeURIComponent(res.locals.username),otherperson)], function (err, result) {
     if (err) throw err;
     res.json(result)
   });

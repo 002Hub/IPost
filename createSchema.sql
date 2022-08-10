@@ -35,14 +35,14 @@ CREATE TABLE `posts` (
 );
 
 CREATE TABLE `dms` (
-  `post_id` bigint NOT NULL AUTO_INCREMENT,
-  `post_user_name` varchar(100) NOT NULL,
-  `post_text` varchar(4000) NOT NULL,
-  `post_time` bigint NOT NULL,
-  `post_special_text` varchar(100) DEFAULT NULL,
-  `post_receiver_name` varchar(100) DEFAULT NULL,
-  `post_is_private` tinyint DEFAULT '0',
-  `post_from_bot` tinyint DEFAULT '0',
-  `post_reply_id` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`post_id`)
+  `dms_id` bigint NOT NULL AUTO_INCREMENT,
+  `dms_user_name` varchar(100) NOT NULL,
+  `dms_text` varchar(4000) NOT NULL,
+  `dms_time` bigint NOT NULL,
+  `dms_special_text` varchar(100) DEFAULT NULL,
+  `dms_channel` varchar(100) DEFAULT NULL,
+  `dms_is_private` tinyint DEFAULT '0',
+  `dms_from_bot` tinyint DEFAULT '0',
+  `dms_reply_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`dms_id`)
 );

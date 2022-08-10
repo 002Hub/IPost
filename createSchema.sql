@@ -40,7 +40,7 @@ CREATE TABLE `dms` (
   `dms_text` varchar(4000) NOT NULL,
   `dms_time` bigint NOT NULL,
   `dms_special_text` varchar(100) DEFAULT NULL,
-  `dms_channel` varchar(100) DEFAULT NULL,
+  `dms_receiver` varchar(100) DEFAULT NULL,
   `dms_is_private` tinyint DEFAULT '0',
   `dms_from_bot` tinyint DEFAULT '0',
   `dms_reply_id` bigint unsigned DEFAULT NULL,

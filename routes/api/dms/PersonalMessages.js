@@ -16,8 +16,8 @@ module.exports = {
                 "dms_user_name","dms_text","dms_time","dms_special_text","dms_id","dms_from_bot","dms_reply_id"
             ]
 
-            let sql = `select ${columns.join(",")} from ipost.dms where (dms_channel = ?) order by dms_id desc;`
-            con.query(sql, [xor(encodeURIComponent(res.locals.username),otherperson)], function (err, result) {
+            let sql = `select ${columns.join(",")} from ipost.dms where (dms_receiver = ?) order by dms_id desc;`
+            con.query(sql, [otherperson], function (err, result) {
                 if (err) throw err;
                 res.json(result)
             });

@@ -39,7 +39,7 @@ module.exports = {
                 "dms_user_name","dms_receiver"
             ]
 
-            let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ? and dms_user_name = ?) or (dms_receiver = ? and dms_user_name = ?)) group by dms_receiver;`
+            let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ? and dms_user_name = ?) or (dms_receiver = ? and dms_user_name = ?)) group by dms_receiver,dms_user_name;`
             con.query(sql, [otherperson,encodeURIComponent(res.locals.username),encodeURIComponent(res.locals.username),otherperson], function (err, result) {
                 if (err) throw err;
                 res.json(result)

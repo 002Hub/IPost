@@ -424,7 +424,9 @@ const toLoad = [
   "api/all.js",
   "api/settingshandler.js",
   "api/post.js",
-  "api/dms/PersonalMessages.js"
+  "api/dms/PersonalMessages.js",
+  "api/dms/post.js",
+  
 ]
 
 for (let i = 0; i < toLoad.length; i++) {

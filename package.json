@@ -9,6 +9,25 @@
     "helmet": "^5.1.0",
     "jimp": "^0.16.1",
     "mysql": "^2.18.1",
-    "ws": "^8.8.0"
-  }
+    "ws": "^8.8.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests"
+  },
+  "name": "ipost",
+  "description": "IPost is a revolutionary open-source chatting platform featuring an innovative design",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/002Hub/IPost.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/002Hub/IPost/issues"
+  },
+  "homepage": "https://github.com/002Hub/IPost#readme"
 }

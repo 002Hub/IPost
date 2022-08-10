@@ -1,11 +1,13 @@
+const xor = require("../../../extra_modules/xor.js")
+
 module.exports = {
     "setup": function(router,con,server) {
         router.get("/api/getPersonalPosts", async function(req,res) {
             res.set("Access-Control-Allow-Origin","")
         
-            let otherperson = req.query.otherperson
+            let otherperson = encodeURIComponent(req.query.otherperson||"")
         
-            if(typeof otherperson != "string" || otherperson.length > 100) {
+            if(typeof otherperson != "string" || otherperson.length > 100 || otherperson=="") {
                 res.status(400).json({"error": "invalid otherperson given"})
                 return
             }

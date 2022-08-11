@@ -716,26 +716,35 @@ router.post("/api/changeUsername", async function(req,res) {
   let hashed_pw = SHA.SHA256(req.body.currentPW,res.locals.username,HASHES_DB)
   let hashed_new_pw = SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_DB)
 
-  let sql = `select * from ipost.users where User_Name=?;`
+  let sql = `select * from ipost.users where User_Name=?;` //check if pw is correct
   let values = [res.locals.username]
   con.query(sql, values, function (err, result) {
     if (err) throw err;
     if(result[0] && result[0].User_PW == hashed_pw) {
-      let sql = `update ipost.users set User_PW=?,User_Name=? where User_Name=? and User_PW=?;`
-      let values = [hashed_new_pw,req.body.newUsername,res.locals.username,hashed_pw]
+      let sql = `select * from ipost.users where User_Name=?;` //check if newUsername isn't already used
+      let values = [req.body.newUsername]
       con.query(sql, values, function (err, result) {
         if (err) throw err;
-        let ip = getIP(req)
-        let setTo = req.body.newUsername + " " + SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_COOKIE)
-        let cookiesigned = signature.sign(setTo, cookiesecret+ip);
-        res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-        //updated username in the users table, but not yet on posts
-        let sql = `update ipost.posts set post_user_name=? where post_user_name=?;`
-        let values = [req.body.newUsername,res.locals.username,hashed_pw]
-        con.query(sql, values, function (err, result) {
-          res.json({"success":"successfully changed username"})
-        });
+        if(result[0]) {
+          res.json({"error":"user with that username already exists"})
+          return
+        }
 
+        let sql = `update ipost.users set User_PW=?,User_Name=? where User_Name=? and User_PW=?;` //change username in users
+        let values = [hashed_new_pw,req.body.newUsername,res.locals.username,hashed_pw]
+        con.query(sql, values, function (err, result) {
+          if (err) throw err;
+          let ip = getIP(req)
+          let setTo = req.body.newUsername + " " + SHA.SHA256(req.body.currentPW,req.body.newUsername,HASHES_COOKIE)
+          let cookiesigned = signature.sign(setTo, cookiesecret+ip);
+          res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+          //updated username in the users table, but not yet on posts
+          let sql = `update ipost.posts set post_user_name=? where post_user_name=?;` //change username of every past post sent
+          let values = [req.body.newUsername,res.locals.username,hashed_pw]
+          con.query(sql, values, function (err, result) {
+            res.json({"success":"successfully changed username"}) //done
+          });
+        })
       })
     } else {
       res.json({"error":"invalid password"})

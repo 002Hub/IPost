@@ -54,6 +54,12 @@ module.exports = {
             }
 
             req.body.message = encodeURIComponent(req.body.message.trim())
+
+            if(req.body.message.length > 1000) {
+                res.json({"error":"message too long"}) //check again after URI encoding it
+                return
+            }
+
             req.body.receiver = encodeURIComponent(req.body.receiver||"")
             if(req.body.receiver == "")req.body.receiver="everyone"
 

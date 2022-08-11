@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Posts</title>
+    <title>DMs</title>
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/posts.css">
     <script type="text/javascript" src="/js/httppost.js"></script>
@@ -32,8 +32,8 @@
         <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
       </div>
       <div class="channelTab" id="channelTab">
+        <input type="text" name="Username_input" id="Username_input" placeholder="Username" class="channel" style="font-size: 16px;" onkeypress="clickPress(event)"> <br>
         <!-- <p class="channel">- Channel Name -</p> -->
-
       </div>
       <div class="posts" id="posts"></div>
     </div>

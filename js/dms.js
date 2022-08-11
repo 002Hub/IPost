@@ -9,7 +9,7 @@ var reply_id = 0
 
 var highest_id
 
-var currentChannel = "everyone"
+var currentChannel = ""
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
@@ -349,6 +349,27 @@ function removeDuplicates(a) {
 	});
 }
 
+function createChannel(channelname,tab) {
+	channelname = decodeURIComponent(channelname)
+	let channelp = document.createElement("p")
+	channelp.classList.add("channel")
+	let textnode = document.createTextNode(channelname)
+	channelp.appendChild(textnode)
+	channelp.addEventListener("click",async function(){
+		switchChannel(channelname)
+		main()
+
+		let settings = await (await fetch("/api/settings")).json()
+		console.log(settings)
+		if(settings != "null") {
+			if(settings.ACCR == false) {
+				unreply()
+			}
+		}
+	})
+	tab.appendChild(channelp)
+}
+
 async function loadChannels() {
   //        <!-- <p class="channel">- Channel Name -</p> -->
 
@@ -369,25 +390,8 @@ async function loadChannels() {
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-    let channelname = decodeURIComponent(channels[i])
-    if(channelname == "")continue;
-    let channelp = document.createElement("p")
-    channelp.classList.add("channel")
-    let textnode = document.createTextNode(channelname)
-    channelp.appendChild(textnode)
-    channelp.addEventListener("click",async function(){
-      switchChannel(channelname)
-      main()
-
-      let settings = await (await fetch("/api/settings")).json()
-      console.log(settings)
-      if(settings != "null") {
-        if(settings.ACCR == false) {
-          unreply()
-        }
-      }
-    })
-    tab.appendChild(channelp)
+		if(channels[i]=="")continue;
+    createChannel(channels[i],tab)
   }
 }
 
@@ -397,6 +401,20 @@ function init() {
   main()
   firstAsk()
   loadChannels()
+}
+
+async function clickPress(event) {
+	if (event.key == "Enter") {
+		user = (await (await fetch("/api/getotheruser?user="+encodeURIComponent(document.getElementById("Username_input").value))).json())
+		if(user.username == undefined) {
+			alert("invalid username entered")
+			return
+		} else {
+			let tab = document.getElementById("channelTab")
+			createChannel(encodeURIComponent(user.username),tab)
+			switchChannel(user.username)
+		}
+	}
 }
 
 init()

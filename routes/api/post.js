@@ -55,7 +55,7 @@ module.exports = {
 
             req.body.message = encodeURIComponent(req.body.message.trim())
 
-            if(req.body.message.length > 1000) {
+            if(req.body.message.length > 3000) {
                 res.json({"error":"message too long"}) //check again after URI encoding it
                 return
             }

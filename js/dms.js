@@ -353,6 +353,7 @@ function createChannel(channelname,tab) {
 	channelname = decodeURIComponent(channelname)
 	let channelp = document.createElement("p")
 	channelp.classList.add("channel")
+	channelp.id = channelname
 	let textnode = document.createTextNode(channelname)
 	channelp.appendChild(textnode)
 	channelp.addEventListener("click",async function(){
@@ -410,9 +411,11 @@ async function clickPress(event) {
 			alert("invalid username entered")
 			return
 		} else {
-			let tab = document.getElementById("channelTab")
-			createChannel(encodeURIComponent(user.username),tab)
-			switchChannel(user.username)
+			if(document.getElementById(user.username) == undefined) {
+				let tab = document.getElementById("channelTab")
+				createChannel(encodeURIComponent(user.username),tab)
+			}
+			document.getElementById(user.username).click()
 		}
 	}
 }

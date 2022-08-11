@@ -9,7 +9,7 @@ var reply_id = 0
 
 var highest_id
 
-var currentChannel = ""
+var currentChannel = "none"
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {

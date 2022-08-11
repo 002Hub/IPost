@@ -337,6 +337,18 @@ function switchChannel(channelname) {
   socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 }
 
+function removeDuplicates(a) {
+	let prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+	return a.filter(function(item) {
+			let type = typeof item;
+			if(type in prims)
+					return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+			else
+					return objs.indexOf(item) >= 0 ? false : objs.push(item);
+	});
+}
+
 async function loadChannels() {
   //        <!-- <p class="channel">- Channel Name -</p> -->
 
@@ -351,6 +363,8 @@ async function loadChannels() {
 			channels[channels.length] = dm.dms_user_name
 		}
 	}
+
+	channels = removeDuplicates(channels)
 
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""

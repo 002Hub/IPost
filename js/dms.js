@@ -246,16 +246,21 @@ async function main(){
   }
 
   let all_posts = await (await fetch(`/api/getPersonalPosts?otherperson=${currentChannel}`)).json()
-  if(!all_posts)return;
+  if(!all_posts){
+		document.getElementById("loading").style="display:none;"
+  	document.getElementById("scriptonly").style = ""
+	};
   document.getElementById("posts").innerHTML = ""
 	if(all_posts.length <= 0) {
+		document.getElementById("loading").style="display:none;"
+  	document.getElementById("scriptonly").style = ""
 		//TODO: empty page
 		return
 	}
   highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false)
+    await createPost(decodeURIComponent(item.dms_user_name),decodeURIComponent(item.dms_text),item.dms_time,item.dms_special_text,item.dms_id,item.dms_from_bot,item.dms_reply_id,false)
   }
 
   let links = document.getElementsByClassName("insertedlink")
@@ -350,7 +355,7 @@ async function loadChannels() {
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-    let channelname = decodeURIComponent(channels[i].post_receiver_name)
+    let channelname = decodeURIComponent(channels[i])
     if(channelname == "")continue;
     let channelp = document.createElement("p")
     channelp.classList.add("channel")

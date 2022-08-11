@@ -416,6 +416,7 @@ async function clickPress(event) {
 				createChannel(encodeURIComponent(user.username),tab)
 			}
 			document.getElementById(user.username).click()
+			document.getElementById("Username_input").value = ""
 		}
 	}
 }

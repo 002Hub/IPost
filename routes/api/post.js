@@ -87,8 +87,9 @@ module.exports = {
                     data: post_obj
                 }
                 let messagestr = JSON.stringify(message)
-                server.wss.clients.forEach(function(ws) {
-                    if(ws.channel == decodeURIComponent(req.body.receiver)) {
+                let channel = decodeURIComponent(req.body.receiver)
+                server.wss.clients.forEach(async function(ws) {
+                    if(ws.channel == channel) {
                         ws.send(messagestr)
                     }
                 });

@@ -9,7 +9,7 @@ var reply_id = 0
 
 var highest_id
 
-var currentChannel = "none"
+var currentChannel = sessionStorage.getItem("lastdm") || "none"
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
@@ -333,6 +333,7 @@ document.addEventListener("visibilitychange", function() {
 });
 
 function switchChannel(channelname) {
+  sessionStorage.setItem("lastdm", channelname);
   currentChannel = channelname
   socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 }

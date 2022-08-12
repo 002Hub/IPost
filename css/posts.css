@@ -71,6 +71,7 @@ button {
   margin-bottom: 10px;
   border-radius: 10px;
   overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 #post-text, button {
@@ -78,6 +79,7 @@ button {
   border-radius: 5px;
   resize: none;
   overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 .channelTab {

@@ -44,15 +44,16 @@ async function postMessage() {
     return
   }
   if(cd && posting_id!=undefined) {
+    cd = false
+    setTimeout(function(){
+      cd = true
+    },400)
     let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel,"pid": posting_id})
+    posting_id = undefined
     update_pid()
     if(window.location.href.split("?mention=")[1])location.replace('/posts');
     document.getElementById("post-text").value=""
     unreply()
-    cd = false
-    setTimeout(function(){
-      cd = true
-    },200)
   } else {
     alert("Please wait a tiny bit before posting again")
   }

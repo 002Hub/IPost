@@ -46,7 +46,7 @@ module.exports = {
             res.set("Access-Control-Allow-Origin","*")
             let arg = req.query.id
             let uriencusername = encodeURIComponent(res.locals.username)
-            let sql = `select dms_user_name,dms_text,dms_time,dms_special_text,dms_id,dms_from_bot,dms_reply_id,dms_receiver_name from ipost.dms where dms_id=? and (dms_user_name=? or dms_receiver_name=?);`
+            let sql = `select dms_user_name,dms_text,dms_time,dms_special_text,dms_id,dms_from_bot,dms_reply_id,dms_receiver from ipost.dms where dms_id=? and (dms_user_name=? or dms_receiver=?);`
             con.query(sql, [arg,uriencusername,uriencusername], function (err, result) {
               if (err) throw err;
               if(result[0]) {

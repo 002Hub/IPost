@@ -325,6 +325,7 @@ async function mainNoti(user) {
 }
 
 document.addEventListener("visibilitychange", function() {
+  //cansendNoti = document.visibilityState !== 'visible'
   if (document.visibilityState === 'visible') {
     cansendNoti = false
   } else {
@@ -360,14 +361,7 @@ function createChannel(channelname,tab) {
 	channelp.addEventListener("click",async function(){
 		switchChannel(channelname)
 		main()
-
-		let settings = await (await fetch("/api/settings")).json()
-		console.log(settings)
-		if(settings != "null") {
-			if(settings.ACCR == false) {
-				unreply()
-			}
-		}
+		unreply()
 	})
 	tab.appendChild(channelp)
 }

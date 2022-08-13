@@ -32,11 +32,30 @@ module.exports = {
                 "dms_user_name","dms_receiver"
             ]
 
+            let uriencusername = encodeURIComponent(res.locals.username)
+
             let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ?) or (dms_user_name = ?)) group by dms_receiver,dms_user_name;`
-            con.query(sql, [encodeURIComponent(res.locals.username),encodeURIComponent(res.locals.username)], function (err, result) {
+            con.query(sql, [uriencusername,uriencusername], function (err, result) {
                 if (err) throw err;
                 res.json(result)
             });
         })
+
+        //
+        router.get("/api/dms/getDM", async function(req,res) {
+            res.set("Access-Control-Allow-Origin","*")
+            let arg = req.query.id
+            let uriencusername = encodeURIComponent(res.locals.username)
+            let sql = `select dms_user_name,dms_text,dms_time,dms_special_text,dms_id,dms_from_bot,dms_reply_id,dms_receiver_name from ipost.dms where dms_id=? and (dms_user_name=? or dms_receiver_name=?);`
+            con.query(sql, [arg,uriencusername,uriencusername], function (err, result) {
+              if (err) throw err;
+              if(result[0]) {
+                res.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
+                res.json(result[0])
+              } else {
+                res.json({"error":"there is no such dm!"})
+              }
+            });
+          })
     }
 }

@@ -1,4 +1,4 @@
-const xor = require("../../../extra_modules/xor.js")
+const unsafeencrypt = require("unsafe_encrypt")
 
 module.exports = {
     "setup": function(router,con,server) {
@@ -39,6 +39,11 @@ module.exports = {
                 if (err) throw err;
                 res.json(result)
             });
+        })
+
+        router.get("/api/dms/encrypt.js", async function(req,res) {
+            res.set("Access-Control-Allow-Origin","*")
+            res.send(unsafeencrypt.web_version())
         })
 
         //

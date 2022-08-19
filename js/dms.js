@@ -39,6 +39,21 @@ socket.addEventListener("message", async function (event) {
 var posting_id = undefined;
 var cd = true //inversed "cooldown"
 
+let encryption_keys = ""
+
+function set_keys(s_key) {
+  let key = extend(s_key,512)
+  let msgkey = key.substring(0,128)
+  let sigkey = key.substring(129,512)
+
+  let packed = pack_keys({
+    signkey: sigkey,
+    messagekey: msgkey
+  })
+  
+  encryption_keys = packed
+}
+
 async function postMessage() {
   let len = document.getElementById("post-text").value.length
   if(len >= 1001) {
@@ -46,12 +61,21 @@ async function postMessage() {
     return
   }
   if(cd && posting_id!=undefined) {
-    let r = await post("/api/dms/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel,"pid": posting_id})
+    cd = false
+
+    let text = document.getElementById("post-text").value
+
+    if(typeof encrypt == "function" && encryption_keys != "") {
+      text = encrypt(test,{
+        packed: encryption_keys
+      })
+    }
+
+    let r = await post("/api/dms/post",{"message":text,"reply_id":reply_id,"receiver":currentChannel,"pid": posting_id})
     update_pid()
     if(window.location.href.split("?mention=")[1])location.replace('/posts');
     document.getElementById("post-text").value=""
     unreply()
-    cd = false
     setTimeout(function(){
       cd = true
     },200)

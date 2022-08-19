@@ -84,7 +84,7 @@ function log_info(level, ...info) {
 }
 console.log = log_info;
 
-const WebSocket = { Server: ws }.Server;
+const WebSocket = ws.Server;
 
 import {EventEmitter} from 'events';
 import merge from 'merge-descriptors';

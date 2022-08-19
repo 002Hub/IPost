@@ -1,5 +1,5 @@
-import "fs"
-import {format} from "util"
+const fs = require("fs")
+const format = require("util").format
 
 
 /**

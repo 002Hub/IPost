@@ -894,31 +894,14 @@ router.post("/register",async function(req,res) {
     let setTo = username + " " + SHA.SHA256(password,username,HASHES_COOKIE)
     let cookiesigned = signature.sign(setTo, cookiesecret+ip);
     ip = SHA.SHA256(ip,setTo,HASHES_DB)
-    const {
-      publicKey,
-      privateKey,
-    } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase: password
-      }
-    });
 
     const default_settings = {}
 
-    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip, publicKey.toString(), privateKey.toString(),JSON.stringify(default_settings)]
-    let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_PublicKey, User_PrivateKey, User_Settings) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+    let values = [encodeURIComponent(username),hashed_pw, Date.now(), ip, ip,JSON.stringify(default_settings)]
+    let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_Settings) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
     con.query(sql, values, function (err, result) {
       if (err) throw err;
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-      res.cookie("priv_key",privateKey.toString(), { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
       res.redirect("/user?success=true")
     });
   })
@@ -981,31 +964,6 @@ router.post("/login",async function(req,res) {
       res.cookie('AUTH_COOKIE',cookiesigned, { maxAge: Math.pow(10,10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
 
       ip = SHA.SHA256(ip,setTo,HASHES_DB)
-      if(result[0].User_PublicKey == null) {
-        const {
-          publicKey,
-          privateKey,
-        } = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 4096,
-          publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem',
-            cipher: 'aes-256-cbc',
-            passphrase: password
-          }
-        });
-        res.cookie("priv_key",privateKey.toString(), { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
-        let sql = `update ipost.users set User_PublicKey=?,User_PrivateKey=? where User_Name = ?;`
-        con.query(sql,[publicKey.toString(),privateKey.toString(),encodeURIComponent(username)],function(error,result) {
-          if(error)throw error
-        })
-      } else {
-        res.cookie("priv_key",result[0].User_PrivateKey, { maxAge: Math.pow(10,10), httpOnly: false, secure: DID_I_FINALLY_ADD_HTTPS }) //only meant to be used as temporary storage, moved to localStorage on user page
-      }
       if(result[0].User_LastIP != ip) {
         let sql = `update ipost.users set User_LastIP = ? where User_Name = ?;`
         con.query(sql,[ip,encodeURIComponent(username)],function(error,result) {

@@ -29,8 +29,6 @@ module.exports = {
       values[1] = SHA.SHA256(values[1],values[0],HASHES_DIFF)
       res.locals.bio = ""
       res.locals.avatar = ""
-      res.locals.publicKey = ""
-      res.locals.privateKey = ""
       res.locals.settings = {}
       con.query(sql, values, function (err, result) {
         if (err) throw err;
@@ -38,8 +36,6 @@ module.exports = {
           res.locals.username = values[0];
           res.locals.bio = result[0].User_Bio || ""
           res.locals.avatar = result[0].User_Avatar || ""
-          res.locals.publicKey = result[0].User_PublicKey || ""
-          res.locals.privateKey = result[0].User_PrivateKey || ""
           res.locals.settings = JSON.parse(result[0].User_Settings)
           if(res.locals.settings == "null")res.locals.settings = {}
           if(res.locals.settings == null)res.locals.settings = {}

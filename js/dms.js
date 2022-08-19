@@ -248,7 +248,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   }
 
   if(typeof decrypt == "function" && encryption_keys != "") {
-    text = decrypt(text,{packed:encryption_keys})
+    text = decrypt(text,{packed:encryption_keys}).msg
   }
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)

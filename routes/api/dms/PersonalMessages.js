@@ -1,4 +1,4 @@
-const unsafeencrypt = require("unsafe_encrypt")
+import {web_version} from "unsafe_encrypt"
 
 module.exports = {
     "setup": function(router,con,server) {
@@ -43,7 +43,7 @@ module.exports = {
 
         router.get("/api/dms/encrypt.js", async function(req,res) {
             res.set("Access-Control-Allow-Origin","*")
-            res.send(unsafeencrypt.web_version())
+            res.send(web_version())
         })
 
         //

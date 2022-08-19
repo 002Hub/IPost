@@ -52,6 +52,8 @@ function set_keys(s_key) {
   })
   
   encryption_keys = packed
+
+  main()
 }
 
 async function postMessage() {
@@ -66,7 +68,7 @@ async function postMessage() {
     let text = document.getElementById("post-text").value
 
     if(typeof encrypt == "function" && encryption_keys != "") {
-      text = encrypt(test,{
+      text = encrypt(text,{
         packed: encryption_keys
       })
     }
@@ -245,6 +247,9 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
     }
   }
 
+  if(typeof decrypt == "function" && encryption_keys != "") {
+    text = decrypt(text,{packed:encryption_keys})
+  }
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
   newDiv.id = postid

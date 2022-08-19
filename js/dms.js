@@ -187,10 +187,10 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   if(reply_id != 0) {
     try {
       const reply_obj = await (await fetch(`/api/dms/getDM?id=${reply_id}`)).json()
-      const reply_username = decodeURIComponent(reply_obj.post_user_name)
+      const reply_username = decodeURIComponent(reply_obj.dms_user_name)
       const reply_username_text = document.createTextNode(reply_username)
-      const reply_text = decodeURIComponent(reply_obj.post_text)
-      const reply_channel = reply_obj.post_receiver_name
+      const reply_text = decodeURIComponent(reply_obj.dms_text)
+      const reply_channel = reply_obj.dms_receiver
       replyAvatar.width=10;
       replyAvatar.height=10;
       replyAvatar.classList.add("avatar")

@@ -16,6 +16,7 @@
     "start": "node server.js",
     "test": "node tests"
   },
+  "type": "module",
   "name": "ipost",
   "description": "IPost is a revolutionary open-source chatting platform featuring an innovative design",
   "version": "1.0.0",

@@ -1,5 +1,5 @@
-const fs = require("fs");
-const util = require('util');
+import "fs"
+import {format} from "util"
 
 
 /**
@@ -14,7 +14,7 @@ function ensureExists(path, mask, cb) {
         cb = mask;
         mask = 0o744;
     }
-    fs.mkdir(path, mask, function(err) {
+    mkdir(path, mask, function(err) {
         if (err) {
             if (err.code == 'EEXIST') cb(null); // Ignore the error if the folder already exists
             else cb(err); // Something else went wrong
@@ -22,7 +22,7 @@ function ensureExists(path, mask, cb) {
     });
 }
 
-const config = JSON.parse(fs.readFileSync("server_config.json"))
+const config = JSON.parse(readFileSync("server_config.json"))
 
 const time = Date.now()
 const original_log = console.log
@@ -41,13 +41,13 @@ function log_info(level, ...info) {
     level = 5
   }
   if(config["logs"] && config["logs"]["level"] && config["logs"]["level"] >= level) {
-    let tolog = `[INFO] [${Date.now()}] : ${util.format(text)} \n`
+    let tolog = `[INFO] [${Date.now()}] : ${format(text)} \n`
     original_log(tolog) //still has some nicer colors
     ensureExists(__dirname + '/logs/', function(err) {
         if(err) {
           process.stderr.write(tolog) //just write it to stderr
         } else {
-          fs.appendFile(__dirname+"/logs/"+time,tolog,function(err){
+          appendFile(__dirname+"/logs/"+time,tolog,function(err){
             if(err){
               process.stderr.write(err)
             }
@@ -67,7 +67,6 @@ console.log(5,"starting up")
 
 const http = require('http');
 const https = require('https');
-const crypto = require("crypto");
 const express = require("express");
 const useragent = require('express-useragent');
 const fileUpload = require('express-fileupload');
@@ -93,12 +92,12 @@ const con = mysql.createPool({
   connectionLimit : config.mysql.connections,
   host: config.mysql.host,
   user: config.mysql.user,
-  password: fs.readFileSync(config.mysql.password_file).toString()
+  password: readFileSync(config.mysql.password_file).toString()
 });
 
 const dir = __dirname + "/"
 
-const cookiesecret = fs.readFileSync("cookiesecret.txt").toString()
+const cookiesecret = readFileSync("cookiesecret.txt").toString()
 
 const SHA = require("./extra_modules/SHA.js")
 
@@ -419,19 +418,34 @@ var commonfunctions = {
   genstring
 }
 
-const toLoad = [
-  "api/options.js",
-  "api/all.js",
-  "api/settingshandler.js",
-  "api/post.js",
-  "api/dms/PersonalMessages.js",
-  "api/dms/post.js",
-  
-]
+import {setup as optionssetup} from "./routes/api/options.js"
+import {setup as allsetup} from "./routes/api/all.js"
+import {setup as settingshandlersetup} from "./routes/api/settingshandler.js"
+import {setup as postsetup} from "./routes/api/post.js"
+import {setup as dmsPersonalMessagessetup} from "./routes/api/dms/PersonalMessages.js"
+import {setup as dmspostsetup} from "./routes/api/dms/post.js"
 
-for (let i = 0; i < toLoad.length; i++) {
-  require("./routes/"+toLoad[i]).setup(router,con,commonfunctions)
-}
+
+optionssetup(router,con,commonfunctions)
+allsetup(router,con,commonfunctions)
+settingshandlersetup(router,con,commonfunctions)
+postsetup(router,con,commonfunctions)
+dmsPersonalMessagessetup(router,con,commonfunctions)
+dmspostsetup(router,con,commonfunctions)
+
+// const toLoad = [
+//   "api/options.js",
+//   "api/all.js",
+//   "api/settingshandler.js",
+//   "api/post.js",
+//   "api/dms/PersonalMessages.js",
+//   "api/dms/post.js",
+  
+// ]
+
+// for (let i = 0; i < toLoad.length; i++) {
+//   require("./routes/"+toLoad[i]).setup(router,con,commonfunctions)
+// }
 
 // let options = require("./routes/api/options.js")
 // options.setup(router,con,commonfunctions)
@@ -494,10 +508,10 @@ router.post("/api/setavatar",function(req,res) {
       return res.status(500).json({"error":"there's been an internal server error."})
     }
     if(res.locals.avatar) {
-      fs.unlinkSync(avatars + res.locals.avatar)
+      unlinkSync(avatars + res.locals.avatar)
     }
     let filename = genstring(96) + ".png"
-    while(fs.existsSync(avatars + "/" + filename) || filename == ".png") {
+    while(existsSync(avatars + "/" + filename) || filename == ".png") {
       console.log(5,"already have file: ",filename);
       original_log("already have file: ",filename)
       filename = genstring(96) + ".png"
@@ -513,7 +527,7 @@ router.post("/api/setavatar",function(req,res) {
         con.query(sql, [filename,encodeURIComponent(res.locals.username)], function (err, result) {
           if (err) throw err;
           res.json({"success":"updated avatar"})
-          fs.unlinkSync(avatars+"temp_"+filename)
+          unlinkSync(avatars+"temp_"+filename)
         });
       })
     })
@@ -769,7 +783,7 @@ router.get("/users/*", async function(req,res) {
 
 router.get("/css/*", (request, response) => {
   if(!increaseUSERCall(request,response))return
-  if(fs.existsSync(__dirname + request.originalUrl)){
+  if(existsSync(__dirname + request.originalUrl)){
     response.sendFile(__dirname + request.originalUrl);
   } else {
     response.status(404).send("no file with that name found")
@@ -779,7 +793,7 @@ router.get("/css/*", (request, response) => {
 
 router.get("/js/*", (request, response) => {
   if(!increaseUSERCall(request,response))return
-  if(fs.existsSync(__dirname + request.originalUrl)){
+  if(existsSync(__dirname + request.originalUrl)){
     response.sendFile(__dirname + request.originalUrl);
   } else {
     response.status(404).send("no file with that name found")
@@ -789,7 +803,7 @@ router.get("/js/*", (request, response) => {
 
 router.get("/images/*", (request, response) => {
   if(!increaseUSERCall(request,response))return
-  if(fs.existsSync(__dirname + request.originalUrl)){
+  if(existsSync(__dirname + request.originalUrl)){
     response.sendFile(__dirname + request.originalUrl);
   } else {
     response.status(404).send("no file with that name found")
@@ -801,10 +815,10 @@ router.get("/avatars/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return
   response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
   let originalUrl = request.originalUrl.split("?").shift()
-  if(fs.existsSync(dir + originalUrl + ".png")) {
+  if(existsSync(dir + originalUrl + ".png")) {
     return response.sendFile(dir + originalUrl + ".png");
   }
-  if(fs.existsSync(dir + originalUrl)) {
+  if(existsSync(dir + originalUrl)) {
     return response.sendFile(dir + originalUrl);
   }
   response.status(404).send("No avatar with that name found")
@@ -818,16 +832,16 @@ router.get("/logout",async function(req,res) {
 router.get("/*", (request, response, next) => {
   if(!increaseUSERCall(request,response))return
   let originalUrl = request.originalUrl.split("?").shift()
-  if(fs.existsSync(dir + "views/"+originalUrl+".html")) {
+  if(existsSync(dir + "views/"+originalUrl+".html")) {
     return response.sendFile(dir + "views/"+originalUrl+".html");
   }
-  if(fs.existsSync(dir + "views"+originalUrl)) {
+  if(existsSync(dir + "views"+originalUrl)) {
     return response.sendFile(dir + "views"+originalUrl);
   }
-  if(fs.existsSync(dir + "views"+originalUrl+".html")) {
+  if(existsSync(dir + "views"+originalUrl+".html")) {
     return response.sendFile(dir + "views"+originalUrl+".html");
   }
-  if(fs.existsSync(dir + "views"+originalUrl)) {
+  if(existsSync(dir + "views"+originalUrl)) {
     return response.sendFile(dir + "views"+originalUrl);
   }
   response.status(404).send("No file with that name found")
@@ -986,8 +1000,8 @@ httpServer.listen(config["ports"]["http"],function(){
   console.log(5,"HTTP Server is listening")
 });
 
-const privateKey = fs.readFileSync(config["ssl"]["privateKey"]).toString()
-const certificate = fs.readFileSync(config["ssl"]["certificate"]).toString()
+const privateKey = readFileSync(config["ssl"]["privateKey"]).toString()
+const certificate = readFileSync(config["ssl"]["certificate"]).toString()
 
 const credentials = {key: privateKey, cert: certificate};
 

@@ -9,6 +9,7 @@
     "helmet": "^5.1.1",
     "jimp": "^0.16.1",
     "mysql": "^2.18.1",
+    "unsafe_encrypt": "^1.0.2",
     "ws": "^8.8.1"
   },
   "scripts": {
@@ -19,7 +20,6 @@
   "description": "IPost is a revolutionary open-source chatting platform featuring an innovative design",
   "version": "1.0.0",
   "main": "server.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/002Hub/IPost.git"

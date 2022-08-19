@@ -12,7 +12,7 @@ import Jimp from "jimp";
 import SHA from "./extra_modules/SHA.js";
 import getIP from "./extra_modules/getip.js";
 import unsign from "./extra_modules/unsign.js";
-import { readFileSync, mkdir, existsSync } from "fs";
+import { readFileSync, mkdir, existsSync, appendFile } from "fs";
 import { format } from "util";
 import { setup as optionssetup } from "./routes/api/options.js";
 import { setup as allsetup } from "./routes/api/all.js";

@@ -7,7 +7,7 @@ import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import * as signature from "cookie-signature";
 import * as mysql from "mysql";
-import ws from "ws";
+import * as ws from "ws";
 import Jimp from "jimp";
 import SHA from "./extra_modules/SHA.js";
 import getIP from "./extra_modules/getip.js";
@@ -84,7 +84,7 @@ function log_info(level, ...info) {
 }
 console.log = log_info;
 
-const WebSocket = ws.Server;
+const WebSocket = ws.WebSocketServer;
 
 import {EventEmitter} from 'events';
 import merge from 'merge-descriptors';

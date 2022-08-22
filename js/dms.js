@@ -42,7 +42,6 @@ var cd = true //inversed "cooldown"
 let encryption_keys = ""
 
 function set_keys(s_key) {
-  localStorage.setItem(currentChannel+"enc_key",s_key)
   let key = extend(s_key,512)
   let msgkey = key.substring(0,128)
   let sigkey = key.substring(129,512)
@@ -51,6 +50,8 @@ function set_keys(s_key) {
     signkey: sigkey,
     messagekey: msgkey
   })
+
+  localStorage.setItem(currentChannel+"enc_key",packed)
   
   encryption_keys = packed
 
@@ -381,7 +382,8 @@ function switchChannel(channelname) {
   socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 
   if(localStorage.getItem(currentChannel+"enc_key")!=null) {
-    set_keys(localStorage.getItem(currentChannel+"enc_key"))
+    encryption_keys = localStorage.getItem(currentChannel+"enc_key")
+    main()
   } else {
     encryption_keys = ""
   }

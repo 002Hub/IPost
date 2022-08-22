@@ -42,6 +42,7 @@ var cd = true //inversed "cooldown"
 let encryption_keys = ""
 
 function set_keys(s_key) {
+  localStorage.setItem(currentChannel+"enc_key",s_key)
   let key = extend(s_key,512)
   let msgkey = key.substring(0,128)
   let sigkey = key.substring(129,512)
@@ -215,7 +216,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       const reply_obj = await (await fetch(`/api/dms/getDM?id=${reply_id}`)).json()
       const reply_username = decodeURIComponent(reply_obj.dms_user_name)
       const reply_username_text = document.createTextNode(reply_username)
-      const reply_text = decodeURIComponent(reply_obj.dms_text)
+      let reply_text = decodeURIComponent(reply_obj.dms_text)
       const reply_channel = reply_obj.dms_receiver
       replyAvatar.width=10;
       replyAvatar.height=10;
@@ -225,6 +226,11 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyA.appendChild(replyAvatar)
       replyA.appendChild(reply_username_text)
       replyA.appendChild(spacerTextNode())
+
+      if(typeof decrypt == "function" && encryption_keys != "") {
+        reply_text = decrypt(reply_text,{packed:encryption_keys}).msg
+      }
+
       replyA.innerHTML += filterReply(reply_text.replace("\n"," ").substring(0,20))
       replyA.appendChild(replyBr)
 
@@ -312,11 +318,18 @@ async function main(){
 
 async function reply(postid) {
   let post = await(await fetch("/api/dms/getDM?id="+postid)).json()
-  let username = post.post_user_name
-  let posttext = post.post_text
+  let username = post.dms_user_name
+  let posttext = post.dms_text
   document.getElementById("reply").style = ""
   document.getElementById("reply_username").innerText = decodeURIComponent(username)
-  document.getElementById("reply_text").innerHTML = filterPost(decodeURIComponent(posttext))
+
+  posttext = decodeURIComponent(posttext)
+
+  if(typeof decrypt == "function" && encryption_keys != "") {
+    posttext = decrypt(posttext,{packed:encryption_keys}).msg
+  }
+
+  document.getElementById("reply_text").innerHTML = filterPost(posttext)
   reply_id = postid
 }
 
@@ -366,6 +379,12 @@ function switchChannel(channelname) {
   sessionStorage.setItem("lastdm", channelname);
   currentChannel = channelname
   socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
+
+  if(localStorage.getItem(currentChannel+"enc_key")!=null) {
+    set_keys(localStorage.getItem(currentChannel+"enc_key"))
+  } else {
+    encryption_keys = ""
+  }
 }
 
 function removeDuplicates(a) {

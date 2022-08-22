@@ -379,13 +379,18 @@ document.addEventListener("visibilitychange", function() {
 function switchChannel(channelname) {
   sessionStorage.setItem("lastdm", channelname);
   currentChannel = channelname
-  socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 
   if(localStorage.getItem(currentChannel+"enc_key")!=null) {
     encryption_keys = localStorage.getItem(currentChannel+"enc_key")
     main()
   } else {
     encryption_keys = ""
+  }
+
+  try {
+    socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
+  } catch(err) {
+    console.error(err)
   }
 }
 

@@ -9,7 +9,7 @@ var reply_id = 0
 
 var highest_id
 
-var currentChannel = sessionStorage.getItem("lastdm") || "none"
+var currentChannel
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
@@ -442,6 +442,9 @@ async function loadChannels() {
 }
 
 function init() {
+
+  switchChannel(sessionStorage.getItem("lastdm") || "none")
+
   setInterval(update_pid,30000)
   update_pid()
   main()

@@ -382,7 +382,6 @@ function switchChannel(channelname) {
 
   if(localStorage.getItem(currentChannel+"enc_key")!=null) {
     encryption_keys = localStorage.getItem(currentChannel+"enc_key")
-    main()
   } else {
     encryption_keys = ""
   }

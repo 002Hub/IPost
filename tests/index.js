@@ -1,1 +1,1 @@
-require("./xor.js")
+//TODO: add some useful test cases

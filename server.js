@@ -834,13 +834,23 @@ import LRU from "lru-cache"
 
 ejs.cache = new LRU({max:20})
 
+function load_var(fina) {
+    let out = readFileSync(fina)
+    if(fina.endsWith(".js")) {
+        return min_js(out.toString()).code
+    }
+    return out
+}
+
+import {minify as min_js} from "uglify-js"
+
 const global_page_variables = {
-    globalcss: readFileSync("./css/global.css"),
-    httppostjs: readFileSync("./js/httppost.js"),
-    addnavbar: readFileSync("./js/addnavbar.js"),
-    markdownjs: readFileSync("./js/markdown.js"),
-    htmlescapejs: readFileSync("./js/htmlescape.js"),
-    warnmessagejs: readFileSync("./js/warn_message.js")
+    globalcss: load_var("./css/global.css"),
+    httppostjs: load_var("./js/httppost.js"),
+    addnavbar: load_var("./js/addnavbar.js"),
+    markdownjs: load_var("./js/markdown.js"),
+    htmlescapejs: load_var("./js/htmlescape.js"),
+    warnmessagejs: load_var("./js/warn_message.js")
 }
 
 router.get("/*", async function(request, response) {

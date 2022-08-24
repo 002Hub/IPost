@@ -505,7 +505,9 @@ router.post("/api/setavatar", function (req, res) {
             return res.status(500).json({ "error": "there's been an internal server error." });
         }
         if (res.locals.avatar) {
-            unlinkSync(avatars + res.locals.avatar);
+            try {
+                unlinkSync(avatars + res.locals.avatar);
+            } catch(ignored){}
         }
         let filename = genstring(96) + ".png";
         while (existsSync(avatars + "/" + filename) || filename == ".png") {
@@ -826,24 +828,62 @@ router.get("/logout", async function (req, res) {
     res.cookie("AUTH_COOKIE", "", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
     res.redirect("/");
 });
-router.get("/*", (request, response, next) => {
-    if (!increaseUSERCall(request, response))
-        return;
+
+import ejs from "ejs"
+import LRU from "lru-cache"
+
+ejs.cache = new LRU({max:20})
+
+const global_page_variables = {
+    globalcss: readFileSync("./css/global.css"),
+    httppostjs: readFileSync("./js/httppost.js"),
+    addnavbar: readFileSync("./js/addnavbar.js"),
+    markdownjs: readFileSync("./js/markdown.js"),
+    htmlescapejs: readFileSync("./js/htmlescape.js"),
+    warnmessagejs: readFileSync("./js/warn_message.js")
+}
+
+router.get("/*", async function(request, response) {
+    if (!increaseUSERCall(request, response))return;
+    
     let originalUrl = request.originalUrl.split("?").shift();
+
+    let path
+
     if (existsSync(dir + "views/" + originalUrl + ".html")) {
-        return response.sendFile(dir + "views/" + originalUrl + ".html");
+        path = dir + "views/" + originalUrl + ".html"
+        //return response.sendFile(dir + "views/" + originalUrl + ".html");
     }
     if (existsSync(dir + "views" + originalUrl)) {
-        return response.sendFile(dir + "views" + originalUrl);
+        path = dir + "views" + originalUrl
+        //return response.sendFile(dir + "views" + originalUrl);
     }
     if (existsSync(dir + "views" + originalUrl + ".html")) {
-        return response.sendFile(dir + "views" + originalUrl + ".html");
+        path = dir + "views" + originalUrl + ".html"
+        //return response.sendFile(dir + "views" + originalUrl + ".html");
     }
     if (existsSync(dir + "views" + originalUrl)) {
-        return response.sendFile(dir + "views" + originalUrl);
+        path = dir + "views" + originalUrl
+        //return response.sendFile(dir + "views" + originalUrl);
     }
+
+    if(path != "") {
+        ejs.renderFile(path,global_page_variables,async function(err,str){
+            if(err) {
+                console.log(1,err)
+                response.status(500)
+                response.send("error")
+                //TODO: make error page
+                return
+            }
+            response.send(str)
+        })
+        return;
+    }
+
     response.status(404).send("No file with that name found");
 });
+
 router.post("/register", async function (req, res) {
     for (let i = 0; i < 10; i++) { //don't want people spam registering
         if (!increaseAPICall(req, res))

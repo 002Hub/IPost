@@ -8,7 +8,7 @@ export const setup = function (router, con, server) {
             console.log(5, "pid collision");
         }
         PIDS[pid] = true;
-        setTimeout(function () {
+        setTimeout(function() {
             PIDS[pid] = undefined;
         }, 40000);
         res.json({ "pid": pid });

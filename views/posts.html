@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8">
     <title>Posts</title>
-    <link rel="stylesheet" href="/css/global.css">
+    <style>
+      <%- globalcss %>
+    </style>
     <link rel="stylesheet" href="/css/posts.css">
-    <script type="text/javascript" src="/js/httppost.js"></script>
-    <script type="text/javascript" src="/js/htmlescape.js"></script>
-    <script type="text/javascript" src="/js/addnavbar.js"></script>
-    <script type="text/javascript" src="/js/markdown.js"></script>
-    <script src="/js/warn_message.js" charset="utf-8"></script>
+    <script type="text/javascript"><%- httppostjs %></script>
+    <script type="text/javascript"><%- htmlescapejs %></script>
+    <script type="text/javascript"><%- addnavbar %></script>
+    <script type="text/javascript"><%- markdownjs %></script>
+    <script type="text/javascript"><%- warnmessagejs %></script>
   </head>
   <body>
     <div id="loading" class="status">

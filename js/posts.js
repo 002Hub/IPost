@@ -10,7 +10,7 @@ var highest_id
 
 var currentChannel = sessionStorage.getItem("lastchannel") || "everyone"
 
-const createElement = document.createElement
+function createElement(s){return document.createElement(s)}
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {

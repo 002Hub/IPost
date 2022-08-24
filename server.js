@@ -804,6 +804,7 @@ router.get("/images/*", (request, response) => {
     if (!increaseUSERCall(request, response))
         return;
     if (existsSync(__dirname + request.originalUrl)) {
+        response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
         response.sendFile(__dirname + request.originalUrl);
     }
     else {

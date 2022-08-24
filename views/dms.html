@@ -3,17 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title>DMs</title>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/posts.css">
-    <script type="text/javascript" src="/js/httppost.js"></script>
-    <script type="text/javascript" src="/js/htmlescape.js"></script>
-    <script type="text/javascript" src="/js/addnavbar.js"></script>
-    <script type="text/javascript" src="/js/markdown.js"></script>
-    <script type="text/javascript" src="/js/extend_key.js"></script>
+    <style>
+      <%- globalcss %>
+    </style>
+    <style>
+      <%- loadfile("./css/posts.css") %>
+    </style>
+    <script type="text/javascript"><%- httppostjs %></script>
+    <script type="text/javascript"><%- htmlescapejs %></script>
+    <script type="text/javascript"><%- markdownjs %></script>
+    <script type="text/javascript"><%- warnmessagejs %></script>
+    <script><%- loadfile("./js/extend_key.js") %></script>
     <script type="text/javascript" src="/api/dms/encrypt.js"></script>
-    <script src="/js/warn_message.js" charset="utf-8"></script>
+    <script type="text/javascript">let user = <%- JSON.stringify(user) %></script>
   </head>
   <body>
+    <%- navbar %>
     <div id="loading" class="status">
       <h1>Loading...</h1>
       Please allow us up to 5 seconds to load in your requested content. <br>
@@ -36,10 +41,9 @@
       <div class="channelTab">
         <input type="text" name="Username_input" id="Username_input" placeholder="Username" class="channel" style="font-size: 16px;" onkeypress="clickPress(event)"> <br>
         <div id="channelTab"></div>
-        <!-- <p class="channel">- Channel Name -</p> -->
       </div>
       <div class="posts" id="posts"></div>
     </div>
-    <script type="text/javascript" src="/js/dms.js"></script>
+    <script><%- loadfile("./js/dms.js") %></script>
   </body>
 </html>

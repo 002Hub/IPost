@@ -1,4 +1,3 @@
-let user
 let username
 
 const wss_server = "wss://ipost.tk"

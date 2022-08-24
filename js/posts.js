@@ -10,6 +10,8 @@ var highest_id
 
 var currentChannel = sessionStorage.getItem("lastchannel") || "everyone"
 
+const createElement = document.createElement
+
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
   if(wss_server == event.origin) {
@@ -123,19 +125,19 @@ async function reply_link_clicked(reply_channel,reply_id) {
 
 async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top) {
   if(!specialtext)specialtext=""
-  const newDiv = document.createElement("div");
-  const newP = document.createElement("p");
-  const newA = document.createElement("a");
-  const newSpan2 = document.createElement("span");
-  const newSpan3 = document.createElement("span");
-  const avatar = document.createElement("img");
-  const boticon = document.createElement("img");
+  const newDiv = createElement("div");
+  const newP = createElement("p");
+  const newA = createElement("a");
+  const newSpan2 = createElement("span");
+  const newSpan3 = createElement("span");
+  const avatar = createElement("img");
+  const boticon = createElement("img");
 
-  const replyDiv = document.createElement("div");
-  const replyA = document.createElement("a");
-  const replyAvatar = document.createElement("img");
-  const replySpan = document.createElement("span");
-  const replyBr = document.createElement("br");
+  const replyDiv = createElement("div");
+  const replyA = createElement("a");
+  const replyAvatar = createElement("img");
+  const replySpan = createElement("span");
+  const replyBr = createElement("br");
 
   boticon.src = "/images/bot.png"
   boticon.height = 25
@@ -343,7 +345,7 @@ async function loadChannels() {
   for (let i = 0; i < channels.length; i++) {
     let channelname = decodeURIComponent(channels[i].post_receiver_name)
     if(channelname == "")continue;
-    let channelp = document.createElement("p")
+    let channelp = createElement("p")
     channelp.classList.add("channel")
     let textnode = document.createTextNode(channelname)
     channelp.appendChild(textnode)

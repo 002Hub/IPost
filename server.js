@@ -841,18 +841,30 @@ function load_var(fina) {
     if(fina.endsWith(".js")) {
         return min_js(out.toString()).code
     }
+
+    if(fina.endsWith(".css")) {
+        const {
+            styles,
+            errors,
+        } = new Clean({}).minify(out.toString());
+        return styles
+    }
+    
     return out
 }
 
 import {minify as min_js} from "uglify-js"
+import Clean from 'clean-css';
+
 
 const global_page_variables = {
     globalcss: load_var("./css/global.css"),
     httppostjs: load_var("./js/httppost.js"),
-    addnavbar: load_var("./js/addnavbar.js"),
+    navbar: load_var("./extra_modules/navbar.html"),
     markdownjs: load_var("./js/markdown.js"),
     htmlescapejs: load_var("./js/htmlescape.js"),
-    warnmessagejs: load_var("./js/warn_message.js")
+    warnmessagejs: load_var("./js/warn_message.js"),
+    loadfile: load_var
 }
 
 router.get("/*", async function(request, response) {

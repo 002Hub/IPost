@@ -860,7 +860,7 @@ router.get("/*", async function(request, response) {
     
     let originalUrl = request.originalUrl.split("?").shift();
 
-    let path
+    let path = ""
 
     if (existsSync(dir + "views/" + originalUrl + ".html")) {
         path = dir + "views/" + originalUrl + ".html"
@@ -1048,8 +1048,12 @@ const privateKey = readFileSync(config["ssl"]["privateKey"]).toString();
 const certificate = readFileSync(config["ssl"]["certificate"]).toString();
 const credentials = { key: privateKey, cert: certificate };
 var httpsServer;
+
+import spdy from "spdy"
+
 if (DID_I_FINALLY_ADD_HTTPS) {
-    httpsServer = https.createServer(credentials, app);
+    httpsServer = spdy.createServer(credentials,app)
+    //httpsServer = https.createServer(credentials, app);
     httpsServer.listen(config["ports"]["https"], function () {
         console.log(5, "HTTPS Server is listening");
     });

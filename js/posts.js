@@ -1,4 +1,3 @@
-let user
 let username
 
 const wss_server = "wss://ipost.tk"
@@ -339,7 +338,6 @@ function switchChannel(channelname) {
 async function loadChannels() {
   //        <!-- <p class="channel">- Channel Name -</p> -->
 
-  let channels = await (await fetch("/api/getChannels")).json()
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
@@ -367,7 +365,7 @@ async function loadChannels() {
 
 function init() {
   setInterval(update_pid,30000)
-  update_pid()
+  if(posting_id=="")update_pid()
   main()
   firstAsk()
   loadChannels()

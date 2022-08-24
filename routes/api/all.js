@@ -6,19 +6,12 @@ const HASHES_DB = config.cookies.server_hashes;
 const HASHES_COOKIE = config.cookies.client_hashes;
 const HASHES_DIFF = HASHES_DB - HASHES_COOKIE;
 export const setup = function (router, con, server) {
-    router.use("/api/*", async function (req, res, next) {
+    router.use("/*", async function (req, res, next) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
-        if (config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
-            next();
-            return;
-        }
-        if (!server.increaseAPICall(req, res))
-            return;
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
             unsigned = unsign.getunsigned(req, res);
-            if (!unsigned)
-                return;
+            if (!unsigned)next()
         }
         else {
             unsigned = `${req.body.user} ${SHA.SHA256(req.body.pass, req.body.user, HASHES_COOKIE)}`;
@@ -43,13 +36,27 @@ export const setup = function (router, con, server) {
                     res.locals.settings = {};
                 if (res.locals.settings == null)
                     res.locals.settings = {};
-                next();
+                
             }
-            else {
-                res.status(400);
-                res.json({ "error": "you cannot access the api without being logged in" });
-            }
+            next()
         });
+    });
+
+    router.use("/api/*", async function (req, res, next) {
+        res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
+        if (config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
+            next();
+            return;
+        }
+        if (!server.increaseAPICall(req, res))return;
+
+        if (res.locals.username != undefined) {
+            next();
+        }
+        else {
+            res.status(400);
+            res.json({ "error": "you cannot access the api without being logged in" });
+        }
     });
 };
 export default {

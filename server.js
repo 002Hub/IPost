@@ -856,15 +856,25 @@ function load_var(fina) {
 import {minify as min_js} from "uglify-js"
 import Clean from 'clean-css';
 
+function get_channels(){
+    return new Promise(function(resolve, reject) {
+        let sql = `select post_receiver_name from ipost.posts where post_is_private = '0' group by post_receiver_name;`;
+        con.query(sql, [], function (err, result) {
+            if (err)reject(err)
+            resolve(result)
+        });
+    })
+}
 
-const global_page_variables = {
+let global_page_variables = {
     globalcss: load_var("./css/global.css"),
     httppostjs: load_var("./js/httppost.js"),
     navbar: load_var("./extra_modules/navbar.html"),
     markdownjs: load_var("./js/markdown.js"),
     htmlescapejs: load_var("./js/htmlescape.js"),
     warnmessagejs: load_var("./js/warn_message.js"),
-    loadfile: load_var
+    loadfile: load_var,
+    getChannels: get_channels
 }
 
 router.get("/*", async function(request, response) {
@@ -892,7 +902,10 @@ router.get("/*", async function(request, response) {
     }
 
     if(path != "") {
-        ejs.renderFile(path,global_page_variables,async function(err,str){
+        global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
+        ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
+            str = await str
+            err = await err
             if(err) {
                 console.log(1,err)
                 response.status(500)

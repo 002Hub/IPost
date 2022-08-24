@@ -13,6 +13,10 @@
     <script type="text/javascript"><%- htmlescapejs %></script>
     <script type="text/javascript"><%- markdownjs %></script>
     <script type="text/javascript"><%- warnmessagejs %></script>
+    <script type="text/javascript">let channels = <%- JSON.stringify(await getChannels()) %></script>
+    <script type="text/javascript">let user = <%- JSON.stringify(user) %></script>
+    
+    
   </head>
   <body>
     <%- navbar %>

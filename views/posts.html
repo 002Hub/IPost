@@ -6,14 +6,16 @@
     <style>
       <%- globalcss %>
     </style>
-    <link href="/css/posts.css" rel="preload" as="style" onload="this.rel='stylesheet'">
+    <style>
+      <%- loadfile("./css/posts.css") %>
+    </style>
     <script type="text/javascript"><%- httppostjs %></script>
     <script type="text/javascript"><%- htmlescapejs %></script>
-    <script type="text/javascript"><%- addnavbar %></script>
     <script type="text/javascript"><%- markdownjs %></script>
     <script type="text/javascript"><%- warnmessagejs %></script>
   </head>
   <body>
+    <%- navbar %>
     <div id="loading" class="status">
       <h1>Loading...</h1>
       Please allow us up to 5 seconds to load in your requested content. <br>
@@ -33,12 +35,9 @@
         <br>
         <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
       </div>
-      <div class="channelTab" id="channelTab">
-        <!-- <p class="channel">- Channel Name -</p> -->
-
-      </div>
+      <div class="channelTab" id="channelTab"></div>
       <div class="posts" id="posts"></div>
     </div>
-    <script type="text/javascript" src="/js/posts.js" async></script>
+    <script><%- loadfile("./js/posts.js") %></script>
   </body>
 </html>

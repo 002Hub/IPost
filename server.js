@@ -937,7 +937,12 @@ router.get("/*", async function(request, response) {
         return
     }
 
-    response.status(404).send("No file with that name found");
+    console.log(5,"no file found",originalUrl);
+    try {
+        response.status(404).send("No file with that name found");
+    } catch(err) {
+        console.error(err)
+    }
 });
 
 router.post("/register", async function (req, res) {

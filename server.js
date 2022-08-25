@@ -932,6 +932,11 @@ router.get("/*", async function(request, response) {
         return;
     }
 
+    if(originalUrl == "/favicon.ico") {
+        response.sendFile(dir + "/views/favicon.ico")
+        return
+    }
+
     response.status(404).send("No file with that name found");
 });
 

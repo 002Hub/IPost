@@ -11,7 +11,10 @@ export const setup = function (router, con, server) {
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
             unsigned = unsign.getunsigned(req, res);
-            if (!unsigned)next()
+            if (!unsigned){
+                next()
+                return
+            }
         }
         else {
             unsigned = `${req.body.user} ${SHA.SHA256(req.body.pass, req.body.user, HASHES_COOKIE)}`;

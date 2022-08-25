@@ -855,6 +855,7 @@ function load_var(fina) {
 
 import {minify as min_js} from "uglify-js"
 import Clean from 'clean-css';
+import Minifier from 'html-minifier-terser';
 
 function get_channels(){
     return new Promise(function(resolve, reject) {
@@ -898,12 +899,8 @@ router.get("/*", async function(request, response) {
         path = dir + "views" + originalUrl + ".html"
         //return response.sendFile(dir + "views" + originalUrl + ".html");
     }
-    if (existsSync(dir + "views" + originalUrl)) {
-        path = dir + "views" + originalUrl
-        //return response.sendFile(dir + "views" + originalUrl);
-    }
 
-    if(path != "") {
+    if(path != "" && originalUrl != "/favicon.ico") {
         global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
         ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
             str = await str
@@ -914,6 +911,21 @@ router.get("/*", async function(request, response) {
                 response.send("error")
                 //TODO: make error page
                 return
+            }
+            try {
+                str = await Minifier.minify(str,{
+                    removeComments: true,
+                    removeCommentsFromCDATA: true,
+                    removeCDATASectionsFromCDATA: true,
+                    collapseWhitespace: true,
+                    collapseBooleanAttributes: true,
+                    removeAttributeQuotes: true,
+                    removeRedundantAttributes: true,
+                    useShortDoctype: true,
+                    removeEmptyAttributes: true
+                })
+            } catch(ignored){
+                console.log(2,"error minifying",originalUrl);
             }
             response.send(str)
         })

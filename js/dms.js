@@ -35,7 +35,7 @@ socket.addEventListener("message", async function (event) {
     }
   }
 })
-var posting_id = undefined;
+
 var cd = true //inversed "cooldown"
 
 let encryption_keys = ""
@@ -57,7 +57,7 @@ function set_keys(s_key) {
   main()
 }
 
-async function postMessage() {
+async function postMessage(elem) {
   let len = document.getElementById("post-text").value.length
   if(len >= 1001) {
     alert(`Your message cant contain more than 1000 characters! (${len})`)
@@ -106,8 +106,6 @@ async function update_pid() {
   posting_id = r.pid
   console.log("Updated pid",posting_id)
 }
-
-document.getElementById("post-btn").addEventListener("click",postMessage)
 
 function spacerTextNode() {
   return document.createTextNode(" | ")

@@ -16,6 +16,7 @@
     <script><%- loadfile("./js/extend_key.js") %></script>
     <script type="text/javascript" src="/api/dms/encrypt.js"></script>
     <script type="text/javascript">let user = <%- JSON.stringify(user) %></script>
+    <script type="text/javascript">var posting_id = "<%- getDMPID() %>"</script>
   </head>
   <body>
     <%- navbar %>
@@ -36,7 +37,7 @@
         <span id="reply" style="display:none;" class="noselect">Replying to: <b id="reply_username"></b>&nbsp;&nbsp;&nbsp;<small id="reply_text"></small> <button onclick="unreply()" style="color:red">X</button></span> <br>
         <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
         <br>
-        <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
+        <button type="button" name="button" id="post-btn" onclick="postMessage(this)">Post</button>
       </div>
       <div class="channelTab">
         <input type="text" name="Username_input" id="Username_input" placeholder="Username" class="channel" style="font-size: 16px;" onkeypress="clickPress(event)"> <br>

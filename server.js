@@ -431,9 +431,9 @@ var commonfunctions = {
 optionssetup(router, con, commonfunctions);
 allsetup(router, con, commonfunctions);
 settingshandlersetup(router, con, commonfunctions);
-postsetup(router, con, commonfunctions);
+const get_pid = postsetup(router, con, commonfunctions);
 dmsPersonalMessagessetup(router, con, commonfunctions);
-dmspostsetup(router, con, commonfunctions);
+const get_dmpid = dmspostsetup(router, con, commonfunctions);
 // const toLoad = [
 //   "api/options.js",
 //   "api/all.js",
@@ -874,7 +874,9 @@ let global_page_variables = {
     htmlescapejs: load_var("./js/htmlescape.js"),
     warnmessagejs: load_var("./js/warn_message.js"),
     loadfile: load_var,
-    getChannels: get_channels
+    getChannels: get_channels,
+    getPID: get_pid,
+    getDMPID: get_dmpid
 }
 
 router.get("/*", async function(request, response) {

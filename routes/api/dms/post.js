@@ -1,18 +1,24 @@
 import xor from "../../../extra_modules/xor.js";
 export const setup = function (router, con, server) {
     const PIDS = {}; //[pid]: true/"already_used"
-    router.get("/api/dms/pid", async function (req, res) {
-        res.set("Access-Control-Allow-Origin", "*");
+
+    function createPID(){
         let pid = server.genstring(10); //collision chance is low enough, but we'll check anyways
         while (PIDS[pid] != undefined) {
             pid = server.genstring(10);
             console.log(5, "pid collision");
         }
         PIDS[pid] = true;
-        setTimeout(function () {
+        setTimeout(function() {
             PIDS[pid] = undefined;
         }, 40000);
-        res.json({ "pid": pid });
+        return pid
+    }
+
+
+    router.get("/api/dms/pid", async function (req, res) {
+        res.set("Access-Control-Allow-Origin", "*");
+        res.json({ "pid": createPID() });
     });
     router.post("/api/dms/post", async function (req, res) {
         if (!req.body.message) {
@@ -90,6 +96,7 @@ export const setup = function (router, con, server) {
             console.log(5, `posted new dm by ${res.locals.username} to ${otherperson} : ${xor(encodeURIComponent(res.locals.username), otherperson)}`);
         });
     });
+    return createPID
 };
 export default {
     setup

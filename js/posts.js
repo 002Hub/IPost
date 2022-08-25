@@ -35,7 +35,7 @@ socket.addEventListener("message", async function (event) {
     }
   }
 })
-var posting_id = undefined;
+
 var cd = true //inversed "cooldown"
 
 async function postMessage() {
@@ -79,8 +79,6 @@ async function update_pid() {
   posting_id = r.pid
   console.log("Updated pid",posting_id)
 }
-
-document.getElementById("post-btn").addEventListener("click",postMessage)
 
 function spacerTextNode() {
   return document.createTextNode(" | ")

@@ -5,19 +5,17 @@
     <title>Posts</title>
     <style>
       <%- globalcss %>
-    </style>
-    <style>
       <%- loadfile("./css/posts.css") %>
     </style>
-    <script type="text/javascript"><%- httppostjs %></script>
-    <script type="text/javascript"><%- htmlescapejs %></script>
-    <script type="text/javascript"><%- markdownjs %></script>
-    <script type="text/javascript"><%- warnmessagejs %></script>
-    <script type="text/javascript">let channels = <%- JSON.stringify(await getChannels()) %></script>
-    <script type="text/javascript">let user = <%- JSON.stringify(user) %></script>
-    <script type="text/javascript">var posting_id = "<%- getPID() %>"</script>
-    
-    
+    <script type="text/javascript">
+      <%- httppostjs %>
+      <%- htmlescapejs %>
+      <%- markdownjs %>
+      <%- warnmessagejs %>
+      let channels = <%- JSON.stringify(await getChannels()) %>
+      let user = <%- JSON.stringify(user) %>
+      var posting_id = "<%- getPID() %>"
+    </script>
   </head>
   <body>
     <%- navbar %>

@@ -1,53 +1,63 @@
+const urlregex = /(([a-z]+:\/\/)(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|app|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga|xxx|to))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
 function urlify(text) {
-  let textregex = /(([a-z]+:\/\/)(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|app|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga|xxx|to))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
-  return text.replace(textregex,'<a href="$1" target="_blank" class="insertedlink">$1</a> ')
+  return text.replace(urlregex,'<a href="$1" target="_blank" class="insertedlink">$1</a> ')
 }
 
+const newlregex = /(\n)/gi
 function newlineify(text) {
-  let textregex = /(\n)/gi
-  return text.replace(textregex,' <br>')
+  return text.replace(newlregex,' <br>')
 }
 
+const crossregex = /~([^~]*)~/gi
 function crossout(text) {
-  let textregex = /~([^~]*)~/gi
-  return text.replace(textregex,'<span class="crossout">$1</span>')
+  return text.replace(crossregex,'<span class="crossout">$1</span>')
 }
 
+const italicregex = /\*([^\*]*)\*/gi
 function italicify(text) {
-  let textregex = /\*([^\*]*)\*/gi
-  return text.replace(textregex,'<i>$1</i> ')
+  return text.replace(italicregex,'<i>$1</i> ')
 }
 
+const boldregex = /\*\*([^\*]*)\*\*/gi
 function boldify(text) {
-  let textregex = /\*\*([^\*]*)\*\*/gi
-  return text.replace(textregex,'<b>$1</b> ')
+  return text.replace(boldregex,'<b>$1</b> ')
 }
 
+const mentionregex = /@([^\s]*)/gi
 function filterMentions(text) {
-  let textregex = /(@[^\s]*)/gi //if you find an "@" select everything until you find a whitespace (and save as $1)
-  return text.replace(textregex,`<span><a href="/users/$1" class="mention">$1</a></span> `)
+  return text.replace(mentionregex,`<span><a href="/users/$1" class="mention">$1</a></span> `)
 }
-function filterReplies(text) {
-  let textregex = /_@_([^\s]*)/gi
-  return text.replace(textregex,`<span><a href="/users/$1" class="reply" style="color: pink;">$1</a></span> `)
-}
+
+const allregex = /(```([^```]*)```)|(\n)|(~([^~]*)~)|(\*\*([^\*]*)\*\*)|(\*([^\*]*)\*)|(@[^\s]*)/gi
+
+const cdblregex = /```([^```]*)```/gi
 
 /**
  * filter out html, as well as render some markdown into html
  * @param  {string} text               text to filter/format
  * @return {string}      html that represents the filtered text
  */
-function filterPost(text) {
-  text = htmlesc(text)
-  text = newlineify(text)
-  text = urlify(text)
-  //text = filterReplies(text)
-  text = filterMentions(text)
-  text = crossout(text)
-  text = boldify(text)
-  text = italicify(text)
+function filterPost(text){
+  let result = htmlesc(text).replace(allregex, function (match) {
+    let out = match
+    if(cdblregex.test(match)) {
+      let paddlen = 3
+      out = out.substring(paddlen,out.length-paddlen).trim()+"\n"
+      return `<pre><code>${out}</code></pre>`
+    }
 
-  return text
+    out = newlineify(out)
+    out = urlify(out)
+    out = filterMentions(out)
+    out = crossout(out)
+    out = boldify(out)
+    out = italicify(out)
+
+    return out
+    
+  });
+
+  return result
 }
 
 /**

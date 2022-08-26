@@ -63,6 +63,7 @@ button {
 }
 
 .post,.self,.status {
+  padding: 1%;
   color: var(--text-color);
   width: 50%;
   margin-left: 25%;
@@ -78,6 +79,7 @@ button {
   overflow-wrap: break-word;
   overflow: hidden;
   background-color: var(--bg-color);
+  padding: 1%;
 }
 
 #post-text, button {

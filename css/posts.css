@@ -74,6 +74,11 @@ button {
   overflow: hidden;
 }
 
+.ovfl-bw {
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
 #post-text, button {
   color: var(--text-color);
   border-radius: 5px;

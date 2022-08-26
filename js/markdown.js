@@ -43,7 +43,8 @@ function filterPost(text){
     if(cdblregex.test(match)) {
       let paddlen = 3
       out = out.substring(paddlen,out.length-paddlen).trim()+"\n"
-      return `<pre><code>${out}</code></pre>`
+      out = newlineify(out)
+      return `<code class="ovfl-bw">${out}</code>`
     }
 
     out = newlineify(out)

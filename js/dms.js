@@ -270,13 +270,15 @@ async function main(){
     user = await (await fetch("/api/getuser")).json()
     username = user.username
     if(!username){
+      user = undefined
       document.getElementById("noaccount").style=""
       document.getElementById("loading").style="display:none;"
       console.log("no account");
       return;
     }
-    document.getElementById("username-self").innerText = username
   }
+  username = user.username
+  document.getElementById("username-self").innerText = username
 
   let all_posts = await (await fetch(`/api/getPersonalPosts?otherperson=${currentChannel}`)).json()
   if(!all_posts){

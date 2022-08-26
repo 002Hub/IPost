@@ -44,7 +44,7 @@ function filterPost(text){
       let paddlen = 3
       out = out.substring(paddlen,out.length-paddlen).trim()+"\n"
       out = newlineify(out)
-      return `<code class="ovfl-bw">${out}</code>`
+      return `<div class="ovfl-bw"><code>${out}</code></div>`
     }
 
     out = newlineify(out)

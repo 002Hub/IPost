@@ -927,7 +927,12 @@ router.get("/*", async function(request, response) {
             } catch(ignored){
                 console.log(2,"error minifying",originalUrl);
             }
-            response.send(str)
+
+            try {
+                response.send(str)
+            } catch(err) {
+                console.error(err)
+            }
         })
         return;
     }

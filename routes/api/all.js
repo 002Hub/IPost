@@ -10,7 +10,11 @@ export const setup = function (router, con, server) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
-            unsigned = unsign.getunsigned(req, res);
+            if(!req.cookies.AUTH_COOKIE) {
+                next()
+                return
+            }
+            unsigned = unsign.unsign(req.cookies.AUTH_COOKIE, req, res);
             if (!unsigned){
                 next()
                 return

@@ -793,7 +793,7 @@ router.get("/images/*", (request, response) => {
     }
     else if(existsSync(__dirname + request.originalUrl.toLowerCase())){
         response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
-        response.sendFile(__dirname + request.originalUrl);
+        response.sendFile(__dirname + request.originalUrl.toLowerCase());
     }
     else {
         response.status(404).send("no file with that name found");
@@ -925,6 +925,7 @@ router.get("/*", async function(request, response) {
     }
 
     if(originalUrl == "/favicon.ico") {
+        response.set('Cache-Control', 'public, max-age=2592000');
         response.sendFile(dir + "/views/favicon.ico")
         return
     }

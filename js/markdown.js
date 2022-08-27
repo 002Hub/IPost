@@ -30,7 +30,13 @@ function filterMentions(text) {
 
 const emojiregex = /:([^:\s]*):/gi
 function emojify(text) {
-  return text.replace(emojiregex,"<img class='emoji' src='/images/emoji/$1.png' alt='$1' width=20 height=20/>")
+  return text.replace(emojiregex,"<img class='emoji' src='/images/emoji/$1.png' alt='$1' width=20 height=20/> title=':$1:'")
+}
+
+function unemojify(text){
+  text = text.replace(/\u{1F5FF}/gu,":moyai:")
+  text = text.replace(/\u{1F440}/gu,":eyes:")
+  return text
 }
 
 const allregex = /(```([^```]*)```)|(\n)|(~([^~]*)~)|(\*\*([^\*]*)\*\*)|(\*([^\*]*)\*)|(@[^\s]*)|(:([^:\s]*):)/gi
@@ -43,6 +49,7 @@ const cdblregex = /```([^```]*)```/gi
  * @return {string}      html that represents the filtered text
  */
 function filterPost(text){
+  text = unemojify(text)
   let result = htmlesc(text).replace(allregex, function (match) {
     let out = match
     if(cdblregex.test(match)) {
@@ -51,7 +58,6 @@ function filterPost(text){
       out = newlineify(out)
       return `<div class="ovfl-bw"><code>${out}</code></div>`
     }
-
     out = newlineify(out)
     out = urlify(out)
     out = emojify(out)

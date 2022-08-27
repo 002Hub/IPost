@@ -30,7 +30,7 @@ function filterMentions(text) {
 
 const emojiregex = /:([^:\s]*):/gi
 function emojify(text) {
-  return text.replace(emojiregex,"<img class='emoji' src='/images/emoji/$1.png' alt='$1' title=':$1:' width=20 height=20/>")
+  return text.replace(emojiregex,"<img class='emoji' src='/images/emoji/$1.png' alt='$1' title=':$1:' height=20/>")
 }
 
 function unemojify(text){

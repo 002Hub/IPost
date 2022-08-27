@@ -791,6 +791,10 @@ router.get("/images/*", (request, response) => {
         response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
         response.sendFile(__dirname + request.originalUrl);
     }
+    else if(existsSync(__dirname + request.originalUrl.toLowerCase())){
+        response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
+        response.sendFile(__dirname + request.originalUrl);
+    }
     else {
         response.status(404).send("no file with that name found");
     }

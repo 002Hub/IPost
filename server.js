@@ -433,23 +433,7 @@ settingshandlersetup(router, con, commonfunctions);
 const get_pid = postsetup(router, con, commonfunctions);
 dmsPersonalMessagessetup(router, con, commonfunctions);
 const get_dmpid = dmspostsetup(router, con, commonfunctions);
-// const toLoad = [
-//   "api/options.js",
-//   "api/all.js",
-//   "api/settingshandler.js",
-//   "api/post.js",
-//   "api/dms/PersonalMessages.js",
-//   "api/dms/post.js",
-// ]
-// for (let i = 0; i < toLoad.length; i++) {
-//   require("./routes/"+toLoad[i]).setup(router,con,commonfunctions)
-// }
-// let options = require("./routes/api/options.js")
-// options.setup(router,con,commonfunctions)
-// let apiALL = require("./routes/api/all.js")
-// apiALL.setup(router,con,commonfunctions)
-// let settingshandler = require("./routes/api/settingshandler.js")
-// settingshandler.setup(router,con,commonfunctions)
+
 router.get("/api/search", async function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     let type = req.query.type;

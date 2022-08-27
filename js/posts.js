@@ -20,7 +20,7 @@ socket.addEventListener("message", async function (event) {
     let message = ds.message
     let item = ds.data
     let username = decodeURIComponent(item.post_user_name)
-    if(message == "new_post") {
+    if(message == "new_post" && decodeURIComponent(item.post_receiver_name) == currentChannel) {
       await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
       if(user["username"]!=username)mainNoti(username)
 
@@ -49,7 +49,21 @@ async function postMessage() {
     setTimeout(function(){
       cd = true
     },400)
-    let r = await post("/api/post",{"message":document.getElementById("post-text").value,"reply_id":reply_id,"receiver":currentChannel,"pid": posting_id})
+    let formdata = new FormData()
+
+    formdata.append("message",document.getElementById("post-text").value)
+    formdata.append("reply_id",reply_id)
+    formdata.append("receiver",currentChannel)
+    formdata.append("pid",posting_id)
+    for(let i in files) {
+      console.log("processed file",files[i].name);
+      formdata.append("file_"+i,files[i])
+    }
+    files = []
+
+    let r = await fetch("/api/post", {
+      method: "POST", body: formdata
+    });
     posting_id = undefined
     update_pid()
     if(window.location.href.split("?mention=")[1])location.replace('/posts');
@@ -362,6 +376,43 @@ async function loadChannels() {
       }
     })
     tab.appendChild(channelp)
+  }
+}
+
+var files = []
+
+function addFile(file) {
+  if(file.size > 100000) {
+    console.log("file is too big: ", file.name, file.type, file.size);
+    return;
+  }
+  if(files.length >= 5) {
+    console.log("too many files already: ", files);
+    return;
+  }
+  files[files.length]=file
+  console.log("File added: ", file.name, file.type, file.size);
+}
+
+function dropHandler(ev) {
+  console.log("file dropped");
+
+  ev.preventDefault();
+
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    [...ev.dataTransfer.items].forEach((item, i) => {
+      // If dropped items aren't files, reject them
+      if (item.kind === 'file') {
+        const file = item.getAsFile();
+        addFile(file)
+      }
+    });
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    [...ev.dataTransfer.files].forEach((file, i) => {
+      addFile(file)
+    });
   }
 }
 

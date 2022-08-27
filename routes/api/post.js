@@ -43,7 +43,14 @@ export const setup = function (router, con, server) {
         else {
             reply_id = req.body.reply_id;
         }
-        if ((typeof req.body.reply_id) != "number") {
+        if(typeof reply_id == "string") {
+            reply_id = parseInt(reply_id)
+            if(isNaN(reply_id)) {
+                res.json({ "error": "no valid reply id given" });
+                return;
+            }
+        }
+        if ((typeof reply_id) != "number") {
             res.json({ "error": "no valid reply id given" });
             return;
         }
@@ -82,11 +89,8 @@ export const setup = function (router, con, server) {
                 data: post_obj
             };
             let messagestr = JSON.stringify(message);
-            let channel = decodeURIComponent(req.body.receiver);
             server.wss.clients.forEach(async function (ws) {
-                if (ws.channel == channel) {
-                    ws.send(messagestr);
-                }
+                ws.send(messagestr);
             });
             res.json({ "success": "successfully posted message" });
             console.log(5, `posted new message by ${res.locals.username} : ${req.body.message}`);

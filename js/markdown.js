@@ -28,7 +28,12 @@ function filterMentions(text) {
   return text.replace(mentionregex,`<span><a href="/users/$1" class="mention">$1</a></span> `)
 }
 
-const allregex = /(```([^```]*)```)|(\n)|(~([^~]*)~)|(\*\*([^\*]*)\*\*)|(\*([^\*]*)\*)|(@[^\s]*)/gi
+const emojiregex = /:([^:\s]*):/gi
+function emojify(text) {
+  return text.replace(emojiregex,"<img class='emoji' src='/images/emoji/$1.png' alt='$1' width=20 height=20/>")
+}
+
+const allregex = /(```([^```]*)```)|(\n)|(~([^~]*)~)|(\*\*([^\*]*)\*\*)|(\*([^\*]*)\*)|(@[^\s]*)|(:([^:\s]*):)/gi
 
 const cdblregex = /```([^```]*)```/gi
 
@@ -49,6 +54,7 @@ function filterPost(text){
 
     out = newlineify(out)
     out = urlify(out)
+    out = emojify(out)
     out = filterMentions(out)
     out = crossout(out)
     out = boldify(out)

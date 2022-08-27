@@ -12,9 +12,7 @@
       <%- htmlescapejs %>
       <%- markdownjs %>
       <%- warnmessagejs %>
-      let channels = <%- JSON.stringify(await getChannels()) %>
-      let user = <%- JSON.stringify(user) %>
-      var posting_id = "<%- getPID() %>"
+      let channels = <%- JSON.stringify(await getChannels()) %>,user = <%- JSON.stringify(user) %>,posting_id = "<%- getPID() %>"
     </script>
   </head>
   <body>
@@ -30,7 +28,7 @@
       To log in, please visit <a href="/login">The login page</a> <br>
       If you are new to here, please visit <a href="/register">The register page</a> <br>
     </div>
-    <div id="scriptonly" style="display:none;">
+    <div id="scriptonly" style="display:none;" ondrop="dropHandler(event)">
       <div class="self">
         Username: <span class="Username" id="username-self"></span> <br>
         <span id="reply" style="display:none;" class="noselect">Replying to: <b id="reply_username"></b>&nbsp;&nbsp;&nbsp;<small id="reply_text"></small> <button onclick="unreply()" style="color:red">X</button></span> <br>

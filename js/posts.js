@@ -135,7 +135,7 @@ async function reply_link_clicked(reply_channel,reply_id) {
   }
 }
 
-async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top) {
+async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top,avatar_src) {
   if(!specialtext)specialtext=""
   const newDiv = createElement("div");
   const newP = createElement("p");
@@ -173,7 +173,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   avatar.height=25;
   avatar.classList.add("avatar")
 
-  avatar.src = await getavatar(username)
+  avatar.src = avatar_src || await getavatar(username)
 
   newA.appendChild(avatar)
   newA.appendChild(newUsername)
@@ -265,7 +265,7 @@ async function main(){
   highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false)
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,item.User_Avatar)
   }
 
   let links = document.getElementsByClassName("insertedlink")

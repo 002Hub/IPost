@@ -1008,7 +1008,7 @@ router.post("/register", async function (req, res) {
         ip = SHA.SHA256(ip, setTo, HASHES_DB);
         const default_settings = {};
         let values = [encodeURIComponent(username), hashed_pw, Date.now(), ip, ip, JSON.stringify(default_settings)];
-        let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_Settings) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
+        let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_Settings) VALUES (?, ?, ?, ?, ?, ?);`;
         con.query(sql, values, function (err, result) {
             if (err)
                 throw err;

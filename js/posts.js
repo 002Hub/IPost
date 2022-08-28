@@ -206,7 +206,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyAvatar.width=10;
       replyAvatar.height=10;
       replyAvatar.classList.add("avatar")
-      replyAvatar.src = reply_obj.User_Avatar || await getavatar(reply_username)
+      replyAvatar.src = "/avatars/"+reply_obj.User_Avatar
 
       replyA.appendChild(replyAvatar)
       replyA.appendChild(reply_username_text)
@@ -265,7 +265,7 @@ async function main(){
   highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,item.User_Avatar)
+    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,"/avatars/"+item.User_Avatar)
   }
 
   let links = document.getElementsByClassName("insertedlink")

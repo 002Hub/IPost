@@ -206,7 +206,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyAvatar.width=10;
       replyAvatar.height=10;
       replyAvatar.classList.add("avatar")
-      replyAvatar.src = await getavatar(reply_username)
+      replyAvatar.src = reply_obj.User_Avatar || await getavatar(reply_username)
 
       replyA.appendChild(replyAvatar)
       replyA.appendChild(reply_username_text)

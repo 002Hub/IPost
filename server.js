@@ -545,7 +545,7 @@ router.get("/api/getalluserinformation", async function (req, res) {
 router.get("/api/getotheruser", async function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let username = req.query.user;
-    let sql = `select User_Name,User_Bio,User_Avatar,User_PublicKey from ipost.users where User_Name=?;`;
+    let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name=?;`;
     con.query(sql, [username], function (err, result) {
         if (err)
             throw err;
@@ -602,7 +602,7 @@ router.get("/api/getPostsLowerThan", async function (req, res) {
 router.get("/api/getPost", async function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let arg = req.query.id;
-    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,post_receiver_name from ipost.posts where post_id=?;`;
+    let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,post_receiver_name,User_Avatar from ipost.posts inner join ipost.users on (User_Name = post_user_name) where post_id=?;`;
     con.query(sql, [arg], function (err, result) {
         if (err)
             throw err;

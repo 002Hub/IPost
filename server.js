@@ -7,11 +7,11 @@ import cookieParser from "cookie-parser";
 import * as signature from "cookie-signature";
 import * as mysql from "mysql";
 import * as ws from "ws";
-import Jimp from "jimp";
+import sharp from "sharp"
 import SHA from "./extra_modules/SHA.js";
 import getIP from "./extra_modules/getip.js";
 import unsign from "./extra_modules/unsign.js";
-import { readFileSync, mkdir, existsSync, appendFile, unlinkSync } from "fs";
+import { readFileSync, mkdir, existsSync, appendFile, unlinkSync, writeFileSync } from "fs";
 import { format } from "util";
 import { setup as optionssetup } from "./routes/api/options.js";
 import { setup as allsetup } from "./routes/api/all.js";
@@ -499,23 +499,16 @@ router.post("/api/setavatar", function (req, res) {
             original_log("already have file: ", filename);
             filename = genstring(96) + ".png";
         }
-        avatar.mv(avatars + "temp_" + filename, function (err) {
-            if (err) {
-                return res.status(500).json({ "error": "there's been an internal server error." });
-            }
-            Jimp.read(avatars + "temp_" + filename).then(function (image) {
-                image.resize(100, 100);
-                image.write(avatars + filename);
-                let sql = `update ipost.users set User_Avatar=? where User_Name=?`;
-                con.query(sql, [filename, encodeURIComponent(res.locals.username)], function (err, result) {
-                    if (err)
-                        throw err;
-                    res.json({ "success": "updated avatar" });
-                    unlinkSync(avatars + "temp_" + filename);
-                });
+        sharp(avatar.data).resize(100,100).toBuffer().then(function(data){
+            writeFileSync(avatars + filename,data)
+            let sql = `update ipost.users set User_Avatar=? where User_Name=?`;
+            con.query(sql, [filename, encodeURIComponent(res.locals.username)], function (err, result) {
+                if (err)
+                    throw err;
+                res.json({ "success": "updated avatar" });
             });
-        });
-    });
+        })
+    });         
 });
 router.get("/api/getuser", async function (req, res) {
     res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar });

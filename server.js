@@ -849,7 +849,15 @@ function get_channels(){
         let sql = `select post_receiver_name from ipost.posts where post_is_private = '0' group by post_receiver_name;`;
         con.query(sql, [], function (err, result) {
             if (err)reject(err)
-            resolve(result)
+
+            let out = []
+
+            for(let channel of result){
+                if(channel.post_receiver_name == "")continue;
+                out[out.length] = channel.post_receiver_name
+            }
+
+            resolve(out)
         });
     })
 }

@@ -329,7 +329,7 @@ async function loadChannels() {
   let tab = getById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-    let channelname = decURIComp(channels[i].post_receiver_name)
+    let channelname = decURIComp(channels[i])
     if(channelname == "")continue;
     let channelp = createElement("p")
     channelp.classList.add("channel")

@@ -1,16 +1,14 @@
-let username
+let username,reply_id=0,highest_id,currentChannel = sessionStorage.getItem("lastchannel") || "everyone"
 
-const wss_server = "wss://ipost.tk"
-const wss_port = "443"
-const wss_URI = wss_server + ":" + wss_port
-
-var reply_id = 0
-
-var highest_id
-
-var currentChannel = sessionStorage.getItem("lastchannel") || "everyone"
+const 
+wss_server = "wss://ipost.tk",
+wss_port = "443",
+wss_URI = wss_server + ":" + wss_port,
+decURIComp = decodeURIComponent
 
 function createElement(s){return document.createElement(s)}
+function getById(i){return document.getElementById(i)}
+
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
@@ -19,14 +17,14 @@ socket.addEventListener("message", async function (event) {
     let ds = JSON.parse(data)
     let message = ds.message
     let item = ds.data
-    let username = decodeURIComponent(item.post_user_name)
-    if(message == "new_post" && decodeURIComponent(item.post_receiver_name) == currentChannel) {
-      await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
+    let username = decURIComp(item.post_user_name)
+    if(message == "new_post" && decURIComp(item.post_receiver_name) == currentChannel) {
+      await createPost(username,decURIComp(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
       if(user["username"]!=username)mainNoti(username)
 
       let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
       for (let i = 0; i < highest_known_posts.length; i++) {
-        if(document.getElementById(highest_known_posts[i].post_id) == undefined) {
+        if(getById(highest_known_posts[i].post_id) == undefined) {
           main()
           return;
         }
@@ -39,9 +37,14 @@ socket.addEventListener("message", async function (event) {
 var cd = true //inversed "cooldown"
 
 async function postMessage() {
-  let len = document.getElementById("post-text").value.length
-  if(len >= 1001) {
+  let msg = getById("post-text").value
+  let len = msg.length
+  if(len > 1000) {
     alert(`Your message cant contain more than 1000 characters! (${len})`)
+    return
+  }
+  if(encodeURIComponent(msg).length > 3000) {
+    alert("Your message is too long! (Too many special characters)")
     return
   }
   if(cd && posting_id!=undefined) {
@@ -51,23 +54,21 @@ async function postMessage() {
     },400)
     let formdata = new FormData()
 
-    formdata.append("message",document.getElementById("post-text").value)
+    formdata.append("message",msg)
     formdata.append("reply_id",reply_id)
     formdata.append("receiver",currentChannel)
     formdata.append("pid",posting_id)
     for(let i in files) {
-      console.log("processed file",files[i].name);
       formdata.append("file_"+i,files[i])
     }
     files = []
 
-    let r = await fetch("/api/post", {
+    fetch("/api/post", {
       method: "POST", body: formdata
     });
     posting_id = undefined
     update_pid()
-    if(window.location.href.split("?mention=")[1])location.replace('/posts');
-    document.getElementById("post-text").value=""
+    getById("post-text").value=""
     unreply()
   } else {
     alert("Please wait a tiny bit before posting again")
@@ -84,11 +85,7 @@ async function update_pid() {
       location.replace("/")
       return
     }
-
-    //possibly more errors coming soon :tm: ?
-
-
-    return
+    throw new Error(r.error)
   }
   posting_id = r.pid
   console.log("Updated pid",posting_id)
@@ -96,21 +93,6 @@ async function update_pid() {
 
 function spacerTextNode() {
   return document.createTextNode(" | ")
-}
-
-const user_cache = {}
-async function getavatar(username) {
-  let user = user_cache[username]
-  if(user == undefined) {
-    user = (await (await fetch("/api/getotheruser?user="+encodeURIComponent(username))).json())["avatar"]
-    if(user) {
-      user = "/avatars/"+user
-    } else {
-      user = "/images/default_avatar.png"
-    }
-    user_cache[username]=user
-  }
-  return user
 }
 
 async function reply_link_clicked(reply_channel,reply_id) {
@@ -121,13 +103,13 @@ async function reply_link_clicked(reply_channel,reply_id) {
     console.log("switched channel")
     await main()
     console.log("loaded new messages")
-    let replied_msg = document.getElementById(reply_id)
+    let replied_msg = getById(reply_id)
     if(replied_msg) {
       console.log("found element")
       replied_msg.scrollIntoView()
     }
   } else {
-    let replied_msg = document.getElementById(reply_id)
+    let replied_msg = getById(reply_id)
     if(replied_msg) {
       console.log("found element")
       replied_msg.scrollIntoView()
@@ -157,13 +139,8 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   boticon.classList.add("boticon")
 
   const newUsername = document.createTextNode(username);
-  let timedate = new Date(time)
-  time = timedate
-  time = time.toString()
-  time = time.split(" ")
-  time = time[0] + " " + time[1] + " " + time[2] + " " + time[3] + " " + time[4]
-  if(timedate=="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time="unknown time"
-  const newTime = document.createTextNode(time)
+
+  const newTime = document.createTextNode(new Date(time).toLocaleTimeString())
   const newSpecialText = document.createTextNode(specialtext)
   newDiv.classList.add("post");
   newSpan3.classList.add("specialtext")
@@ -173,7 +150,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   avatar.height=25;
   avatar.classList.add("avatar")
 
-  avatar.src = avatar_src || await getavatar(username)
+  avatar.src = avatar_src
 
   newA.appendChild(avatar)
   newA.appendChild(newUsername)
@@ -199,9 +176,9 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   if(reply_id != 0) {
     try {
       const reply_obj = await (await fetch(`/api/getPost?id=${reply_id}`)).json()
-      const reply_username = decodeURIComponent(reply_obj.post_user_name)
+      const reply_username = decURIComp(reply_obj.post_user_name)
       const reply_username_text = document.createTextNode(reply_username)
-      const reply_text = decodeURIComponent(reply_obj.post_text)
+      const reply_text = decURIComp(reply_obj.post_text)
       const reply_channel = reply_obj.post_receiver_name
       replyAvatar.width=10;
       replyAvatar.height=10;
@@ -236,7 +213,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
   newDiv.id = postid
-  let posts_div = document.getElementById("posts")
+  let posts_div = getById("posts")
   if(add_on_top) {
     posts_div.insertBefore(newDiv, posts_div.children[0]);
   } else {
@@ -250,22 +227,22 @@ async function main(){
     username = user.username
     if(!username){
       user = undefined
-      document.getElementById("noaccount").style=""
-      document.getElementById("loading").style="display:none;"
+      getById("noaccount").style=""
+      getById("loading").style="display:none;"
       console.log("no account");
       return;
     }
   }
   username = user.username
-  document.getElementById("username-self").innerText = username
+  getById("username-self").innerText = username
 
   let all_posts = await (await fetch(`/api/getPosts?channel=${currentChannel}`)).json()
   if(!all_posts)return;
-  document.getElementById("posts").innerHTML = ""
+  getById("posts").innerHTML = ""
   highest_id = all_posts[0].post_id
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,"/avatars/"+item.User_Avatar)
+    await createPost(decURIComp(item.post_user_name),decURIComp(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,"/avatars/"+item.User_Avatar)
   }
 
   let links = document.getElementsByClassName("insertedlink")
@@ -282,22 +259,22 @@ async function main(){
     }
   }
 
-  document.getElementById("loading").style="display:none;"
-  document.getElementById("scriptonly").style = ""
+  getById("loading").style="display:none;"
+  getById("scriptonly").style = ""
 }
 
 async function reply(postid) {
   let post = await(await fetch("/api/getPost?id="+postid)).json()
   let username = post.post_user_name
   let posttext = post.post_text
-  document.getElementById("reply").style = ""
-  document.getElementById("reply_username").innerText = decodeURIComponent(username)
-  document.getElementById("reply_text").innerHTML = filterPost(decodeURIComponent(posttext))
+  getById("reply").style = ""
+  getById("reply_username").innerText = decURIComp(username)
+  getById("reply_text").innerHTML = filterPost(decURIComp(posttext))
   reply_id = postid
 }
 
 function unreply() {
-  document.getElementById("reply").style = "display:none;"
+  getById("reply").style = "display:none;"
   reply_id = 0
 }
 
@@ -337,7 +314,7 @@ document.addEventListener("visibilitychange", function() {
 });
 
 if(window.location.href.includes("message=")) {
-  document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
+  getById("post-text").innerText = `${decURIComp(window.location.href.split("message=")[1])} `
 }
 
 function switchChannel(channelname) {
@@ -349,10 +326,10 @@ function switchChannel(channelname) {
 async function loadChannels() {
   //        <!-- <p class="channel">- Channel Name -</p> -->
 
-  let tab = document.getElementById("channelTab")
+  let tab = getById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-    let channelname = decodeURIComponent(channels[i].post_receiver_name)
+    let channelname = decURIComp(channels[i].post_receiver_name)
     if(channelname == "")continue;
     let channelp = createElement("p")
     channelp.classList.add("channel")

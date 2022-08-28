@@ -336,11 +336,6 @@ document.addEventListener("visibilitychange", function() {
   }
 });
 
-if(window.location.href.includes("mention=")) { //deprecated, use message instead
-  document.getElementById("post-text").innerText = `@${decodeURIComponent(window.location.href.split("mention=")[1])} `
-}
-//TODO: remove mention
-
 if(window.location.href.includes("message=")) {
   document.getElementById("post-text").innerText = `${decodeURIComponent(window.location.href.split("message=")[1])} `
 }

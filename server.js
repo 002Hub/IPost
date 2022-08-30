@@ -26,6 +26,35 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 
+async function addTextOnImage(text,buf) {
+    try {
+        const width = text.length*30; // 10 pixels per character
+        const height = 30;
+
+        const svgImage = `
+        <svg width="${width}" height="${height}">
+        <style>
+        .title { fill: #001; font-size: 30px; font-weight: bold;}
+        </style>
+        <text x="50%" y="50%" text-anchor="middle" class="title">${text}</text>
+        </svg>
+        `;
+
+        let img = await sharp(buf)
+
+        return await img
+            .composite([
+            {
+                input: Buffer.from(svgImage),
+                top: 70,
+                left: 0,
+            },
+            ]).toBuffer()
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 /**
  * makes sure that a given folder exists, if it doesn't it creates one for you
  * @param  {string}   path               the path of the folder
@@ -434,6 +463,18 @@ const get_pid = postsetup(router, con, commonfunctions);
 dmsPersonalMessagessetup(router, con, commonfunctions);
 const get_dmpid = dmspostsetup(router, con, commonfunctions);
 
+router.get("/api/getFileIcon/*",async function(req,res){
+    let path = req.path.split("/api/getFileIcon/")[1]
+    if(path.length > 4) {
+        res.status(400).json({"error":"file ending is too long"})
+        return;
+    }
+    addTextOnImage(path,await sharp("./images/empty_file.png").toBuffer()).then(buf => {
+        res.set("content-type","image/png")
+        res.send(buf)
+    })
+})
+
 router.get("/api/search", async function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     let type = req.query.type;
@@ -499,7 +540,10 @@ router.post("/api/setavatar", function (req, res) {
             original_log("already have file: ", filename);
             filename = genstring(96) + ".png";
         }
-        sharp(avatar.data).resize(100,100).toBuffer().then(function(data){
+        sharp(avatar.data).resize({
+            width: 100,
+            height: 100
+          }).toBuffer().then(function(data){
             writeFileSync(avatars + filename,data)
             let sql = `update ipost.users set User_Avatar=? where User_Name=?`;
             con.query(sql, [filename, encodeURIComponent(res.locals.username)], function (err, result) {

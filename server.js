@@ -667,7 +667,7 @@ router.post("/api/setBio", async function (req, res) {
         return;
     }
     bio = encodeURIComponent(bio);
-    if (100 < bio.length) {
+    if (bio.length > 100) {
         res.status(400);
         res.json({ "error": "the bio is too long!" });
         return;
@@ -736,7 +736,7 @@ router.post("/api/changeUsername", async function (req, res) {
         res.json({ "error": "incorrect password" });
         return;
     }
-    if (100 < req.body.newUsername.length) {
+    if (req.body.newUsername.length > 100) {
         res.status(400);
         res.json({ "error": "username is too long" });
         return;

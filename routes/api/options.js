@@ -1,5 +1,5 @@
 function allowAllTraffic(router, str, type) {
-    router.options(str, async function (req, res, next) {
+    router.options(str,  function (req, res, next) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         res.set("Access-Control-Allow-Methods", type || "GET");
         res.set("Access-Control-Allow-Headers", "Content-Type");

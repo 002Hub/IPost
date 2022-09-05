@@ -472,7 +472,7 @@ router.get("/api/getFileIcon/*",async function(req,res){
     })
 })
 
-router.get("/api/search", async function (req, res) {
+router.get("/api/search",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     let type = req.query.type;
     let arg = encodeURIComponent(req.query.selector);
@@ -551,10 +551,10 @@ router.post("/api/setavatar", function (req, res) {
         })
     });         
 });
-router.get("/api/getuser", async function (req, res) {
+router.get("/api/getuser",  function (req, res) {
     res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar });
 });
-router.get("/api/getalluserinformation", async function (req, res) {
+router.get("/api/getalluserinformation",  function (req, res) {
     res.set("Access-Control-Allow-Origin", ""); //we don't want that here
     let unsigned = unsign.getunsigned(req, res);
     if (!unsigned)
@@ -576,7 +576,7 @@ router.get("/api/getalluserinformation", async function (req, res) {
         }
     });
 });
-router.get("/api/getotheruser", async function (req, res) {
+router.get("/api/getotheruser",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let username = req.query.user;
     let sql = `select User_Name,User_Bio,User_Avatar from ipost.users where User_Name=?;`;
@@ -591,11 +591,11 @@ router.get("/api/getotheruser", async function (req, res) {
         }
     });
 });
-router.get("/api/getPosts/*", async function (req, res) {
+router.get("/api/getPosts/*",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     res.redirect("/api/getPosts");
 });
-router.get("/api/getPosts", async function (req, res) {
+router.get("/api/getPosts",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     if (req.query.channel != undefined) {
         let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,User_Avatar from ipost.posts inner join ipost.users on (User_Name = post_user_name) where post_receiver_name = ? group by post_id order by post_id desc limit 30;`;
@@ -614,7 +614,7 @@ router.get("/api/getPosts", async function (req, res) {
         });
     }
 });
-router.get("/api/getPostsLowerThan", async function (req, res) {
+router.get("/api/getPostsLowerThan",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     if (req.query.channel != undefined) {
         let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id from ipost.posts where ((post_receiver_name = ?) and (post_id < ?)) group by post_id order by post_id desc limit 30;`;
@@ -633,7 +633,7 @@ router.get("/api/getPostsLowerThan", async function (req, res) {
         });
     }
 });
-router.get("/api/getPost", async function (req, res) {
+router.get("/api/getPost",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let arg = req.query.id;
     let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,post_receiver_name,User_Avatar from ipost.posts inner join ipost.users on (User_Name = post_user_name) where post_id=?;`;
@@ -649,7 +649,7 @@ router.get("/api/getPost", async function (req, res) {
         }
     });
 });
-router.get("/api/getChannels", async function (req, res) {
+router.get("/api/getChannels",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let sql = `select post_receiver_name from ipost.posts where post_is_private = '0' group by post_receiver_name;`;
     con.query(sql, [], function (err, result) {
@@ -658,7 +658,7 @@ router.get("/api/getChannels", async function (req, res) {
         res.json(result);
     });
 });
-router.post("/api/setBio", async function (req, res) {
+router.post("/api/setBio",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     let bio = req.body.Bio;
     if (!bio) {
@@ -679,7 +679,7 @@ router.post("/api/setBio", async function (req, res) {
         res.json({ "success": "updated bio" });
     });
 });
-router.post("/api/changePW", async function (req, res) {
+router.post("/api/changePW",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     if ((typeof req.body.newPW) != "string") {
         res.json({ "error": "incorrect password" });
@@ -724,7 +724,7 @@ router.post("/api/changePW", async function (req, res) {
             res.json({ "error": "timeout" });
     }, 3000);
 });
-router.post("/api/changeUsername", async function (req, res) {
+router.post("/api/changeUsername",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     if ((typeof req.body.newUsername) != "string") {
         res.status(400);
@@ -791,7 +791,7 @@ router.post("/api/changeUsername", async function (req, res) {
 END /API/*
 
 */
-router.get("/users/*", async function (req, res) {
+router.get("/users/*",  function (req, res) {
     if (!increaseUSERCall(req, res))
         return;
     res.sendFile(dir + "views/otheruser.html");
@@ -847,7 +847,7 @@ router.get("/avatars/*", (request, response, next) => {
     }
     response.status(404).send("No avatar with that name found");
 });
-router.get("/logout", async function (req, res) {
+router.get("/logout",  function (req, res) {
     res.cookie("AUTH_COOKIE", "", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
     res.redirect("/");
 });
@@ -910,7 +910,7 @@ let global_page_variables = {
     cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js"></script>`
 }
 
-async function handleUserFiles(request, response, overrideurl) {
+ function handleUserFiles(request, response, overrideurl) {
     if (!increaseUSERCall(request, response))return;
     if(typeof overrideurl != "string")overrideurl = undefined;
 
@@ -1000,7 +1000,7 @@ router.get("/", function (req, res) {
 
 router.get("/*", handleUserFiles);
 
-router.post("/register", async function (req, res) {
+router.post("/register",  function (req, res) {
     for (let i = 0; i < 10; i++) { //don't want people spam registering
         if (!increaseAPICall(req, res))
             return;
@@ -1071,7 +1071,7 @@ router.post("/register", async function (req, res) {
         });
     });
 });
-router.post("/login", async function (req, res) {
+router.post("/login",  function (req, res) {
     if (!increaseAPICall(req, res))
         return;
     if (!increaseAPICall(req, res))

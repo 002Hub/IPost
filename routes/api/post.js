@@ -14,11 +14,11 @@ export const setup = function (router, con, server) {
         return pid
     }
 
-    router.get("/api/pid", async function (req, res) {
+    router.get("/api/pid",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.json({ "pid": createPID() });
     });
-    router.post("/api/post", async function (req, res) {
+    router.post("/api/post",  function (req, res) {
         if (!req.body.message) {
             res.json({ "error": "no message to post" });
             return;
@@ -89,7 +89,7 @@ export const setup = function (router, con, server) {
                 data: post_obj
             };
             let messagestr = JSON.stringify(message);
-            server.wss.clients.forEach(async function (ws) {
+            server.wss.clients.forEach( function (ws) {
                 ws.send(messagestr);
             });
             res.json({ "success": "successfully posted message" });

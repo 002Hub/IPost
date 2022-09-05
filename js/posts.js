@@ -36,7 +36,7 @@ socket.addEventListener("message", async function (event) {
 
 var cd = true //inversed "cooldown"
 
-async function postMessage() {
+ function postMessage() {
   let msg = getById("post-text").value
   let len = msg.length
   if(len > 1000) {
@@ -286,7 +286,7 @@ function unreply() {
 
 var cansendNoti = false
 
-async function askNotiPerms() {
+ function askNotiPerms() {
   return Notification.requestPermission()
 }
 
@@ -329,7 +329,7 @@ function switchChannel(channelname) {
   socket.send(JSON.stringify({"id":"switchChannel","data":channelname}))
 }
 
-async function loadChannels() {
+ function loadChannels() {
   //        <!-- <p class="channel">- Channel Name -</p> -->
 
   let tab = getById("channelTab")

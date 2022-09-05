@@ -7,13 +7,14 @@
       <%- globalcss %>
       <%- loadfile("./css/posts.css") %>
     </style>
-    <script type="text/javascript">
+    <script type="text/javascript" async>
       <%- httppostjs %>
       <%- htmlescapejs %>
       <%- markdownjs %>
       <%- warnmessagejs %>
       let channels = <%- JSON.stringify(await getChannels()) %>,user = <%- JSON.stringify(user) %>,posting_id = "<%- getPID() %>"
     </script>
+    <%- cookiebanner %>
   </head>
   <body>
     <%- navbar %>
@@ -35,10 +36,11 @@
         <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
         <br>
         <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
+        <div class="files" id="filesDiv"></div>
       </div>
       <div class="channelTab" id="channelTab"></div>
       <div class="posts" id="posts"></div>
     </div>
-    <script><%- loadfile("./js/posts.js") %></script>
+    <script async><%- loadfile("./js/posts.js") %></script>
   </body>
 </html>

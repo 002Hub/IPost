@@ -369,6 +369,12 @@ function addFile(file) {
     return;
   }
   files[files.length]=file
+  const fileimg = createElement("img")
+  console.log(file.name,file.name.lastIndexOf("\."),file.name.substring(file.name.lastIndexOf("\.")+1));
+  fileimg.src = "/api/getFileIcon/"+file.name.substring(file.name.lastIndexOf("\.")+1)
+
+  getById("filesDiv").appendChild(fileimg)
+  //filesDiv
   console.log("File added: ", file.name, file.type, file.size);
 }
 

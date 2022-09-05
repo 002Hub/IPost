@@ -11,7 +11,7 @@ import sharp from "sharp"
 import SHA from "./extra_modules/SHA.js";
 import getIP from "./extra_modules/getip.js";
 import unsign from "./extra_modules/unsign.js";
-import { readFileSync, mkdir, existsSync, appendFile, unlinkSync, writeFileSync } from "fs";
+import { readFileSync, mkdir, existsSync, appendFile, unlinkSync, writeFileSync, readFile } from "fs";
 import { format } from "util";
 import { setup as optionssetup } from "./routes/api/options.js";
 import { setup as allsetup } from "./routes/api/all.js";
@@ -28,8 +28,12 @@ const __dirname = dirname(__filename)
 
 async function addTextOnImage(text,buf) {
     try {
-        const width = text.length*30; // 10 pixels per character
-        const height = 30;
+        let img = await sharp(buf)
+
+        const metadata = await img.metadata()
+
+        const width = metadata.width;
+        const height = metadata.height;
 
         const svgImage = `
         <svg width="${width}" height="${height}">
@@ -40,13 +44,11 @@ async function addTextOnImage(text,buf) {
         </svg>
         `;
 
-        let img = await sharp(buf)
-
         return await img
             .composite([
             {
                 input: Buffer.from(svgImage),
-                top: 70,
+                top: 0,
                 left: 0,
             },
             ]).toBuffer()
@@ -435,11 +437,6 @@ app.use("/*", function (req, res, next) {
         return;
     }
     next();
-});
-router.get("/", function (req, res) {
-    if (!increaseUSERCall(req, res))
-        return;
-    res.sendFile(dir + "views/index.html");
 });
 console.log(5, "finished loading user routes, starting with api routes");
 /*
@@ -909,30 +906,34 @@ let global_page_variables = {
     loadfile: load_var,
     getChannels: get_channels,
     getPID: get_pid,
-    getDMPID: get_dmpid
+    getDMPID: get_dmpid,
+    cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js"></script>`
 }
 
-router.get("/*", async function(request, response) {
+async function handleUserFiles(request, response, overrideurl) {
     if (!increaseUSERCall(request, response))return;
-    
-    let originalUrl = request.originalUrl.split("?").shift();
+    if(typeof overrideurl != "string")overrideurl = undefined;
+
+    let originalUrl = overrideurl || request.originalUrl.split("?").shift();
 
     let path = ""
-
-    if (existsSync(dir + "views/" + originalUrl + ".html")) {
-        path = dir + "views/" + originalUrl + ".html"
-        //return response.sendFile(dir + "views/" + originalUrl + ".html");
-    }
     if (existsSync(dir + "views" + originalUrl)) {
         path = dir + "views" + originalUrl
         //return response.sendFile(dir + "views" + originalUrl);
+    }
+    if (existsSync(dir + "views/" + originalUrl + "index.html")) {
+        path = dir + "views/" + originalUrl + "index.html"
+    }
+    if (existsSync(dir + "views/" + originalUrl + ".html")) {
+        path = dir + "views/" + originalUrl + ".html"
+        //return response.sendFile(dir + "views/" + originalUrl + ".html");
     }
     if (existsSync(dir + "views" + originalUrl + ".html")) {
         path = dir + "views" + originalUrl + ".html"
         //return response.sendFile(dir + "views" + originalUrl + ".html");
     }
 
-    if(path != "" && originalUrl != "/favicon.ico") {
+    if(path != "" && originalUrl != "/favicon.ico" && originalUrl != "/api/documentation/") {
         global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
         ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
             str = await str
@@ -975,13 +976,29 @@ router.get("/*", async function(request, response) {
         return
     }
 
+    if(originalUrl == "/api/documentation/") {
+        readFile(path,function(err,res){
+            response.send(res.toString())
+        })
+        return
+    }
+
     console.log(5,"no file found",originalUrl);
     try {
         response.status(404).send("No file with that name found");
     } catch(err) {
         console.error(err)
     }
+}
+
+router.get("/", function (req, res) {
+    // if (!increaseUSERCall(req, res))
+    //     return;
+    handleUserFiles(req,res,"/index")
+    //res.sendFile(dir + "views/index.html");
 });
+
+router.get("/*", handleUserFiles);
 
 router.post("/register", async function (req, res) {
     for (let i = 0; i < 10; i++) { //don't want people spam registering

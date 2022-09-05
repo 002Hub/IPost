@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <link rel="stylesheet" href="/css/logon.css">
-  <link rel="stylesheet" href="/css/global.css">
-  <script src="/js/index.js" charset="utf-8"></script>
-  <script src="/js/addnavbar.js" charset="utf-8"></script>
-  <script src="/js/warn_message.js" charset="utf-8"></script>
+  <style>
+    <%- globalcss %>
+    <%- loadfile("./css/logon.css") %>
+  </style>
+  <script async><%- loadfile("./js/index.js") %></script>
+  <script async>
+    <%- warnmessagejs %>
+  </script>
+  <%- cookiebanner %>
 </head>
 
 <body>
+  <%- navbar %>
     <header>
         <h1 class="noselect">IPost</h1>
     </header>

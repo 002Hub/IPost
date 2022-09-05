@@ -41,7 +41,7 @@ export const setup = function (router, con, server) {
                 res.locals.settings = JSON.parse(result[0].User_Settings);
                 if (res.locals.settings == "null")
                     res.locals.settings = {};
-                if (res.locals.settings == null)
+                if (res.locals.settings === null)
                     res.locals.settings = {};
                 
             }

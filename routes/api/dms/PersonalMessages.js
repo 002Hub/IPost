@@ -1,7 +1,7 @@
 //const web_version = require("unsafe_encrypt").web_version
 import { web_version } from "unsafe_encrypt";
 export const setup = function (router, con, server) {
-    router.get("/api/getPersonalPosts", async function (req, res) {
+    router.get("/api/getPersonalPosts",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "");
         let otherperson = encodeURIComponent(req.query.otherperson || "");
         if (typeof otherperson != "string" || otherperson.length > 100 || otherperson == "") {
@@ -21,7 +21,7 @@ export const setup = function (router, con, server) {
             res.json(result);
         });
     });
-    router.get("/api/dms/conversations", async function (req, res) {
+    router.get("/api/dms/conversations",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         const columns = [
             "dms_user_name", "dms_receiver"
@@ -34,12 +34,12 @@ export const setup = function (router, con, server) {
             res.json(result);
         });
     });
-    router.get("/api/dms/encrypt.js", async function (req, res) {
+    router.get("/api/dms/encrypt.js",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.send(web_version());
     });
     //
-    router.get("/api/dms/getDM", async function (req, res) {
+    router.get("/api/dms/getDM",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         let arg = req.query.id;
         let uriencusername = encodeURIComponent(res.locals.username);

@@ -16,11 +16,11 @@ export const setup = function (router, con, server) {
     }
 
 
-    router.get("/api/dms/pid", async function (req, res) {
+    router.get("/api/dms/pid",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.json({ "pid": createPID() });
     });
-    router.post("/api/dms/post", async function (req, res) {
+    router.post("/api/dms/post",  function (req, res) {
         if (!req.body.message) {
             res.json({ "error": "no message to post" });
             return;

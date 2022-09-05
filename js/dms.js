@@ -340,7 +340,7 @@ function unreply() {
 
 var cansendNoti = false
 
-async function askNotiPerms() {
+ function askNotiPerms() {
   return Notification.requestPermission()
 }
 
@@ -411,7 +411,7 @@ function createChannel(channelname,tab) {
 	channelp.id = channelname
 	let textnode = document.createTextNode(channelname)
 	channelp.appendChild(textnode)
-	channelp.addEventListener("click",async function(){
+	channelp.addEventListener("click", function(){
 		switchChannel(channelname)
 		main()
 		unreply()

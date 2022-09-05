@@ -6,7 +6,7 @@ const HASHES_DB = config.cookies.server_hashes;
 const HASHES_COOKIE = config.cookies.client_hashes;
 const HASHES_DIFF = HASHES_DB - HASHES_COOKIE;
 export const setup = function (router, con, server) {
-    router.use("/*", async function (req, res, next) {
+    router.use("/*",  function (req, res, next) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
@@ -49,7 +49,7 @@ export const setup = function (router, con, server) {
         });
     });
 
-    router.use("/api/*", async function (req, res, next) {
+    router.use("/api/*",  function (req, res, next) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         if (config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
             next();

@@ -1,6 +1,6 @@
 const valuetoText = {
-  ["user"]:"Username",
-  ["post"]:"Post"
+  "user":"Username",
+  "post":"Post"
 }
 
 function changed() {

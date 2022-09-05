@@ -398,7 +398,7 @@ function removeDuplicates(a) {
 	return a.filter(function(item) {
 			let type = typeof item;
 			if(type in prims)
-					return Object.prototype.hasOwnProperty.call(prims.type, item) ? false : (prims[type][item] = true);
+					return Object.prototype.hasOwnProperty.call(prims[type], item) ? false : (prims[type][item] = true);
 			else
 					return objs.indexOf(item) >= 0 ? false : objs.push(item);
 	});

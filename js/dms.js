@@ -379,7 +379,7 @@ function switchChannel(channelname) {
   sessionStorage.setItem("lastdm", channelname);
   currentChannel = channelname
 
-  if(localStorage.getItem(currentChannel+"enc_key")!=null) {
+  if(localStorage.getItem(currentChannel+"enc_key")!==null) {
     encryption_keys = localStorage.getItem(currentChannel+"enc_key")
   } else {
     encryption_keys = ""

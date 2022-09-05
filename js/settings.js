@@ -1,4 +1,4 @@
-async function uploadFile() {
+ function uploadFile() {
   let file = document.getElementById("avatarUpl").files[0];
   console.log(file);
   let formdata = new FormData();

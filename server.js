@@ -1,3 +1,5 @@
+import "newrelic"
+
 import http from "http";
 import * as express from "express";
 import useragent from "express-useragent";

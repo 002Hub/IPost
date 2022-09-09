@@ -245,11 +245,27 @@ async function main(){
   let all_posts = await (await fetch(`/api/getPosts?channel=${currentChannel}`)).json()
   if(!all_posts)return;
   getById("posts").innerHTML = ""
+
+  getById("loading").style="display:none;"
+  getById("scriptonly").style = ""
+
   highest_id = all_posts[0].post_id
+  let post_promises = []
   for(i in all_posts) {
     let item = all_posts[i]
-    await createPost(decURIComp(item.post_user_name),decURIComp(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,item.User_Avatar)
+    let created = createPost(decURIComp(item.post_user_name),decURIComp(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,item.User_Avatar)
+    post_promises.push(created)
   }
+
+  await Promise.all(post_promises)
+
+  Array.from(getById("posts").childNodes).sort((a,b) => {
+    if(+a.id > +b.id)return -1;
+    if(+a.id < +b.id)return 1;
+    return 0
+  }).forEach(e => {
+    getById("posts").appendChild(e)
+  })
 
   let links = document.getElementsByClassName("insertedlink")
   for (let i = 0; i < links.length; i++) {
@@ -265,8 +281,7 @@ async function main(){
     }
   }
 
-  getById("loading").style="display:none;"
-  getById("scriptonly").style = ""
+  
 }
 
 async function reply(postid) {

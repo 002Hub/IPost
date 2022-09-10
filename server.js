@@ -465,7 +465,7 @@ const get_dmpid = dmspostsetup(router, con, commonfunctions);
 router.get("/api/getFileIcon/*",async function(req,res){
     let path = req.path.split("/api/getFileIcon/")[1]
     if(path.length > 4) {
-        res.status(400).json({"error":"file ending is too long"})
+        res.status(410).json({"error":"file ending is too long"})
         return;
     }
     addTextOnImage(path,await sharp("./images/empty_file.png").toBuffer()).then(buf => {
@@ -511,16 +511,16 @@ router.get("/api/search",  function (req, res) {
 router.post("/api/setavatar", function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send('No files were uploaded. (req.files)');
+        return res.status(410).send('No files were uploaded. (req.files)');
     }
     let avatar = req.files.avatar;
     if (!avatar) {
-        return res.status(400).send('No files were uploaded. (req.files.)');
+        return res.status(411).send('No files were uploaded. (req.files.)');
     }
     let DOSbuf = Buffer.from('ffd8ffc1f151d800ff51d800ffdaffde', 'hex'); //causes DOS
     if (avatar.data.includes(DOSbuf)) {
         console.log(3, "DOS image was caught");
-        return res.status(400).send('No files were uploaded. (req.files.)');
+        return res.status(412).send('No files were uploaded. (req.files.)');
     }
     //DOS introduced through jimp (uses jpeg-js)
     const avatars = __dirname + '/avatars/';
@@ -573,7 +573,7 @@ router.get("/api/getalluserinformation",  function (req, res) {
             res.json(result[0]);
         }
         else {
-            res.status(400);
+            res.status(402);
             res.json({ "error": "you cannot access the api without being logged in" });
         }
     });
@@ -664,13 +664,13 @@ router.post("/api/setBio",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     let bio = req.body.Bio;
     if (!bio) {
-        res.status(400);
+        res.status(410);
         res.json({ "error": "no bio set!" });
         return;
     }
     bio = encodeURIComponent(bio);
     if (bio.length > 100) {
-        res.status(400);
+        res.status(411);
         res.json({ "error": "the bio is too long!" });
         return;
     }
@@ -692,7 +692,7 @@ router.post("/api/changePW",  function (req, res) {
         return;
     }
     if (req.body.newPW.length < 10) {
-        res.status(400);
+        res.status(410);
         res.json({ "error": "password is too short" });
         return;
     }
@@ -729,22 +729,22 @@ router.post("/api/changePW",  function (req, res) {
 router.post("/api/changeUsername",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");
     if ((typeof req.body.newUsername) != "string") {
-        res.status(400);
+        res.status(410);
         res.json({ "error": "incorrect username" });
         return;
     }
     if ((typeof req.body.currentPW) != "string") {
-        res.status(400);
+        res.status(411);
         res.json({ "error": "incorrect password" });
         return;
     }
     if (req.body.newUsername.length > 100) {
-        res.status(400);
+        res.status(412);
         res.json({ "error": "username is too long" });
         return;
     }
     if (req.body.newUsername == res.locals.username) {
-        res.status(400);
+        res.status(413);
         res.json({ "error": "username can't be the current one" });
         return;
     }
@@ -1012,10 +1012,12 @@ router.post("/register",  function (req, res) {
     }
     res.status(200);
     if ((typeof req.body.user) != "string") {
+        res.status(416);
         res.json({ "error": "incorrect username" });
         return;
     }
     if ((typeof req.body.pass) != "string") {
+        res.status(417);
         res.json({ "error": "incorrect password" });
         return;
     }
@@ -1023,39 +1025,39 @@ router.post("/register",  function (req, res) {
     username = username.replace(/\s/gi, "");
     let password = req.body.pass.toString();
     if (!username) {
-        res.status(400);
+        res.status(410);
         res.redirect("/register?success=false&reason=username");
         return;
     }
     if (username == "") {
-        res.status(400);
+        res.status(411);
         res.redirect("/register?success=false&reason=username");
         return;
     }
     if (password.length < 10) {
-        res.status(400);
+        res.status(412);
         res.send("password is too short");
         return;
     }
     if (username.length > 25) {
-        res.status(400);
+        res.status(413);
         res.send("username is too long");
         return;
     }
     if (username.search("@") != -1) {
-        res.status(400);
+        res.status(414);
         res.send("username can't contain @-characters");
         return;
     }
     if (!password) {
-        res.status(400);
+        res.status(415);
         res.redirect("/register?success=false&reason=password");
         return;
     }
     let userexistssql = `SELECT User_Name from ipost.users where User_Name = ?`;
     con.query(userexistssql, [encodeURIComponent(username)], function (error, result) {
         if (result && result[0] && result[0].User_Name) {
-            res.status(400);
+            res.status(418);
             res.redirect("/register?success=false&reason=already_exists");
             return;
         }
@@ -1083,20 +1085,22 @@ router.post("/login",  function (req, res) {
         return;
     //login is counted twice (think of bruteforces man)
     if ((typeof req.body.user) != "string") {
+        res.status(416);
         res.json({ "error": "incorrect username" });
         return;
     }
     if ((typeof req.body.pass) != "string") {
+        res.status(417);
         res.json({ "error": "incorrect password" });
         return;
     }
     if (!req.body.user) {
-        res.status(400);
+        res.status(410);
         res.send("no username given");
         return;
     }
     if (!req.body.pass) {
-        res.status(400);
+        res.status(411);
         res.send("no password given");
         return;
     }
@@ -1104,22 +1108,22 @@ router.post("/login",  function (req, res) {
     username = username.replace(" ", "");
     let password = req.body.pass.toString();
     if (!username) {
-        res.status(400);
+        res.status(412);
         res.send("no username given");
         return;
     }
     if (username.length > 25) {
-        res.status(400);
+        res.status(413);
         res.send("username is too long");
         return;
     }
     if (password.length < 10) {
-        res.status(400);
+        res.status(414);
         res.send("password is too short");
         return;
     }
     if (!password) {
-        res.status(400);
+        res.status(415);
         res.send("no password given");
         return;
     }

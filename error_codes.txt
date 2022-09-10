@@ -1,0 +1,7 @@
+400: generic error / unsorted
+402: login error (bad cookie)
+403: login error (no cookie)
+404: invalid url / not found
+410-419: argument/data error
+
+500: server error

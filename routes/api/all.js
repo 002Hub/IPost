@@ -61,7 +61,7 @@ export const setup = function (router, con, server) {
             next();
         }
         else {
-            res.status(400);
+            res.status(402);
             res.json({ "error": "you cannot access the api without being logged in" });
         }
     });

@@ -7,10 +7,12 @@ export const setup = function (router, con, server) {
     });
     router.post("/api/settings", function (req, res) {
         if (!req.body.setting) {
+            res.status(410)
             res.json({ "error": "no setting to change" });
             return;
         }
         if ((typeof req.body.setting) != "string") {
+            res.status(411)
             res.json({ "error": "no setting to change" });
             return;
         }
@@ -25,6 +27,7 @@ export const setup = function (router, con, server) {
         }
         if (!allowed) {
             console.log(5, "incorrect type given, received, expected", typeof req.body.value, allowed_settings[req.body.setting]);
+            res.status(412)
             res.json({ "error": "no new setting value given" });
             return;
         }
@@ -36,6 +39,7 @@ export const setup = function (router, con, server) {
         let values = [JSON.stringify(res.locals.settings), res.locals.username];
         con.query(sql, values, function (err, result) {
             if (err) {
+                res.status(500)
                 res.json({ "status": "error", "code": err });
                 return;
             }

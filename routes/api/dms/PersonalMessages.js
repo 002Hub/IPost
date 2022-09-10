@@ -5,7 +5,7 @@ export const setup = function (router, con, server) {
         res.set("Access-Control-Allow-Origin", "");
         let otherperson = encodeURIComponent(req.query.otherperson || "");
         if (typeof otherperson != "string" || otherperson.length > 100 || otherperson == "") {
-            res.status(400).json({ "error": "invalid otherperson given" });
+            res.status(410).json({ "error": "invalid otherperson given" });
             return;
         }
         const columns = [
@@ -14,7 +14,7 @@ export const setup = function (router, con, server) {
         //dms_user_name = sender
         //dms_receiver = receiver
         //if (sender == current and receiver == other) or (receiver == current and sender == other)
-        let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ? and dms_user_name = ?) or (dms_receiver = ? and dms_user_name = ?)) order by dms_id desc;`;
+        let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ? and dms_user_name = ?) or (dms_receiver = ? and dms_user_name = ?)) order by dms_id desc limit 50;`;
         con.query(sql, [otherperson, encodeURIComponent(res.locals.username), encodeURIComponent(res.locals.username), otherperson], function (err, result) {
             if (err)
                 throw err;

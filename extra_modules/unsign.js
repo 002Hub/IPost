@@ -26,14 +26,14 @@ function unsign(text, req, res) {
 function getunsigned(req, res) {
     let cookie = req.cookies.AUTH_COOKIE;
     if (!cookie) {
-        res.status(400);
+        res.status(403);
         res.json({ "error": "you are not logged in! (no cookie)" });
         return;
     }
     let unsigned = unsign(cookie, req, res);
     if (!unsigned) {
         try {
-            res.status(400);
+            res.status(402);
             res.json({ "error": "Bad auth cookie set" });
         }
         catch (ignored) { } //sometimes it errors, gotta debug soon

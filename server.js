@@ -898,6 +898,8 @@ function get_channels(){
     })
 }
 
+import { web_version } from "unsafe_encrypt";
+
 let global_page_variables = {
     globalcss: load_var("./css/global.css"),
     httppostjs: load_var("./js/httppost.js"),
@@ -909,7 +911,8 @@ let global_page_variables = {
     getChannels: get_channels,
     getPID: get_pid,
     getDMPID: get_dmpid,
-    cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js"></script>`
+    encryptJS: min_js(web_version().toString()).code,
+    cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js" async></script>`
 }
 
  function handleUserFiles(request, response, overrideurl) {

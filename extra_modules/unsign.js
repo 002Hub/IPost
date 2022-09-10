@@ -33,7 +33,7 @@ function getunsigned(req, res) {
     let unsigned = unsign(cookie, req, res);
     if (!unsigned) {
         try {
-            res.status(402);
+            res.status(401);
             res.json({ "error": "Bad auth cookie set" });
         }
         catch (ignored) { } //sometimes it errors, gotta debug soon

@@ -1,4 +1,5 @@
 400: generic error / unsorted
+401: login error (invalid cookie)
 402: login error (bad cookie)
 403: login error (no cookie)
 404: invalid url / not found

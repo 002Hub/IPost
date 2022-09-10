@@ -260,8 +260,8 @@ async function main(){
   await Promise.all(post_promises)
 
   Array.from(getById("posts").childNodes).sort((a,b) => {
-    if(+a.id > +b.id)return -1;
-    if(+a.id < +b.id)return 1;
+    if(Number(a.id) > Number(b.id))return -1;
+    if(Number(a.id) < Number(b.id))return 1;
     return 0
   }).forEach(e => {
     getById("posts").appendChild(e)

@@ -295,7 +295,6 @@ function increaseIndividualCall(url, req) {
     }
     INDIVIDUAL_CALLS[ip][url]++;
     if (INDIVIDUAL_CALLS[ip][url] >= conf["max"]) {
-        res.status(429)
         console.log(5, "ratelimiting someone on", url, INDIVIDUAL_CALLS[ip][url], conf["max"]);
         return false;
     }

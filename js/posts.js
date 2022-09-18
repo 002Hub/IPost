@@ -19,7 +19,22 @@ socket.addEventListener("message", async function (event) {
     let item = ds.data
     let username = decURIComp(item.post_user_name)
     if(message == "new_post" && decURIComp(item.post_receiver_name) == currentChannel) {
-      await createPost(username,decURIComp(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
+      await createPost(
+        username,
+        decURIComp(item.post_text),
+        item.post_time,
+        item.post_special_text,
+        highest_id+1,
+        item.post_from_bot,
+        item.post_reply_id,
+        true,
+        item.user_avatar,
+        item.files[0],
+        item.files[1],
+        item.files[2],
+        item.files[3],
+        item.files[4]
+        )
       if(user["username"]!=username)mainNoti(username)
 
       let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
@@ -34,11 +49,19 @@ socket.addEventListener("message", async function (event) {
   }
 })
 
+socket.addEventListener("open",()=> {
+  switchChannel(currentChannel)
+})
+
 var cd = true //inversed "cooldown"
 
  function postMessage() {
   let msg = getById("post-text").value
   let len = msg.length
+  if(len==0){
+    alert("you have to enter a message!")
+    return;
+  };
   if(len > 1000) {
     alert(`Your message cant contain more than 1000 characters! (${len})`)
     return
@@ -62,6 +85,7 @@ var cd = true //inversed "cooldown"
       formdata.append("file_"+i,files[i])
     }
     files = []
+    getById("filesDiv").innerHTML=""
 
     fetch("/api/post", {
       method: "POST", body: formdata
@@ -117,7 +141,26 @@ async function reply_link_clicked(reply_channel,reply_id) {
   }
 }
 
-async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top,avatar_src) {
+const image_types = {
+  "png":true,
+  "jpg":true,
+  "jpeg":true
+}
+
+function iconLink(name) {
+  if(!name){
+  //if(typeof name === 'undefined' || typeof name === "null"){
+    return undefined;
+  }
+  console.log(name,name.lastIndexOf("\."),name.substring(name.lastIndexOf("\.")+1));
+  let extension = name.substring(name.lastIndexOf("\.")+1)
+  if(extension in image_types) {
+    return "/user_uploads/"+name;
+  }
+  return "/api/getFileIcon/"+extension
+}
+
+async function createPost(username,text,time,specialtext,postid,isbot,reply_id,add_on_top,avatar_src,file0,file1,file2,file3,file4) {
   if(!specialtext)specialtext=""
   const newDiv = createElement("div");
   const newP = createElement("p");
@@ -198,13 +241,6 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyA.appendChild(replyBr)
 
       replyA.classList.add("no-link-style")
-      // async function onclick(event) {
-      //   event.preventDefault()
-        
-      // }
-      // replyDiv.onclick = function() {
-      //   reply_link_clicked(reply_channel, reply_id)
-      // }
 
       replyDiv.appendChild(replyA)
 
@@ -219,6 +255,72 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   newDiv.appendChild(newP)
   newDiv.innerHTML += filterPost(text)
   newDiv.id = postid
+
+  /*
+    FILES
+  */
+
+  const filesP = createElement("p")
+  const file0_img = createElement("img")
+  const file1_img = createElement("img")
+  const file2_img = createElement("img")
+  const file3_img = createElement("img")
+  const file4_img = createElement("img")
+  
+  file0_img.src = iconLink(file0)
+  file1_img.src = iconLink(file1)
+  file2_img.src = iconLink(file2)
+  file3_img.src = iconLink(file3)
+  file4_img.src = iconLink(file4)
+
+  file0_img.width = 50
+  file1_img.width = 50
+  file2_img.width = 50
+  file3_img.width = 50
+  file4_img.width = 50
+  
+
+  if(file0){
+    filesP.appendChild(file0_img)
+
+    file0_img.onclick = function(event) {
+      console.warn("TODO: Create Modal");
+    }
+  }
+  if(file1){
+    filesP.appendChild(file1_img)
+
+    file1_img.onclick = function(event) {
+      console.warn("TODO: Create Modal");
+    }
+  }
+  if(file2){
+    filesP.appendChild(file2_img)
+
+    file2_img.onclick = function(event) {
+      console.warn("TODO: Create Modal");
+    }
+  }
+  if(file3){
+    filesP.appendChild(file3_img)
+
+    file3_img.onclick = function(event) {
+      console.warn("TODO: Create Modal");
+    }
+  }
+  if(file4){
+    filesP.appendChild(file4_img)
+
+    file4_img.onclick = function(event) {
+      console.warn("TODO: Create Modal");
+    }
+  }
+  newDiv.appendChild(filesP)
+
+  /*
+    Adding the post to the posts list
+  */
+
   let posts_div = getById("posts")
   if(add_on_top) {
     posts_div.insertBefore(newDiv, posts_div.children[0]);
@@ -253,7 +355,22 @@ async function main(){
   let post_promises = []
   for(i in all_posts) {
     let item = all_posts[i]
-    let created = createPost(decURIComp(item.post_user_name),decURIComp(item.post_text),item.post_time,item.post_special_text,item.post_id,item.post_from_bot,item.post_reply_id,false,item.User_Avatar)
+    let created = createPost(
+      decURIComp(item.post_user_name),
+      decURIComp(item.post_text),
+      item.post_time,
+      item.post_special_text,
+      item.post_id,
+      item.post_from_bot,
+      item.post_reply_id,
+      false,
+      item.User_Avatar,
+      item.file_0,
+      item.file_1,
+      item.file_2,
+      item.file_3,
+      item.file_4
+      )
     post_promises.push(created)
   }
 
@@ -376,6 +493,7 @@ var files = []
 
 function addFile(file) {
   if(file.size > 100000) {
+    alert("that file is too large, max size: 100KiB")
     console.log("file is too big: ", file.name, file.type, file.size);
     return;
   }

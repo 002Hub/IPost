@@ -1,6 +1,10 @@
 export const setup = function (router, con, server) {
     const PIDS = {}; //[pid]: true/"already_used"
 
+    function isNotNull(a) {
+        return typeof a !== "null" && typeof a !== "undefined"
+    }
+
     function createPID(){
         let pid = server.genstring(10); //collision chance is low enough, but we'll check anyways
         while (PIDS[pid] != undefined) {
@@ -83,7 +87,7 @@ export const setup = function (router, con, server) {
         let __dirname = server.dirname
 
         let file0_name="",file1_name="",file2_name="",file3_name="",file4_name = ""
-        if(req.files !== undefined) {
+        if(isNotNull(req.files)) {
             if(req.files.file_0 !== undefined) {
                 let file = req.files["file_0"]
                 const file0_id = server.genstring(20)

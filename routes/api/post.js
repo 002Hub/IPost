@@ -2,7 +2,7 @@ export const setup = function (router, con, server) {
     const PIDS = {}; //[pid]: true/"already_used"
 
     function isNotNull(a) {
-        return typeof a !== "null" && typeof a !== "undefined"
+        return typeof a !== "null" && typeof a !== "undefined" && a !== null && a !== undefined
     }
 
     function createPID(){
@@ -88,7 +88,7 @@ export const setup = function (router, con, server) {
 
         let file0_name="",file1_name="",file2_name="",file3_name="",file4_name = ""
         if(isNotNull(req.files)) {
-            if(req.files.file_0 !== undefined) {
+            if(isNotNull(req.files.file_0)) {
                 let file = req.files["file_0"]
                 const file0_id = server.genstring(20)
                 console.log(file.name);
@@ -106,7 +106,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files.file_1 !== undefined) {
+            if(isNotNull(req.files.file_1)) {
                 let file = req.files["file_1"]
                 const file1_id = server.genstring(20)
                 console.log(file.name);
@@ -124,7 +124,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files.file_2 !== undefined) {
+            if(isNotNull(req.files.file_2)) {
                 let file = req.files["file_2"]
                 const file2_id = server.genstring(20)
                 console.log(file.name);
@@ -142,7 +142,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files.file_3 !== undefined) {
+            if(isNotNull(req.files.file_3)) {
                 let file = req.files["file_3"]
                 const file3_id = server.genstring(20)
                 console.log(file.name);
@@ -160,8 +160,8 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files.file_4 !== undefined) {
-                let file = req.files["file_0"]
+            if(isNotNull(req.files.file_4)) {
+                let file = req.files["file_4"]
                 const file4_id = server.genstring(20)
                 console.log(file.name);
                 file4_name = file4_id+"/"+(file.name.substring(0,25))

@@ -84,7 +84,7 @@ export const setup = function (router, con, server) {
 
         let file0_name="",file1_name="",file2_name="",file3_name="",file4_name = ""
         if(req.files !== undefined) {
-            if(req.files["file_0"] !== undefined) {
+            if(req.files.file_0 !== undefined) {
                 let file = req.files["file_0"]
                 const file0_id = server.genstring(20)
                 console.log(file.name);
@@ -102,7 +102,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files["file_1"] !== undefined) {
+            if(req.files.file_1 !== undefined) {
                 let file = req.files["file_1"]
                 const file1_id = server.genstring(20)
                 console.log(file.name);
@@ -120,7 +120,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files["file_2"] !== undefined) {
+            if(req.files.file_2 !== undefined) {
                 let file = req.files["file_2"]
                 const file2_id = server.genstring(20)
                 console.log(file.name);
@@ -138,7 +138,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files["file_3"] !== undefined) {
+            if(req.files.file_3 !== undefined) {
                 let file = req.files["file_3"]
                 const file3_id = server.genstring(20)
                 console.log(file.name);
@@ -156,7 +156,7 @@ export const setup = function (router, con, server) {
                     })
                 })
             }
-            if(req.files["file_4"] !== undefined) {
+            if(req.files.file_4 !== undefined) {
                 let file = req.files["file_0"]
                 const file4_id = server.genstring(20)
                 console.log(file.name);

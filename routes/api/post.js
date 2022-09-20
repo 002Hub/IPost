@@ -83,95 +83,97 @@ export const setup = function (router, con, server) {
         let __dirname = server.dirname
 
         let file0_name="",file1_name="",file2_name="",file3_name="",file4_name = ""
-        if(req.files["file_0"] !== undefined) {
-            let file = req.files["file_0"]
-            const file0_id = server.genstring(20)
-            console.log(file.name);
-            file0_name = file0_id+"/"+(file.name.substring(0,25))
-            server.ensureExists(__dirname + "/user_uploads/"+file0_id,undefined,(err)=>{
-                if(err) {
-                    console.error(err)
-                    return;
-                }
-                file.mv(__dirname + "/user_uploads/"+file0_name,(err2) => {
-                    if(err2) {
-                        console.error(err2)
+        if(req.files !== undefined) {
+            if(req.files["file_0"] !== undefined) {
+                let file = req.files["file_0"]
+                const file0_id = server.genstring(20)
+                console.log(file.name);
+                file0_name = file0_id+"/"+(file.name.substring(0,25))
+                server.ensureExists(__dirname + "/user_uploads/"+file0_id,undefined,(err)=>{
+                    if(err) {
+                        console.error(err)
                         return;
                     }
+                    file.mv(__dirname + "/user_uploads/"+file0_name,(err2) => {
+                        if(err2) {
+                            console.error(err2)
+                            return;
+                        }
+                    })
                 })
-            })
-        }
-        if(req.files["file_1"] !== undefined) {
-            let file = req.files["file_1"]
-            const file1_id = server.genstring(20)
-            console.log(file.name);
-            file1_name = file1_id+"/"+(file.name.substring(0,25))
-            server.ensureExists(__dirname + "/user_uploads/"+file1_id,undefined,(err)=>{
-                if(err) {
-                    console.error(err)
-                    return;
-                }
-                file.mv(__dirname + "/user_uploads/"+file1_name,(err2) => {
-                    if(err2) {
-                        console.error(err2)
+            }
+            if(req.files["file_1"] !== undefined) {
+                let file = req.files["file_1"]
+                const file1_id = server.genstring(20)
+                console.log(file.name);
+                file1_name = file1_id+"/"+(file.name.substring(0,25))
+                server.ensureExists(__dirname + "/user_uploads/"+file1_id,undefined,(err)=>{
+                    if(err) {
+                        console.error(err)
                         return;
                     }
+                    file.mv(__dirname + "/user_uploads/"+file1_name,(err2) => {
+                        if(err2) {
+                            console.error(err2)
+                            return;
+                        }
+                    })
                 })
-            })
-        }
-        if(req.files["file_2"] !== undefined) {
-            let file = req.files["file_2"]
-            const file2_id = server.genstring(20)
-            console.log(file.name);
-            file2_name = file2_id+"/"+(file.name.substring(0,25))
-            server.ensureExists(__dirname + "/user_uploads/"+file2_id,undefined,(err)=>{
-                if(err) {
-                    console.error(err)
-                    return;
-                }
-                file.mv(__dirname + "/user_uploads/"+file2_name,(err2) => {
-                    if(err2) {
-                        console.error(err2)
+            }
+            if(req.files["file_2"] !== undefined) {
+                let file = req.files["file_2"]
+                const file2_id = server.genstring(20)
+                console.log(file.name);
+                file2_name = file2_id+"/"+(file.name.substring(0,25))
+                server.ensureExists(__dirname + "/user_uploads/"+file2_id,undefined,(err)=>{
+                    if(err) {
+                        console.error(err)
                         return;
                     }
+                    file.mv(__dirname + "/user_uploads/"+file2_name,(err2) => {
+                        if(err2) {
+                            console.error(err2)
+                            return;
+                        }
+                    })
                 })
-            })
-        }
-        if(req.files["file_3"] !== undefined) {
-            let file = req.files["file_3"]
-            const file3_id = server.genstring(20)
-            console.log(file.name);
-            file3_name = file3_id+"/"+(file.name.substring(0,25))
-            server.ensureExists(__dirname + "/user_uploads/"+file3_id,undefined,(err)=>{
-                if(err) {
-                    console.error(err)
-                    return;
-                }
-                file.mv(__dirname + "/user_uploads/"+file3_name,(err2) => {
-                    if(err2) {
-                        console.error(err2)
+            }
+            if(req.files["file_3"] !== undefined) {
+                let file = req.files["file_3"]
+                const file3_id = server.genstring(20)
+                console.log(file.name);
+                file3_name = file3_id+"/"+(file.name.substring(0,25))
+                server.ensureExists(__dirname + "/user_uploads/"+file3_id,undefined,(err)=>{
+                    if(err) {
+                        console.error(err)
                         return;
                     }
+                    file.mv(__dirname + "/user_uploads/"+file3_name,(err2) => {
+                        if(err2) {
+                            console.error(err2)
+                            return;
+                        }
+                    })
                 })
-            })
-        }
-        if(req.files["file_4"] !== undefined) {
-            let file = req.files["file_0"]
-            const file4_id = server.genstring(20)
-            console.log(file.name);
-            file4_name = file4_id+"/"+(file.name.substring(0,25))
-            server.ensureExists(__dirname + "/user_uploads/"+file4_id,undefined,(err)=>{
-                if(err) {
-                    console.error(err)
-                    return;
-                }
-                file.mv(__dirname + "/user_uploads/"+file4_name,(err2) => {
-                    if(err2) {
-                        console.error(err2)
+            }
+            if(req.files["file_4"] !== undefined) {
+                let file = req.files["file_0"]
+                const file4_id = server.genstring(20)
+                console.log(file.name);
+                file4_name = file4_id+"/"+(file.name.substring(0,25))
+                server.ensureExists(__dirname + "/user_uploads/"+file4_id,undefined,(err)=>{
+                    if(err) {
+                        console.error(err)
                         return;
                     }
+                    file.mv(__dirname + "/user_uploads/"+file4_name,(err2) => {
+                        if(err2) {
+                            console.error(err2)
+                            return;
+                        }
+                    })
                 })
-            })
+            }
         }
         
 

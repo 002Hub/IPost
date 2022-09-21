@@ -212,7 +212,9 @@ export const setup = function (router, con, server) {
                 data: post_obj
             };
             let messagestr = JSON.stringify(message);
+            console.log(5,server.wss.clients);        
             server.wss.clients.forEach(function(ws) {
+                console.log(5,ws);
                 ws.send(messagestr);
             });
             res.json({ "success": "successfully posted message" });

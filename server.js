@@ -1210,6 +1210,7 @@ wss = new WebSocket({
 });
 wss.on("connection", function connection(ws) {
     ws.channel = "everyone";
+    console.log(5,"new connection");
     ws.on("message", function incoming(message) {
         message = JSON.parse(message);
         if (message.id == "switchChannel") {

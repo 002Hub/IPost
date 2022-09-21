@@ -12,6 +12,7 @@ function getById(i){return document.getElementById(i)}
 
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
+  console.log("new websocket message arrived");
   if(wss_server == event.origin) {
     let data = event.data;
     let ds = JSON.parse(data)

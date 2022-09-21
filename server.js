@@ -1163,6 +1163,7 @@ router.post("/login",  function (req, res) {
             res.redirect("/user?success=true");
         }
         else {
+            console.log(5,"login failed, username: ", username);
             res.redirect("/login?success=false?reason=noUser");
         }
     });

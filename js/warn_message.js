@@ -7,4 +7,4 @@ function warnmessage() {
     console.log(message[0],message[1]);
   }
 }
-setInterval(warnmessage,3000)
+const warn_message_int = setInterval(warnmessage,3000)

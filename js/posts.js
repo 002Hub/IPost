@@ -34,7 +34,8 @@ socket.addEventListener("message", async function (event) {
         item.files[2],
         item.files[3],
         item.files[4]
-        )
+      )
+      console.log("created new post");
       if(user["username"]!=username)mainNoti(username)
 
       let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
@@ -45,7 +46,11 @@ socket.addEventListener("message", async function (event) {
         }
       }
       highest_id++;
+    } else {
+      console.warn("unknown message")
     }
+  } else {
+    console.warn("unknown ws origin")
   }
 })
 

@@ -277,8 +277,8 @@ setInterval(clear_user_calls, config.rate_limits.user.reset_time);
 function increaseIndividualCall(url, req) {
     let conf = config["rate_limits"]["individual"][url];
     if (!conf) {
-        if(!url.startsWith("/avatars/")) //ignore avatars
-            console.log(5, "url not in individual ratelimiter", url);
+        //if(!url.startsWith("/avatars/")) //ignore avatars /* DEBUG: inidividual ratelimiters */
+            //console.log(5, "url not in individual ratelimiter", url); /* DEBUG: inidividual ratelimiters */
         return true;
     }
     if (!conf["enabled"])

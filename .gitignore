@@ -7,3 +7,4 @@ ignore/*
 avatars/*
 etc/*
 *newrelic*
+user_uploads/*

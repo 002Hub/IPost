@@ -876,6 +876,10 @@ import LRU from "lru-cache"
 ejs.cache = new LRU({max:20})
 
 function load_var(fina) {
+    if(!existsSync(fina)) {
+        console.log(1,"tried loading non-existent file",fina)
+        return "";
+    }
     let out = readFileSync(fina)
     if(fina.endsWith(".js")) {
         return min_js(out.toString()).code
@@ -928,7 +932,8 @@ let global_page_variables = {
     getPID: get_pid,
     getDMPID: get_dmpid,
     encryptJS: min_js(web_version().toString()).code,
-    cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js" async></script>`
+    cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js" async></script>`,
+    newrelic: load_var("./extra_modules/newrelic_monitor.html")
 }
 
  function handleUserFiles(request, response, overrideurl) {

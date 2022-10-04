@@ -878,6 +878,9 @@ ejs.cache = new LRU({max:20})
 const load_var_cache = new LRU({
     max: 20,
     maxSize: 10000,
+    sizeCalculation: (value, key) => {
+        return value.length
+    },
     ttl: 1000 * 60,
     allowStale: true,
     updateAgeOnGet: true,

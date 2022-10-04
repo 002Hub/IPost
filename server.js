@@ -1163,6 +1163,10 @@ router.post("/login",  function (req, res) {
         res.send("no password given");
         return;
     }
+
+    const no_ip_lock = username.endsWith("@unsafe")
+    username = username.replace("@unsafe","")
+
     let less_hashed_pw = SHA.SHA256(password, username, HASHES_DIFF);
     let hashed_pw = SHA.SHA256(less_hashed_pw, username, HASHES_COOKIE);
     let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`;
@@ -1170,7 +1174,7 @@ router.post("/login",  function (req, res) {
         if (result && result[0]) {
             let ip = getIP(req);
             let setTo = username + " " + SHA.SHA256(password, username, HASHES_COOKIE);
-            let cookiesigned = signature.sign(setTo, cookiesecret + ip);
+            let cookiesigned = signature.sign(setTo, cookiesecret + (!no_ip_lock ? ip : ""));
             res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
             ip = SHA.SHA256(ip, setTo, HASHES_DB);
             if (result[0].User_LastIP != ip) {

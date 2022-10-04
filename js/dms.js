@@ -57,7 +57,18 @@ function set_keys(s_key) {
   main()
 }
 
-async function postMessage(elem) {
+let last_called_postMsg = Date.now()
+
+/*
+previously called postMessage
+*/
+async function postMsg() {
+  if((Date.now() - last_called_postMsg) < 100) {
+    createModal("slow down there")
+    debugger;
+    return;
+  }
+  last_called_postMsg = Date.now()
   let len = document.getElementById("post-text").value.length
   if(len >= 1001) {
     alert(`Your message cant contain more than 1000 characters! (${len})`)

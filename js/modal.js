@@ -33,9 +33,9 @@ function createModal(text,renderAsHTML=false) {
 //
 if (!('maxHeight' in document.body.style)) {
     function modalsize() {
-      var top = document.documentElement.scrollTop;
-      var winsize = document.documentElement.offsetHeight;
-      var docsize = document.documentElement.scrollHeight;
+      const top = document.documentElement.scrollTop;
+      const winsize = document.documentElement.offsetHeight;
+      const docsize = document.documentElement.scrollHeight;
       shade.style.height = Math.max(winsize, docsize) + 'px';
       modal.style.top = top + Math.floor(winsize / 3) + 'px';
     };

@@ -61,11 +61,19 @@ socket.addEventListener("open",()=> {
 
 var cd = true //inversed "cooldown"
 
+let last_called_postMsg = Date.now()
+
 /*
   Tell the api to create a new post with the given information
   previously called "postMessage"
 */
  function postMsg() {
+  if(last_called_postMsg - Date.now() < 100) {
+    createModal("slow down there")
+    debugger;
+    return;
+  }
+  last_called_postMsg = Date.now()
   let msg = getById("post-text").value
   let len = msg.length
   if(len==0){

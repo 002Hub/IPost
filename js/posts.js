@@ -68,7 +68,7 @@ let last_called_postMsg = Date.now()
   previously called "postMessage"
 */
  function postMsg() {
-  if(last_called_postMsg - Date.now() < 100) {
+  if((Date.now() - last_called_postMsg) < 100) {
     createModal("slow down there")
     debugger;
     return;

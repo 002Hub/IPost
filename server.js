@@ -875,7 +875,17 @@ import LRU from "lru-cache"
 
 ejs.cache = new LRU({max:20})
 
+const load_var_cache = new LRU({
+    max: 20,
+    maxSize: 10000,
+    ttl: 1000 * 60,
+    allowStale: true,
+    updateAgeOnGet: true,
+    updateAgeOnHas: true
+})
+
 function load_var(fina) {
+    if(load_var_cache.get(fina))return load_var_cache.get(fina)
     if(!existsSync(fina)) {
         console.log(1,"tried loading non-existent file",fina)
         return "";
@@ -892,6 +902,8 @@ function load_var(fina) {
         } = new Clean({}).minify(out.toString());
         return styles
     }
+
+    load_var_cache.set(fina,out)
     
     return out
 }

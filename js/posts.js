@@ -61,7 +61,11 @@ socket.addEventListener("open",()=> {
 
 var cd = true //inversed "cooldown"
 
- function postMessage() {
+/*
+  Tell the api to create a new post with the given information
+  previously called "postMessage"
+*/
+ function postMsg() {
   let msg = getById("post-text").value
   let len = msg.length
   if(len==0){

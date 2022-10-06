@@ -1,0 +1,23 @@
+<!doctype html><html lang="" dir="ltr"><head></head>
+		<body> <%- newrelic %> <link rel="stylesheet" href="/css/logon.css"/><script src="/js/warn_message.js" charset="utf-8"></script><script type="text/javascript">
+    function login() {
+      const pw = document.getElementById("pass").value
+      localStorage.setItem("decryption_key",pw)
+      //yes I know this is not secure, but at this point I think it'd be better to trust the client for end-to-end encryption
+    }
+  </script><script src="/js/addnavbar.js" charset="utf-8"></script><link rel="stylesheet" href="/css/global.css"/>
+			<header>
+				<h1>Connexion</h1>
+			</header>
+			<main>
+				<form id="login_form" class="form_class" action="login" method="post">
+					<div class="form_div"><label>Nom d'utilisateur :</label><input id="user" class="field_class" name="user" type="text" placeholder="nom d'utilisateur" autofocus="" required=""/><label>Mot de passe :</label><input id="pass" class="field_class" name="pass" type="password" placeholder="mot de passe" required=""/><button class="submit_class" type="submit" form="login_form" onclick="return login()">Connexion</button></div>
+					<div class="info_div">
+						<p>Vous n'avez pas de compte ? <a href="register">Inscrivez-vous maintenant !</a></p>
+					</div>
+				</form>
+			</main>
+			<footer>
+			</footer>
+		</body>
+	</html>

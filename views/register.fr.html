@@ -1,0 +1,32 @@
+<!doctype html><html lang="" dir="ltr"><head></head>
+		<body> <%- newrelic %> <link rel="stylesheet" href="/css/logon.css"/><script src="/js/warn_message.js" charset="utf-8"></script><script type="text/javascript">
+    function register() {
+      const pw = document.getElementById("pass").value
+      localStorage.setItem("decryption_key",pw)
+      //yes I know this is not secure, but at this point I think it'd be better to trust the client for end-to-end encryption
+    }
+
+    const input = document.getElementById('pass');
+    input.addEventListener('input', () => {
+        if (input.value.length < 10) {
+          input.style.borderColor = 'red';
+          return;
+        }
+        input.style.borderColor = 'green';
+    });
+  </script><script src="/js/addnavbar.js" charset="utf-8"></script><link rel="stylesheet" href="/css/global.css"/>
+			<header>
+				<h1>Enregistrez</h1>
+			</header>
+			<main>
+				<form id="register_form" class="form_class" action="register" method="post">
+					<div class="form_div"></div>
+					<div class="info_div">
+						<p></p>
+					</div>
+				</form>
+			</main>
+			<footer>
+			</footer>
+		</body>
+	</html>

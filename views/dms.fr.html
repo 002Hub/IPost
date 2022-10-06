@@ -1,0 +1,15 @@
+<!doctype html><html lang="" dir="ltr"><head><meta charset="utf-8"/>
+			<title>DMs</title>
+		</head>
+		<body>  <div id="loading" class="status"><h1>Chargement...</h1> <br/> </div>
+			<div id="noaccount" style="display:none;" class="status">
+				<h1>Erreur</h1>
+				<h2></h2> <br/></div>
+			<div id="scriptonly" style="display:none;">
+				<div class="self"> </div>
+				<div class="channelTab"><input type="text" name="Username_input" id="Username_input" placeholder="Nom d'utilisateur " class="channel" style="font-size: 16px;" onkeypress="clickPress(event)"/><br/><div id="channelTab"></div>
+				</div>
+				<div class="posts" id="posts">
+				</div>
+			</div><script><%- loadfile("./js/dms.js") %></script></body>
+	</html>

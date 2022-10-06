@@ -1,0 +1,31 @@
+<!doctype html><html lang="" dir="ltr"><head><meta charset="utf-8"/>
+			<title>Beiträge</title>
+		</head>
+		<body> <%- newrelic %>
+    <style>
+      <%- globalcss %>
+      <%- loadfile("./css/posts.css") %>
+    </style><script type="text/javascript" async>
+      <%- httppostjs %>
+      <%- htmlescapejs %>
+      <%- markdownjs %>
+      <%- warnmessagejs %>
+      let channels = <%- JSON.stringify(await getChannels()) %>,user = <%- JSON.stringify(user) %>,posting_id = "<%- getPID() %>"
+    </script>
+    <%- cookiebanner %>
+  
+    <%- navbar %> <div id="loading" class="status"><h1>Lädt...</h1> Please allow us up to 5 seconds to load in your requested content. <br/>
+      If this takes longer than usual, please refresh the page or contact support.<br/> </div>
+			<div id="noaccount" style="display:none;" class="status">
+				<h1>Fehler</h1>
+				<h2>You have to be logged in to view this content</h2> To log in, please visit <a href="/login">The login page</a><br/>
+      If you are new to here, please visit <a href="/register">The register page</a><br/></div>
+			<div id="scriptonly" style="display:none;" ondrop="dropHandler(event)">
+				<div class="self"> Username: <span class="Username" id="username-self"></span><br/><span id="reply" style="display:none;" class="noselect">Replying to: <b id="reply_username"></b>&nbsp;&nbsp;&nbsp;<small id="reply_text"></small><button onclick="unreply()" style="color:red">X</button></span><br/><textarea name="name" id="post-text" rows="8" cols="80"></textarea><br/><button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button><div class="files" id="filesDiv"></div>
+				</div>
+				<div class="channelTab" id="channelTab">
+				</div>
+				<div class="posts" id="posts">
+				</div>
+			</div><script async><%- loadfile("./js/posts.js") %></script></body>
+	</html>

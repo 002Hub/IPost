@@ -13,7 +13,9 @@ function unsign(text, req, res) {
     let ip = getIP(req);
     let unsigned = signature.unsign(text, cookiesecret + ip);
     if (!unsigned) {
-        return false;
+        unsigned = signature.unsign(text, cookiesecret); //unsafe login?
+        if(!unsigned)return false;
+        return unsigned
     }
     return unsigned;
 }

@@ -36,12 +36,15 @@
         <span id="reply" style="display:none;" class="noselect">Replying to: <b id="reply_username"></b>&nbsp;&nbsp;&nbsp;<small id="reply_text"></small> <button onclick="unreply()" style="color:red">X</button></span> <br>
         <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
         <br>
-        <button type="button" name="button" id="post-btn" onclick="postMessage()">Post</button>
+        <button type="button" name="button" id="post-btn" onclick="postMsg()">Post</button>
         <div class="files" id="filesDiv"></div>
       </div>
       <div class="channelTab" id="channelTab"></div>
       <div class="posts" id="posts"></div>
     </div>
-    <script async><%- loadfile("./js/posts.js") %></script>
+    <script async>
+      <%- loadfile("./js/posts.js") %>
+      <%- loadfile("./js/modal.js") %>
+    </script>
   </body>
 </html>

@@ -1,0 +1,23 @@
+<!doctype html><html lang="" dir="ltr"><head></head>
+		<body> <%- newrelic %>
+  <style>
+    <%- globalcss %>
+    <%- loadfile("./css/logon.css") %>
+  </style><script async><%- loadfile("./js/index.js") %></script><script async>
+    <%- warnmessagejs %>
+  </script>
+  <%- cookiebanner %>
+
+  <%- navbar %> <header><h1 class="noselect">IPost</h1>
+			</header>
+			<main>
+				<form id="login_form" class="form_class" action="login" method="post">
+					<div class="info_div"> IPost is a revolutionary <a href="https://github.com/002Hub/IPost">open source</a> chatting website <br/>
+            featuring an innovative design<br/><br/><br/> <div id="NoAccount" style="display:none;"><span>Do you not have an account? <a href="register">Register now!</a></span><br/><br/><span>Do you already have an account? <a href="login">Login now!</a></span><br/><br/></div>
+						<div id="HasAccount" style="display:none;"><span>Here to chat? <a href="posts">Chat now!</a></span><br/><br/><span>Just want a quick look at your profile? <a href="user">your profile</a></span><br/><br/></div>
+					</div>
+				</form>
+			</main>
+			<footer> Are you a developer that wants to work with our API? You can find the documentation   <a href="/api/documentation/">here</a></footer>
+		</body>
+	</html>

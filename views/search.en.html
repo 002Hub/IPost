@@ -1,0 +1,23 @@
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="UTF-8"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Search</title>
+		</head>
+		<body> <%- newrelic %> <link rel="stylesheet" href="/css/search.css"/><script type="text/javascript" src="/js/htmlescape.js"></script><link rel="stylesheet" href="/css/global.css"/><script src="/js/httppost.js" charset="utf-8"></script><script src="/js/addnavbar.js" charset="utf-8"></script><script src="/js/search.js" charset="utf-8"></script><script type="text/javascript" src="/js/markdown.js"></script><script src="/js/warn_message.js" charset="utf-8"></script><style media="screen">
+      .result {
+        background-color: darkgray;
+        width: 50%;
+        margin-left: 25%;
+        margin-right: 25%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        overflow-wrap: break-word;
+        padding-left: 5px;
+        padding-bottom: 2px;
+      }
+    </style><main><div class="form_div form_class"><select id="type" name="type" onchange="changed()"><option value="user">Username</option>
+					<option value="post">Post</option>
+				</select><br/><br/><input type="text" name="selector" id="selector" value="" placeholder="UserName" onkeydown="keydown(event)"/></div><br/><div id="output" class="form_class"></div>
+		</main>
+	</body></html>

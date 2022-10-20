@@ -37,7 +37,7 @@
         <span id="reply" style="display:none;" class="noselect">Replying to: <b id="reply_username"></b>&nbsp;&nbsp;&nbsp;<small id="reply_text"></small> <button onclick="unreply()" style="color:red">X</button></span> <br>
         <textarea name="name" id="post-text" rows="8" cols="80"></textarea>
         <br>
-        <button type="button" name="button" id="post-btn" onclick="postMessage(this)">Post</button>
+        <button type="button" name="button" id="post-btn" onclick="postMsg()">Post</button>
       </div>
       <div class="channelTab">
         <input type="text" name="Username_input" id="Username_input" placeholder="Username" class="channel" style="font-size: 16px;" onkeypress="clickPress(event)"> <br>
@@ -45,6 +45,9 @@
       </div>
       <div class="posts" id="posts"></div>
     </div>
-    <script><%- loadfile("./js/dms.js") %></script>
+    <script>
+      <%- loadfile("./js/dms.js") %>
+      <%- loadfile("./js/modal.js") %>
+    </script>
   </body>
 </html>

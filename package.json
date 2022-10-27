@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.1",
     "clean-css": "^5.3.1",
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.8",

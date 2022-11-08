@@ -10,7 +10,7 @@
     "html-minifier-terser": "^7.0.0",
     "lru-cache": "^7.14.0",
     "mysql": "^2.18.1",
-    "newrelic": "^9.2.0",
+    "newrelic": "^9.3.0",
     "sharp": "^0.30.7",
     "spdy": "^4.0.2",
     "uglify-js": "^3.17.3",

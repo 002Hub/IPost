@@ -22,6 +22,9 @@ import { setup as postsetup } from "./routes/api/post.js";
 import { setup as dmsPersonalMessagessetup } from "./routes/api/dms/PersonalMessages.js";
 import { setup as dmspostsetup } from "./routes/api/dms/post.js";
 
+import * as compress from "compression"
+const compression = compress.default
+
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 const __filename = fileURLToPath(import.meta.url)
@@ -384,6 +387,7 @@ app.use(bodyParser.default.json({ limit: "100mb" }));
 app.use(bodyParser.default.urlencoded({ limit: "100mb", extended: true }));
 app.use(clientErrorHandler);
 app.use(cookieParser(cookiesecret));
+app.use(compression())
 var blocked_headers = [
     'HTTP_VIA',
     'HTTP_X_FORWARDED_FOR',

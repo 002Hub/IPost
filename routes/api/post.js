@@ -2,7 +2,7 @@ export const setup = function (router, con, server) {
     const PIDS = {}; //[pid]: true/"already_used"
 
     function isNotNull(a) {
-        return typeof a !== "null" && typeof a !== "undefined" && a !== null && a !== undefined
+        return typeof a !== "undefined" && a !== null
     }
 
     function createPID(){

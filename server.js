@@ -56,7 +56,7 @@ async function addTextOnImage(text,buf) {
                 top: 0,
                 left: 0,
             },
-            ]).toBuffer()
+            ]).webp({effort:6}).toBuffer()
     } catch (error) {
         console.log(error);
     }

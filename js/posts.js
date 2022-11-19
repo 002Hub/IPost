@@ -162,7 +162,9 @@ async function reply_link_clicked(reply_channel,reply_id) {
 const image_types = {
   "png":true,
   "jpg":true,
-  "jpeg":true
+  "jpeg":true,
+  "webp":true,
+  "jfif":true
 }
 
 function iconLink(name) {
@@ -173,7 +175,7 @@ function iconLink(name) {
   console.log(name,name.lastIndexOf("\."),name.substring(name.lastIndexOf("\.")+1));
   let extension = name.substring(name.lastIndexOf("\.")+1)
   if(extension in image_types) {
-    return "/user_uploads/"+name;
+    return "/user_uploads/previews/"+name;
   }
   return "/api/getFileIcon/"+extension
 }

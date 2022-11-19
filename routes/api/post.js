@@ -1,3 +1,14 @@
+import sharp from "sharp";
+import {writeFile} from "fs";
+
+const image_types = {
+    "png":true,
+    "jpg":true,
+    "jpeg":true,
+    "webp":true,
+    "jfif":true
+}
+
 export const setup = function (router, con, server) {
     const PIDS = {}; //[pid]: true/"already_used"
 
@@ -86,103 +97,48 @@ export const setup = function (router, con, server) {
         console.log(req.body);
         let __dirname = server.dirname
 
-        let file0_name="",file1_name="",file2_name="",file3_name="",file4_name = ""
+        const file_names = ["","","","",""]
         if(isNotNull(req.files)) {
-            if(isNotNull(req.files.file_0)) {
-                let file = req.files["file_0"]
-                const file0_id = server.genstring(20)
-                console.log(file.name);
-                file0_name = file0_id+"/"+(file.name.substring(0,25))
-                server.ensureExists(__dirname + "/user_uploads/"+file0_id,undefined,(err)=>{
-                    if(err) {
-                        console.error(err)
-                        return;
-                    }
-                    file.mv(__dirname + "/user_uploads/"+file0_name,(err2) => {
-                        if(err2) {
-                            console.error(err2)
+            for(let file_index=0;file_index<5;file_index++) {
+                if(isNotNull(req.files[`file_${file_index}`])) {
+                    let file = req.files[`file_${file_index}`]
+                    const file_id = server.genstring(20)
+                    const file_name = `${file_id}/${(file.name.substring(0,25)).replace(/\.[^/.]+$/, "")}`
+                    let extension = file.name.substring(file.name.lastIndexOf("\.")+1)
+                    file_names[file_index]=`${file_name}${(extension in image_types && ".webp") || extension}`
+                    server.ensureExists(`${__dirname}/user_uploads/${file_id}`,undefined,async (err)=>{
+                        if(err) {
+                            console.error(err)
                             return;
                         }
-                    })
-                })
-            }
-            if(isNotNull(req.files.file_1)) {
-                let file = req.files["file_1"]
-                const file1_id = server.genstring(20)
-                console.log(file.name);
-                file1_name = file1_id+"/"+(file.name.substring(0,25))
-                server.ensureExists(__dirname + "/user_uploads/"+file1_id,undefined,(err)=>{
-                    if(err) {
-                        console.error(err)
-                        return;
-                    }
-                    file.mv(__dirname + "/user_uploads/"+file1_name,(err2) => {
-                        if(err2) {
-                            console.error(err2)
-                            return;
+                        if(extension in image_types) {
+                            writeFile(`${__dirname}/user_uploads/${file_name}.webp`,await sharp(file.data).webp({mixed:true,effort:6}).toBuffer(),(err2)=>{
+                                if(err2)console.error(err2)
+                            })
+                            server.ensureExists(`${__dirname}/user_uploads/previews/${file_id}`,undefined,async (error) => {
+                                if(error) {
+                                    console.error(error)
+                                    return;
+                                }
+                                writeFile(`${__dirname}/user_uploads/previews/${file_name}.webp`,await sharp(file.data).resize(50,28,{fit: "inside"}).webp({mixed:true,effort:6}).toBuffer(),(error2)=>{
+                                    if(error2)console.error(error2)
+                                })
+                            })
+                        } else {
+                            file.mv(`${__dirname}/user_uploads/${file_name}.${extension}`,(err2)=>{
+                                if(err2)console.error(err2)
+                            })
                         }
                     })
-                })
-            }
-            if(isNotNull(req.files.file_2)) {
-                let file = req.files["file_2"]
-                const file2_id = server.genstring(20)
-                console.log(file.name);
-                file2_name = file2_id+"/"+(file.name.substring(0,25))
-                server.ensureExists(__dirname + "/user_uploads/"+file2_id,undefined,(err)=>{
-                    if(err) {
-                        console.error(err)
-                        return;
-                    }
-                    file.mv(__dirname + "/user_uploads/"+file2_name,(err2) => {
-                        if(err2) {
-                            console.error(err2)
-                            return;
-                        }
-                    })
-                })
-            }
-            if(isNotNull(req.files.file_3)) {
-                let file = req.files["file_3"]
-                const file3_id = server.genstring(20)
-                console.log(file.name);
-                file3_name = file3_id+"/"+(file.name.substring(0,25))
-                server.ensureExists(__dirname + "/user_uploads/"+file3_id,undefined,(err)=>{
-                    if(err) {
-                        console.error(err)
-                        return;
-                    }
-                    file.mv(__dirname + "/user_uploads/"+file3_name,(err2) => {
-                        if(err2) {
-                            console.error(err2)
-                            return;
-                        }
-                    })
-                })
-            }
-            if(isNotNull(req.files.file_4)) {
-                let file = req.files["file_4"]
-                const file4_id = server.genstring(20)
-                console.log(file.name);
-                file4_name = file4_id+"/"+(file.name.substring(0,25))
-                server.ensureExists(__dirname + "/user_uploads/"+file4_id,undefined,(err)=>{
-                    if(err) {
-                        console.error(err)
-                        return;
-                    }
-                    file.mv(__dirname + "/user_uploads/"+file4_name,(err2) => {
-                        if(err2) {
-                            console.error(err2)
-                            return;
-                        }
-                    })
-                })
+                } else {
+                    break
+                }
             }
         }
         
 
         let sql = `insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4) values (?,?,?,?,?,?,?,?,?,?,?);`;
-        let values = [encodeURIComponent(res.locals.username), req.body.message, Date.now(), req.body.receiver, res.locals.isbot, reply_id,file0_name,file1_name,file2_name,file3_name,file4_name];
+        let values = [encodeURIComponent(res.locals.username), req.body.message, Date.now(), req.body.receiver, res.locals.isbot, reply_id,...file_names];
         con.query(sql, values, function (err, result) {
             if (err){
                 res.status(500)
@@ -199,13 +155,7 @@ export const setup = function (router, con, server) {
                 post_from_bot: res.locals.isbot,
                 post_reply_id: reply_id,
                 user_avatar: res.locals.avatar,
-                files: [
-                    file0_name,
-                    file1_name,
-                    file2_name,
-                    file3_name,
-                    file4_name
-                ]
+                files: file_names
             };
             let message = {
                 message: "new_post",

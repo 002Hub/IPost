@@ -10,9 +10,9 @@ import * as signature from "cookie-signature";
 import * as mysql from "mysql";
 import * as ws from "ws";
 import sharp from "sharp"
-import SHA from "./extra_modules/SHA.js";
+import {SHA256} from "./extra_modules/SHA.js";
 import getIP from "./extra_modules/getip.js";
-import unsign from "./extra_modules/unsign.js";
+import {unsign} from "./extra_modules/unsign.js";
 import { readFileSync, mkdir, existsSync, appendFile, unlinkSync, writeFileSync, readFile } from "fs";
 import { format } from "util";
 import { setup as optionssetup } from "./routes/api/options.js";
@@ -308,7 +308,7 @@ function increaseAccountAPICall(req, res) {
     if (!cookie) {
         return true;
     }
-    let unsigned = unsign.unsign(cookie, req, res);
+    let unsigned = unsign(cookie, req, res);
     if (!unsigned) {
         return true; //if there's no account, why not just ignore it
     }
@@ -570,7 +570,7 @@ router.get("/api/getalluserinformation",  function (req, res) {
     unsigned = decodeURIComponent(unsigned);
     let sql = `select * from ipost.users where User_Name=? and User_PW=?;`;
     let values = unsigned.split(" ");
-    values[1] = SHA.SHA256(values[1], values[0], HASHES_DIFF);
+    values[1] = SHA256(values[1], values[0], HASHES_DIFF);
     con.query(sql, values, function (err, result) {
         if (err)
             throw err;
@@ -702,8 +702,8 @@ router.post("/api/changePW",  function (req, res) {
         res.json({ "error": "password is too short" });
         return;
     }
-    let hashed_pw = SHA.SHA256(req.body.currentPW, res.locals.username, HASHES_DB);
-    let hashed_new_pw = SHA.SHA256(req.body.newPW, res.locals.username, HASHES_DB);
+    let hashed_pw = SHA256(req.body.currentPW, res.locals.username, HASHES_DB);
+    let hashed_new_pw = SHA256(req.body.newPW, res.locals.username, HASHES_DB);
     let sql = `select * from ipost.users where User_Name=? and User_PW=?;`;
     let values = [res.locals.username, hashed_pw];
     con.query(sql, values, function (err, result) {
@@ -716,7 +716,7 @@ router.post("/api/changePW",  function (req, res) {
                 if (err)
                     throw err;
                 let ip = getIP(req);
-                let setTo = res.locals.username + " " + SHA.SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE);
+                let setTo = res.locals.username + " " + SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE);
                 let cookiesigned = signature.sign(setTo, cookiesecret + ip);
                 res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
                 res.json({ "success": "successfully changed password" });
@@ -754,8 +754,8 @@ router.post("/api/changeUsername",  function (req, res) {
         res.json({ "error": "username can't be the current one" });
         return;
     }
-    let hashed_pw = SHA.SHA256(req.body.currentPW, res.locals.username, HASHES_DB);
-    let hashed_new_pw = SHA.SHA256(req.body.currentPW, req.body.newUsername, HASHES_DB);
+    let hashed_pw = SHA256(req.body.currentPW, res.locals.username, HASHES_DB);
+    let hashed_new_pw = SHA256(req.body.currentPW, req.body.newUsername, HASHES_DB);
     let sql = `select * from ipost.users where User_Name=?;`; //check if pw is correct
     let values = [res.locals.username];
     con.query(sql, values, function (err, result) {
@@ -777,7 +777,7 @@ router.post("/api/changeUsername",  function (req, res) {
                     if (err)
                         throw err;
                     let ip = getIP(req);
-                    let setTo = req.body.newUsername + " " + SHA.SHA256(req.body.currentPW, req.body.newUsername, HASHES_COOKIE);
+                    let setTo = req.body.newUsername + " " + SHA256(req.body.currentPW, req.body.newUsername, HASHES_COOKIE);
                     let cookiesigned = signature.sign(setTo, cookiesecret + ip);
                     res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
                     //updated username in the users table, but not yet on posts
@@ -1112,12 +1112,12 @@ router.post("/register",  function (req, res) {
             res.redirect("/register?success=false&reason=already_exists");
             return;
         }
-        let less_hashed_pw = SHA.SHA256(password, username, HASHES_DIFF);
-        let hashed_pw = SHA.SHA256(less_hashed_pw, username, HASHES_COOKIE);
+        let less_hashed_pw = SHA256(password, username, HASHES_DIFF);
+        let hashed_pw = SHA256(less_hashed_pw, username, HASHES_COOKIE);
         let ip = getIP(req);
-        let setTo = username + " " + SHA.SHA256(password, username, HASHES_COOKIE);
+        let setTo = username + " " + SHA256(password, username, HASHES_COOKIE);
         let cookiesigned = signature.sign(setTo, cookiesecret + ip);
-        ip = SHA.SHA256(ip, setTo, HASHES_DB);
+        ip = SHA256(ip, setTo, HASHES_DB);
         const default_settings = {};
         let values = [encodeURIComponent(username), hashed_pw, Date.now(), ip, ip, JSON.stringify(default_settings)];
         let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_Settings) VALUES (?, ?, ?, ?, ?, ?);`;
@@ -1182,16 +1182,16 @@ router.post("/login",  function (req, res) {
     const no_ip_lock = username.endsWith("@unsafe")
     username = username.replace("@unsafe","")
 
-    let less_hashed_pw = SHA.SHA256(password, username, HASHES_DIFF);
-    let hashed_pw = SHA.SHA256(less_hashed_pw, username, HASHES_COOKIE);
+    let less_hashed_pw = SHA256(password, username, HASHES_DIFF);
+    let hashed_pw = SHA256(less_hashed_pw, username, HASHES_COOKIE);
     let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`;
     con.query(userexistssql, [encodeURIComponent(username), hashed_pw], function (error, result) {
         if (result && result[0]) {
             let ip = getIP(req);
-            let setTo = username + " " + SHA.SHA256(password, username, HASHES_COOKIE);
+            let setTo = username + " " + SHA256(password, username, HASHES_COOKIE);
             let cookiesigned = signature.sign(setTo, cookiesecret + (!no_ip_lock ? ip : ""));
             res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-            ip = SHA.SHA256(ip, setTo, HASHES_DB);
+            ip = SHA256(ip, setTo, HASHES_DB);
             if (result[0].User_LastIP != ip) {
                 let sql = `update ipost.users set User_LastIP = ? where User_Name = ?;`;
                 con.query(sql, [ip, encodeURIComponent(username)], function (error, result) {

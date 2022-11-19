@@ -1,6 +1,6 @@
 import fs from "fs";
-import SHA from "../../extra_modules/SHA.js";
-import unsign from "../../extra_modules/unsign.js";
+import {SHA256} from "../../extra_modules/SHA.js";
+import {unsign} from "../../extra_modules/unsign.js";
 const config = JSON.parse(fs.readFileSync("server_config.json"));
 const HASHES_DB = config.cookies.server_hashes;
 const HASHES_COOKIE = config.cookies.client_hashes;
@@ -14,20 +14,20 @@ export const setup = function (router, con, server) {
                 next()
                 return
             }
-            unsigned = unsign.unsign(req.cookies.AUTH_COOKIE, req, res);
+            unsigned = unsign(req.cookies.AUTH_COOKIE, req, res);
             if (!unsigned){
                 next()
                 return
             }
         }
         else {
-            unsigned = `${req.body.user} ${SHA.SHA256(req.body.pass, req.body.user, HASHES_COOKIE)}`;
+            unsigned = `${req.body.user} ${SHA256(req.body.pass, req.body.user, HASHES_COOKIE)}`;
             //basically we generate the unsigned cookie
             res.locals.isbot = true; //only bots use user+pass
         }
         let sql = `select User_Name,User_Bio,User_Avatar,User_Settings from ipost.users where User_Name=? and User_PW=?;`;
         let values = unsigned.split(" ");
-        values[1] = SHA.SHA256(values[1], values[0], HASHES_DIFF);
+        values[1] = SHA256(values[1], values[0], HASHES_DIFF);
         res.locals.bio = "";
         res.locals.avatar = "";
         res.locals.settings = {};

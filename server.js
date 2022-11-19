@@ -886,33 +886,32 @@ const load_var_cache = new LRU({
     updateAgeOnHas: true
 })
 
+import {minify as min_js} from "uglify-js"
+import Clean from 'clean-css';
+import Minifier from 'html-minifier-terser';
+
 function load_var(fina) {
     if(load_var_cache.get(fina))return load_var_cache.get(fina)
     if(!existsSync(fina)) {
         console.log(1,"tried loading non-existent file",fina)
+        load_var_cache.set(fina,"")
         return "";
     }
     let out = readFileSync(fina)
     if(fina.endsWith(".js")) {
-        return min_js(out.toString()).code
+        out = min_js(out.toString()).code
     }
-
-    if(fina.endsWith(".css")) {
+    else if(fina.endsWith(".css")) {
         const {
             styles,
-            errors,
         } = new Clean({}).minify(out.toString());
-        return styles
+        out = styles
     }
 
     load_var_cache.set(fina,out)
     
     return out
 }
-
-import {minify as min_js} from "uglify-js"
-import Clean from 'clean-css';
-import Minifier from 'html-minifier-terser';
 
 function get_channels(){
     return new Promise(function(resolve, reject) {

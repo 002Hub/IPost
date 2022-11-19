@@ -52,7 +52,7 @@ export const setup = function (router, con, server) {
             reply_id = req.body.reply_id;
         }
         if(typeof reply_id == "string") {
-            reply_id = parseInt(reply_id)
+            reply_id = parseInt(reply_id,10)
             if(isNaN(reply_id)) {
                 res.status(414)
                 res.json({ "error": "no valid reply id given" });

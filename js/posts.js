@@ -495,8 +495,8 @@ function switchChannel(channelname) {
       switchChannel(channelname)
       main()
 
-      let settings = await (await fetch("/api/settings")).json()
-      console.log(settings)
+      let settings = await (await fetch("/api/settings")).json() // skipqc
+      console.log(settings) // skipqc
       if(settings != "null") {
         if(settings.ACCR == false) {
           unreply()

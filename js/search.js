@@ -74,7 +74,7 @@ function createPost(username,text,time,specialtext,postid) {
   newP.appendChild(newSpan3)
 
   newDiv.appendChild(newP)
-  newDiv.innerHTML += filterPost(text)
+  newDiv.innerHTML += filterPost(text) // skipqc
   newDiv.id = postid
   document.getElementById("output").appendChild(newDiv)
 }

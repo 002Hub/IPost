@@ -1,4 +1,21 @@
- function uploadFile() {
+function completeHandler(event) {
+  console.log("completed upload");
+  console.log(event.target.responseText);
+  setuser() // skipqc
+}
+
+function errorHandler(event) {
+  console.log("error during upload");
+  console.log(event.target.responseText);
+}
+
+function progressHandler(event) {
+  console.log("progressing upload");
+  console.log("Uploaded " + event.loaded + " bytes of " + event.total);
+  console.log(event.target.responseText);
+}
+
+function uploadFile() {
   let file = document.getElementById("avatarUpl").files[0];
   console.log(file);
   let formdata = new FormData();
@@ -12,23 +29,6 @@
   ajax.send(formdata);
 
   document.getElementById("avatarUplButton").style = "display:none;";
-}
-
-function completeHandler(event) {
-  console.log("completed upload");
-  console.log(event.target.responseText);
-  setuser()
-}
-
-function errorHandler(event) {
-  console.log("error during upload");
-  console.log(event.target.responseText);
-}
-
-function progressHandler(event) {
-  console.log("progressing upload");
-  console.log("Uploaded " + event.loaded + " bytes of " + event.total);
-  console.log(event.target.responseText);
 }
 
 function getCookie(cname) {
@@ -89,6 +89,13 @@ async function setuser() {
   document.getElementById("avatarUplButton").addEventListener("click",uploadFile);
 }
 
+async function sendBio(str) {
+  if(document.getElementById("bio").placeholder != str && str != "") {
+    document.getElementById("bio").placeholder = str
+    return await post("/api/setBio",{"Bio":str}) // skipqc
+  }
+}
+
 async function bioChanger() {
   document.getElementById("bio").disabled = !document.getElementById("bio").disabled
   document.getElementById("changeBio").innerText = (document.getElementById("bio").disabled && "Change Bio") || "Submit"
@@ -103,17 +110,10 @@ async function bioChanger() {
   }
 }
 
-async function sendBio(str) {
-  if(document.getElementById("bio").placeholder != str && str != "") {
-    document.getElementById("bio").placeholder = str
-    return await post("/api/setBio",{"Bio":str})
-  }
-}
-
 
 async function changePW() {
   if(window.confirm("Are you sure that you want to change your Password?")){
-    let re = await (await post("/api/changePW",{"currentPW":document.getElementById("currentPW_pw").value,"newPW":document.getElementById("newPW").value})).json()
+    let re = await (await post("/api/changePW",{"currentPW":document.getElementById("currentPW_pw").value,"newPW":document.getElementById("newPW").value})).json() // skipqc
     document.getElementById("response_pw").innerText = re["error"] || re["success"]
     document.getElementById("response_pw").style="color:green"
     if(re["error"]) {
@@ -128,6 +128,7 @@ async function changePW() {
 
 async function changeUsername() {
   if(window.confirm("Are you sure that you want to change your Username?")){
+    // skipqc
     let re = await (await post("/api/changeUsername",{"currentPW":document.getElementById("currentPW_us").value.toString(),"newUsername":document.getElementById("newUsername").value})).json()
     document.getElementById("response_us").innerText = re["error"] || re["success"]
     document.getElementById("response_us").style="color:green"
@@ -145,7 +146,7 @@ async function setAllowCCR() {
   const ACCR = document.getElementById("ACCR_checkbox").checked
   const settingname = "ACCR" //Allow Cross-Channel reply (see #22 )
 
-  let r = await(await post("/api/settings",{setting: settingname, value: ACCR})).json()
+  let r = await(await post("/api/settings",{setting: settingname, value: ACCR})).json() // skipqc
 
   if(r.status == "error") {
     alert("Couldn't change setting")

@@ -120,7 +120,7 @@ export const setup = function (router, con, server) {
                                     console.error(error)
                                     return;
                                 }
-                                writeFile(`${__dirname}/user_uploads/previews/${file_name}.webp`,await sharp(file.data).resize(50,28,{fit: "inside"}).webp({mixed:true,effort:6}).toBuffer(),(error2)=>{
+                                writeFile(`${__dirname}/user_uploads/previews/${file_name}.webp`,await sharp(file.data).resize(50,50,{fit: "inside"}).webp({mixed:true,effort:6}).toBuffer(),(error2)=>{
                                     if(error2)console.error(error2)
                                 })
                             })

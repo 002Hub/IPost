@@ -962,8 +962,19 @@ let global_page_variables = {
     let originalUrl = overrideurl || request.originalUrl.split("?").shift();
 
     let path = ""
+    //console.log("handling user file")
     if (existsSync(dir + "views" + originalUrl)) {
+        //console.log("exists without additional path");
         path = dir + "views" + originalUrl
+        if(originalUrl.endsWith(".txt")) {
+            response.set('Content-Type', 'text/plain');
+            //console.log("sending txt file")
+            readFile(path,(err,data)=> {
+                if(err)return
+                response.send(data)
+            })
+            return
+        }
         //return response.sendFile(dir + "views" + originalUrl);
     }
     if (existsSync(dir + "views/" + originalUrl + "index.html")) {

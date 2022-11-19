@@ -725,12 +725,7 @@ router.post("/api/changePW",  function (req, res) {
         else {
             res.json({ "error": "invalid password" });
         }
-        sent_res = true;
     });
-    setTimeout(function () {
-        if (!sent_res)
-            res.json({ "error": "timeout" });
-    }, 3000);
 });
 router.post("/api/changeUsername",  function (req, res) {
     res.set("Access-Control-Allow-Origin", "");

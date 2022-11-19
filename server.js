@@ -712,9 +712,9 @@ router.post("/api/changePW", (req, res) => {
         if (result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
             let sql = `update ipost.users set User_PW=? where User_Name=? and User_PW=?;`;
             let values = [hashed_new_pw, res.locals.username, hashed_pw];
-            con.query(sql, values, (err) => {
-                if (err)
-                    throw err;
+            con.query(sql, values, (err2) => {
+                if (err2)
+                    throw err2;
                 let ip = getIP(req);
                 let setTo = `${res.locals.username} ${SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE)}`
                 let cookiesigned = signature.sign(setTo, cookiesecret + ip);

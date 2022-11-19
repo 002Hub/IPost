@@ -408,7 +408,7 @@ var blocked_headers = [
 if (!config.disallow_proxies_by_headers) {
     blocked_headers = [];
 }
-app.use(function (req, res, next) {
+app.use(function (_req, res, next) {
     res.set("X-XSS-Protection", "1; mode=block");
     next();
 });
@@ -551,7 +551,7 @@ router.post("/api/setavatar", function (req, res) {
           }).toBuffer().then(function(data){
             writeFileSync(avatars + filename,data)
             let sql = `update ipost.users set User_Avatar=? where User_Name=?`;
-            con.query(sql, [filename, encodeURIComponent(res.locals.username)], function (err, result) {
+            con.query(sql, [filename, encodeURIComponent(res.locals.username)], function (err) {
                 if (err)
                     throw err;
                 res.json({ "success": "updated avatar" });
@@ -559,7 +559,7 @@ router.post("/api/setavatar", function (req, res) {
         })
     });         
 });
-router.get("/api/getuser",  function (req, res) {
+router.get("/api/getuser",  function (_req, res) {
     res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar });
 });
 router.get("/api/getalluserinformation",  function (req, res) {
@@ -599,7 +599,7 @@ router.get("/api/getotheruser",  function (req, res) {
         }
     });
 });
-router.get("/api/getPosts/*",  function (req, res) {
+router.get("/api/getPosts/*",  function (_req, res) {
     res.set("Access-Control-Allow-Origin", "");
     res.redirect("/api/getPosts");
 });
@@ -657,7 +657,7 @@ router.get("/api/getPost",  function (req, res) {
         }
     });
 });
-router.get("/api/getChannels",  function (req, res) {
+router.get("/api/getChannels",  function (_req, res) {
     res.set("Access-Control-Allow-Origin", "*");
     let sql = `select post_receiver_name from ipost.posts where post_is_private = '0' group by post_receiver_name;`;
     con.query(sql, [], function (err, result) {
@@ -681,13 +681,13 @@ router.post("/api/setBio",  function (req, res) {
         return;
     }
     let sql = `update ipost.users set User_Bio=? where User_Name=?`;
-    con.query(sql, [bio, encodeURIComponent(res.locals.username)], function (err, result) {
+    con.query(sql, [bio, encodeURIComponent(res.locals.username)], function (err) {
         if (err)
             throw err;
         res.json({ "success": "updated bio" });
     });
 });
-router.post("/api/changePW",  function (req, res) {
+router.post("/api/changePW", (req, res) => {
     res.set("Access-Control-Allow-Origin", "");
     if ((typeof req.body.newPW) != "string") {
         res.json({ "error": "incorrect password" });
@@ -712,11 +712,11 @@ router.post("/api/changePW",  function (req, res) {
         if (result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
             let sql = `update ipost.users set User_PW=? where User_Name=? and User_PW=?;`;
             let values = [hashed_new_pw, res.locals.username, hashed_pw];
-            con.query(sql, values, function (err, result) {
+            con.query(sql, values, (err) => {
                 if (err)
                     throw err;
                 let ip = getIP(req);
-                let setTo = res.locals.username + " " + SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE);
+                let setTo = `${res.locals.username} ${SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE)}`
                 let cookiesigned = signature.sign(setTo, cookiesecret + ip);
                 res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
                 res.json({ "success": "successfully changed password" });
@@ -768,17 +768,17 @@ router.post("/api/changeUsername",  function (req, res) {
                 }
                 let sql = `update ipost.users set User_PW=?,User_Name=? where User_Name=? and User_PW=?;`; //change username in users
                 let values = [hashed_new_pw, req.body.newUsername, res.locals.username, hashed_pw];
-                con.query(sql, values, function (err, result) {
+                con.query(sql, values, function (err) {
                     if (err)
                         throw err;
                     let ip = getIP(req);
-                    let setTo = req.body.newUsername + " " + SHA256(req.body.currentPW, req.body.newUsername, HASHES_COOKIE);
+                    let setTo = `${req.body.newUsername} ${SHA256(req.body.currentPW, req.body.newUsername, HASHES_COOKIE)}`
                     let cookiesigned = signature.sign(setTo, cookiesecret + ip);
                     res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
                     //updated username in the users table, but not yet on posts
                     let sql = `update ipost.posts set post_user_name=? where post_user_name=?;`; //change username of every past post sent
                     let values = [req.body.newUsername, res.locals.username, hashed_pw];
-                    con.query(sql, values, function (err, result) {
+                    con.query(sql, values, () => {
                         res.json({ "success": "successfully changed username" }); //done
                     });
                 });
@@ -851,7 +851,7 @@ router.get("/user_uploads/*", (request, response) => {
     return;
 });
 
-router.get("/avatars/*", (request, response, next) => {
+router.get("/avatars/*", (request, response) => {
     if (!increaseUSERCall(request, response))
         return;
     response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
@@ -864,7 +864,7 @@ router.get("/avatars/*", (request, response, next) => {
     }
     response.status(404).send("No avatar with that name found");
 });
-router.get("/logout",  function (req, res) {
+router.get("/logout",  function (_req, res) {
     res.cookie("AUTH_COOKIE", "", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
     res.redirect("/");
 });
@@ -877,7 +877,7 @@ ejs.cache = new LRU({max:20})
 const load_var_cache = new LRU({
     max: 20,
     maxSize: 10000,
-    sizeCalculation: (value, key) => {
+    sizeCalculation: (value) => {
         return value.length
     },
     ttl: 1000 * 60,
@@ -1027,7 +1027,7 @@ let global_page_variables = {
     }
 
     if(originalUrl == "/api/documentation/") {
-        readFile(path,function(err,res){
+        readFile(path,function(_err,res){
             response.send(res.toString())
         })
         return
@@ -1100,7 +1100,7 @@ router.post("/register",  function (req, res) {
         return;
     }
     let userexistssql = `SELECT User_Name from ipost.users where User_Name = ?`;
-    con.query(userexistssql, [encodeURIComponent(username)], function (error, result) {
+    con.query(userexistssql, [encodeURIComponent(username)], function (_error, result) {
         if (result && result[0] && result[0].User_Name) {
             res.status(418);
             res.redirect("/register?success=false&reason=already_exists");
@@ -1109,13 +1109,13 @@ router.post("/register",  function (req, res) {
         let less_hashed_pw = SHA256(password, username, HASHES_DIFF);
         let hashed_pw = SHA256(less_hashed_pw, username, HASHES_COOKIE);
         let ip = getIP(req);
-        let setTo = username + " " + SHA256(password, username, HASHES_COOKIE);
+        let setTo = `${username} ${SHA256(password, username, HASHES_COOKIE)}`
         let cookiesigned = signature.sign(setTo, cookiesecret + ip);
         ip = SHA256(ip, setTo, HASHES_DB);
         const default_settings = {};
         let values = [encodeURIComponent(username), hashed_pw, Date.now(), ip, ip, JSON.stringify(default_settings)];
         let sql = `INSERT INTO ipost.users (User_Name, User_PW, User_CreationStamp, User_CreationIP, User_LastIP, User_Settings) VALUES (?, ?, ?, ?, ?, ?);`;
-        con.query(sql, values, function (err, result) {
+        con.query(sql, values, function (err) {
             if (err)
                 throw err;
             res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
@@ -1179,16 +1179,16 @@ router.post("/login",  function (req, res) {
     let less_hashed_pw = SHA256(password, username, HASHES_DIFF);
     let hashed_pw = SHA256(less_hashed_pw, username, HASHES_COOKIE);
     let userexistssql = `SELECT * from ipost.users where User_Name = ? and User_PW = ?;`;
-    con.query(userexistssql, [encodeURIComponent(username), hashed_pw], function (error, result) {
+    con.query(userexistssql, [encodeURIComponent(username), hashed_pw], function (_error, result) {
         if (result && result[0]) {
             let ip = getIP(req);
-            let setTo = username + " " + SHA256(password, username, HASHES_COOKIE);
+            let setTo = `${username} ${SHA256(password, username, HASHES_COOKIE)}`
             let cookiesigned = signature.sign(setTo, cookiesecret + (!no_ip_lock ? ip : ""));
             res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
             ip = SHA256(ip, setTo, HASHES_DB);
             if (result[0].User_LastIP != ip) {
                 let sql = `update ipost.users set User_LastIP = ? where User_Name = ?;`;
-                con.query(sql, [ip, encodeURIComponent(username)], function (error, result) {
+                con.query(sql, [ip, encodeURIComponent(username)], function (error) {
                     if (error)
                         throw error;
                 });

@@ -15,12 +15,16 @@ function progressHandler(event) {
   console.log(event.target.responseText);
 }
 
+/** 
+* upload avatar to the server
+* @return {undefined} no return value
+*/
 function uploadFile() {
-  let file = document.getElementById("avatarUpl").files[0];
+  const file = document.getElementById("avatarUpl").files[0];
   console.log(file);
-  let formdata = new FormData();
+  const formdata = new FormData();
   formdata.append("avatar", file);
-  let ajax = new XMLHttpRequest();
+  const ajax = new XMLHttpRequest();
   ajax.upload.addEventListener("progress", progressHandler, false);
   ajax.addEventListener("load", completeHandler, false);
   ajax.addEventListener("error", errorHandler, false);
@@ -55,16 +59,10 @@ function setCookie(cname, cvalue, exdays) {
 }
 
 function logout() {
-  localStorage.setItem("priv_key","")
-  localStorage.setItem("decryption_key","")
   location.assign('/logout')
 }
 
 async function setuser() {
-  if(getCookie("priv_key") != "") {
-    localStorage.setItem("priv_key",getCookie("priv_key"))
-    setCookie("priv_key","",0)
-  }
   let user = await (await fetch("/api/getuser")).json();
   let username
   let bio
@@ -89,11 +87,17 @@ async function setuser() {
   document.getElementById("avatarUplButton").addEventListener("click",uploadFile);
 }
 
+/** 
+* sets user bio
+* @param {string} str - bio to set
+* @return {promise} api response
+*/
 async function sendBio(str) {
-  if(document.getElementById("bio").placeholder != str && str != "") {
+  if(document.getElementById("bio").placeholder !== str && str !== "") {
     document.getElementById("bio").placeholder = str
-    return await post("/api/setBio",{"Bio":str}) // skipqc
+    return post("/api/setBio",{"Bio":str}) // skipqc
   }
+  return ""
 }
 
 async function bioChanger() {

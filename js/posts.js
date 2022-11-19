@@ -512,8 +512,8 @@ function switchChannel(channelname) {
 var files = []
 
 function addFile(file) {
-  if(file.size > 100000) {
-    alert("that file is too large, max size: 100KiB")
+  if(file.size > 1_000_000) {
+    alert("that file is too large, max size: 1MiB")
     console.log("file is too big: ", file.name, file.type, file.size);
     return;
   }

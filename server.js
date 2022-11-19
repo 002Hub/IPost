@@ -381,7 +381,12 @@ function increaseUSERCall(req, res, next) {
 }
 console.log(5, "loading routes");
 app.use(useragent.express());
-app.use(fileUpload());
+app.use(fileUpload({
+    limits: {
+        files: 5,
+        fileSize: 1_000_000
+    }
+}));
 
 app.use(bodyParser.default.json({ limit: "100mb" }));
 app.use(bodyParser.default.urlencoded({ limit: "100mb", extended: true }));

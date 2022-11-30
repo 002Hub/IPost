@@ -1,4 +1,4 @@
-const urlregex = /(([a-z]+:\/\/)(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|app|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|ga|xxx|to))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
+const urlregex = /(([a-z]+:\/\/)(([a-z0-9\-]+\.)+([a-z]{2}|aero|arpa|app|biz|com|coop|edu|gov|info|int|jobs|mil|museum|name|nato|net|org|pro|travel|local|internal|tk|rocks|ga|to))(:[0-9]{1,5})?(\/[a-z0-9_\-\.~]+)*(\/([a-z0-9_\-\.]*)(\?[a-z0-9+_\-\.%=&amp;]*)?)?(#[a-zA-Z0-9!$&'()*+.=-_~:@/?]*)?)(\s+|$)/gi
 function urlify(text) {
   return text.replace(urlregex,'<a href="$1" target="_blank" class="insertedlink">$1</a> ')
 }

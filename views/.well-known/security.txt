@@ -1,8 +1,7 @@
 Contact: mailto:ipost@duck.com
 Expires: 2023-12-31T23:00:00.000Z
-Encryption: https://ipost.tk/.well-known/pgp_key.txt
-Acknowledgments: https://ipost.tk/hall-of-fame
+Encryption: https://ipost.rocks/.well-known/pgp_key.txt
+Acknowledgments: https://ipost.rocks/hall-of-fame
 Acknowledgments: https://github.com/002Hub/IPost/issues
 Preferred-Languages: en,de
-Canonical: https://ipost.tk/.well-known/security.txt
-Canonical: https://raw.githubusercontent.com/002Hub/IPost/master/views/security.txt
+Canonical: https://ipost.rocks/.well-known/security.txt

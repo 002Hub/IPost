@@ -1,7 +1,7 @@
 let username,reply_id=0,highest_id,currentChannel = sessionStorage.getItem("lastchannel") || "everyone"
 
 const 
-wss_server = "wss://ipost.tk",
+wss_server = "wss://ipost.rocks",
 wss_port = "443",
 wss_URI = wss_server + ":" + wss_port,
 decURIComp = decodeURIComponent

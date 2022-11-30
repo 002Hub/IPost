@@ -1,6 +1,6 @@
 let username
 
-const wss_server = "wss://ipost.tk"
+const wss_server = "wss://ipost.rocks"
 const wss_port = "443"
 const wss_URI = wss_server + ":" + wss_port
 

@@ -94,7 +94,7 @@ export const setup = function (router, con, server) {
             res.json({ "error": "no message to post" });
             return;
         }
-        console.log(req.body);
+        //console.log(req.body);
         let __dirname = server.dirname
 
         const file_names = ["","","","",""]

@@ -115,6 +115,7 @@ export const setup = function (router, con, server) {
     
         if(path != "" && originalUrl != "/favicon.ico" && originalUrl != "/api/documentation/") {
             global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
+            global_page_variables.query = request.query
             ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
                 str = await str
                 err = await err

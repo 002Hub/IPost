@@ -13,10 +13,10 @@ async function register() {
     }
     let r = (await post("/register",{
         user: document.getElementById("user").value,
-        pass: document.getElementById("pass").value
+        pass: document.getElementById("pass").value,
+        r: REDIRECT_URL
     }))
-    console.log(r)
-    if(!r.url.endsWith("/user?success=true")) {
+    if(!r.url.endsWith("/user?success=true") && !r.url.endsWith(REDIRECT_URL)) {
         if(r.url.endsWith("already_exists")) {
             alert("An account with that name already exists! Did you mean to login?")
             return
@@ -27,7 +27,7 @@ async function register() {
         alert("Registration failed")
         return;
     }
-    window.location = "/user"
+    window.location = r.url
 }
 
 function passkeydown(e) {

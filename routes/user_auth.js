@@ -82,7 +82,11 @@ export const setup = function (router, con, server) {
                 if (err)
                     throw err;
                 res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-                res.redirect("/user?success=true");
+                if(req.body.r !== undefined) {
+                    res.redirect(decodeURIComponent(req.body.r))
+                } else {
+                    res.redirect("/user");
+                }
             });
         });
     });
@@ -153,7 +157,11 @@ export const setup = function (router, con, server) {
                             throw error;
                     });
                 }
-                res.redirect("/user?success=true");
+                if(req.body.r !== undefined) {
+                    res.redirect(decodeURIComponent(req.body.r))
+                } else {
+                    res.redirect("/user");
+                }
             }
             else {
                 console.log(5,"login failed, username: ", username);

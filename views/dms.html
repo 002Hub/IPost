@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>DMs</title>
+    <% if(user.username === undefined) { %>
+      <script> document.location.href = '/no_login?r='+encodeURIComponent(document.location.pathname) </script>
+    <% } %>
     <%- newrelic %>
     <style>
       <%- globalcss %>

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Login | IPost</title>
-  <%- newrelic %>
-  <link rel="stylesheet" href="/css/logon.css">
-  <script src="/js/warn_message.js" charset="utf-8"></script>
-  <script src="/js/addnavbar.js" charset="utf-8"></script>
-  <link rel="stylesheet" href="/css/global.css">
-  <script> <%- httppostjs %> </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | IPost</title>
+    <%- newrelic %>
+    <link rel="stylesheet" href="/css/logon.css">
+    <script src="/js/warn_message.js" charset="utf-8"></script>
+    <script src="/js/addnavbar.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="/css/global.css">
+    <script> 
+        const REDIRECT_URL = "<%-query.r%>"
+        <%- httppostjs %> 
+    </script>
 </head>
 
 <body>

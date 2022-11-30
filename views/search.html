@@ -28,6 +28,9 @@
         padding-bottom: 2px;
       }
     </style>
+    <% if(user.username === undefined) { %>
+      <script> document.location.href = '/no_login?r='+encodeURIComponent(document.location.pathname) </script>
+    <% } %>
   </head>
   <body>
     <main>

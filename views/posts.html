@@ -9,6 +9,9 @@
       <%- globalcss %>
       <%- loadfile("./css/posts.css") %>
     </style>
+    <% if(user.username === undefined) { %>
+      <script> document.location.href = '/no_login?r='+encodeURIComponent(document.location.pathname) </script>
+    <% } %>
     <script type="text/javascript" async>
       <%- httppostjs %>
       <%- htmlescapejs %>

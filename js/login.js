@@ -1,15 +1,16 @@
 async function login() {
     let r = (await post("/login",{
         user: document.getElementById("user").value,
-        pass: document.getElementById("pass").value
+        pass: document.getElementById("pass").value,
+        r: REDIRECT_URL
     }))
-    if(!r.url.endsWith("/user")) {
+    if(!r.url.endsWith("/user") && !r.url.endsWith(REDIRECT_URL)) {
         document.getElementById("pass").value = ""
         console.error("login failed")
         alert("Login failed, please make sure you have the right password")
         return;
     }
-    window.location = "/user"
+    window.location = r.url
 }
 
 let passfield = document.getElementById("pass")

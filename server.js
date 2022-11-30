@@ -82,45 +82,31 @@ const con = mysql.createPool({
     password: readFileSync(config.mysql.password_file).toString()
 });
 const cookiesecret = readFileSync("cookiesecret.txt").toString();
-/**
- * quick function to convert data to base64
- * @param  {any} data               data to encode in base64
- * @return {string}      base64 encoded data
- */
-function b64(data) {
-    let buff = Buffer.from(data);
-    return buff.toString('base64');
-}
+
 /**
  * custom, bad random number generator
  * @param       {number} seed  seed for the number generator, defaults to current timestamp
  * @constructor
  */
-function RNG(seed) {
-    if (!seed)
-        seed = Date.now();
-    this.seed = seed;
-    this.random = function (min, max) {
-        if (!min)
-            min = 0;
-        if (!max) {
-            max = min;
-            min = 0;
-        }
-        this.seed += Math.log(Math.abs(Math.sin(this.seed)) * 100);
-        return Math.abs(Math.sin(this.seed)) * max + min;
-    };
-    this.rand = function (min, max) {
-        return Math.floor(this.random(min, max));
-    };
-}
-/**
- * waits x ms
- * @param  {number} ms               amount of ms to sleep for
- * @return {promise}    promise that gets resolved after x ms
- */
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+class RNG {
+    constructor(seed) {
+        if (!seed)
+            seed = Date.now();
+        this.seed = seed;
+        this.random = function (min, max) {
+            if (!min)
+                min = 0;
+            if (!max) {
+                max = min;
+                min = 0;
+            }
+            this.seed += Math.log(Math.abs(Math.sin(this.seed)) * 100);
+            return Math.abs(Math.sin(this.seed)) * max + min;
+        };
+        this.rand = function (min, max) {
+            return Math.floor(this.random(min, max));
+        };
+    }
 }
 const rand = new RNG();
 const genstring_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
@@ -137,15 +123,7 @@ function genstring(length) {
     }
     return result;
 }
-/**
- * utility function to get a key by its value in an object
- * @param  {object}     object                  object to get key from
- * @param  {any}        value                   value to get key from
- * @return {any}                                key to the given value inside the object
- */
-function getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-}
+
 var API_CALLS = {};
 var API_CALLS_ACCOUNT = {};
 var USER_CALLS = {};

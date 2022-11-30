@@ -211,6 +211,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
 
   avatar.width=25;
   avatar.height=25;
+  avatar.alt = "user avatar"
   avatar.classList.add("avatar")
   if(avatar_src)avatar.src = "/avatars/"+avatar_src
   else {
@@ -298,7 +299,12 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   file2_img.width = 50
   file3_img.width = 50
   file4_img.width = 50
-  
+
+  file0_img.alt = "user uploaded file"
+  file1_img.alt = "user uploaded file"
+  file2_img.alt = "user uploaded file"
+  file3_img.alt = "user uploaded file"
+  file4_img.alt = "user uploaded file"
 
   if(file0){
     filesP.appendChild(file0_img)

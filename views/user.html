@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User | IPost</title>
     <% if(user.username === undefined) { %>
+      <meta name="description" content="<%-unauthorized_description%>">
+    <% } else { %>
+      <meta name="description" content="view your own user page">
+    <% } %>
+    <% if(user.username === undefined) { %>
       <script> document.location.href = '/no_login?r='+encodeURIComponent(document.location.pathname) </script>
     <% } %>
     <%- newrelic %>

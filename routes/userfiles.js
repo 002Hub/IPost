@@ -79,7 +79,8 @@ export const setup = function (router, con, server) {
         cookiebanner: `<script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/3cf33f6b631f3587bf83813b/script.js" async></script>`,
         newrelic: load_var("./extra_modules/newrelic_monitor.html"),
         getPID: server.global_page_variables.getPID,
-        getDMPID: server.global_page_variables.getDMPID
+        getDMPID: server.global_page_variables.getDMPID,
+        unauthorized_description: "Chat now by creating an account on IPost"
     }
 
     

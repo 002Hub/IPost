@@ -12,19 +12,7 @@ import getIP from "./extra_modules/getip.js";
 import {unsign} from "./extra_modules/unsign.js";
 import { readFileSync, appendFile } from "fs";
 import { format } from "util";
-import { setup as optionssetup } from "./routes/api/options.js";
-import { setup as allsetup } from "./routes/api/all.js";
-import { setup as settingshandlersetup } from "./routes/api/settingshandler.js";
-import { setup as postsetup } from "./routes/api/post.js";
-import { setup as dmsPersonalMessagessetup } from "./routes/api/dms/PersonalMessages.js";
-import { setup as dmspostsetup } from "./routes/api/dms/post.js";
-import { setup as fileiconsetup } from "./routes/api/getFileIcon.js";
-import { setup as searchsetup } from "./routes/api/search.js";
-import { setup as getpostssetup } from "./routes/api/getPosts.js";
-import { setup as userroutessetup } from "./routes/api/userRoutes.js";
-import { setup as servefilessetup} from "./routes/serve_static_files.js"
-import { setup as userfilessetup} from "./routes/userfiles.js"
-import { setup as userauthsetup} from "./routes/user_auth.js"
+import { setup as SETUP_ROUTES} from "./routes/setup_all_routes.js"
 
 import { ensureExists } from "./extra_modules/ensureExists.js"
 
@@ -327,7 +315,6 @@ app.use("/*", function (req, res, next) {
 });
 console.log(5, "finished loading user routes, starting with api routes");
 
-const setuproute = handler => handler(router,con,commonfunctions)
 
 /*
 
@@ -348,16 +335,7 @@ var commonfunctions = {
     DID_I_FINALLY_ADD_HTTPS
 };
 
-setuproute(optionssetup)
-setuproute(allsetup)
-setuproute(settingshandlersetup)
-const get_pid = setuproute(postsetup);
-setuproute(dmsPersonalMessagessetup)
-const get_dmpid = setuproute(dmspostsetup);
-setuproute(fileiconsetup)
-setuproute(searchsetup)
-setuproute(getpostssetup)
-setuproute(userroutessetup)
+SETUP_ROUTES(router,con,commonfunctions)
 
 
 router.get("/api/getChannels",  function (_req, res) {
@@ -375,21 +353,10 @@ END /API/*
 
 */
 
-setuproute(servefilessetup)
-
 router.get("/logout",  function (_req, res) {
     res.cookie("AUTH_COOKIE", "", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
     res.redirect("/");
 });
-
-let global_page_variables = {
-    getPID: get_pid,
-    getDMPID: get_dmpid,
-}
-commonfunctions.global_page_variables = global_page_variables
-setuproute(userfilessetup) //needs getPID and getDMPID
-
-setuproute(userauthsetup) //login & register
 
 console.log(5, "finished loading routes");
 app.use(router);

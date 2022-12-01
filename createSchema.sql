@@ -12,8 +12,6 @@ CREATE TABLE `users` (
   `User_LastIP` varchar(45) NOT NULL DEFAULT 'None',
   `User_Bio` varchar(100) DEFAULT 'wow such empty',
   `User_Avatar` varchar(100) DEFAULT NULL,
-  `User_PublicKey` varchar(830) DEFAULT NULL,
-  `User_PrivateKey` text,
   `User_Settings` json NOT NULL,
   PRIMARY KEY (`User_ID`,`User_Name`),
   UNIQUE KEY `User_Name_UNIQUE` (`User_Name`)
@@ -28,9 +26,13 @@ CREATE TABLE `posts` (
   `post_time` bigint NOT NULL,
   `post_special_text` varchar(100) DEFAULT NULL,
   `post_receiver_name` varchar(100) DEFAULT NULL,
-  `post_is_private` tinyint DEFAULT '0',
   `post_from_bot` tinyint DEFAULT '0',
   `post_reply_id` bigint unsigned DEFAULT NULL,
+  `file_0` varchar(52) DEFAULT NULL,
+  `file_1` varchar(52) DEFAULT NULL,
+  `file_2` varchar(52) DEFAULT NULL,
+  `file_3` varchar(52) DEFAULT NULL,
+  `file_4` varchar(52) DEFAULT NULL,
   PRIMARY KEY (`post_id`)
 );
 
@@ -41,7 +43,6 @@ CREATE TABLE `dms` (
   `dms_time` bigint NOT NULL,
   `dms_special_text` varchar(100) DEFAULT NULL,
   `dms_receiver` varchar(100) DEFAULT NULL,
-  `dms_is_encrypted` tinyint DEFAULT '0',
   `dms_from_bot` tinyint DEFAULT '0',
   `dms_reply_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`dms_id`)

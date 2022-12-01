@@ -32,7 +32,7 @@
       async function getuser() {
         let user = await (await fetch("/api/getotheruser?user="+other_username)).json()
         document.getElementById('userName').innerText = `${(!user["error"] && "User: "+user.username) || "Error: "+user["error"]}`
-        document.getElementById('userBio').innerText = `${(!user["error"] && "Bio: " + decodeURIComponent(user.bio)) || ""}`
+        document.getElementById('userBio').innerText = `${(!user["error"] && "Bio: " + decodeURIComponent(user.bio||"wow such empty")) || ""}`
         document.title = `${(!user["error"] && user.username+"'s Page") || "No such User!"}`
         let avatar = user["avatar"]
         if(avatar) {

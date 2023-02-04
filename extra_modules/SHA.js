@@ -1,4 +1,14 @@
 import crypto from "crypto";
+
+let SHA256_cache = {}
+
+function _SHA256(str) {
+    return crypto
+            .createHash("sha256")
+            .update(str)
+            .digest("base64");
+}
+
 /**
  * hashes with the secure hashing algorithm 256
  * @param       {string} str   string to hash
@@ -11,13 +21,18 @@ function SHA256(str, salt, num) {
         num = 1;
     if (!str)
         return;
+    let identifier = _SHA256(str+salt+num.toString())
+    if(SHA256_cache[identifier] != undefined) {
+        return SHA256_cache[identifier];
+    }
     let ret = str;
     for (let i = 0; i < num; i++) {
-        ret = crypto
-            .createHash("sha256")
-            .update(ret + salt)
-            .digest("base64");
+        ret = _SHA256(ret + salt)
     }
+    SHA256_cache[identifier] = ret;
+    setTimeout(()=>{
+        SHA256_cache[identifier] = undefined
+    },10000) //cache for 10s
     return ret;
 }
 export { SHA256 };

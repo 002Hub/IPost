@@ -12,6 +12,13 @@ export const setup = function (router, con, server) {
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
             if(req.body.auth != undefined) {
+                if(typeof req.body.auth === "string") {
+                    try{
+                        req.body.auth = JSON.parse(req.body.auth)
+                    } catch(err) {
+                        console.log("error parsing",err)
+                    }
+                }
                 if(
                     typeof req.body.auth            !== "object" || 
                     typeof req.body.auth.secret     !== "string" || 
@@ -27,7 +34,7 @@ export const setup = function (router, con, server) {
                     //secret    : string(200 chars)
                     //appid     : number
                     //auth_token: string(100 chars)
-                    let sql = "select User_ID,User_Name,User_Bio,User_Avatar,User_Settings from auth_tokens inner join application on auth_token_isfrom_application_id=application_id inner join users on auth_token_u_id=User_ID where auth_token=? and application_secret=? and application_id=?"
+                    let sql = "select User_ID,User_Name,User_Bio,User_Avatar,User_Settings from ipost.auth_tokens inner join ipost.application on auth_token_isfrom_application_id=application_id inner join ipost.users on auth_token_u_id=User_ID where auth_token=? and application_secret=? and application_id=?"
                     con.query(sql,[SHA256(req.body.auth.auth_token,req.body.auth.appid, HASHES_DB),SHA256(req.body.auth.secret,req.body.auth.appid, HASHES_DB),req.body.auth.appid],(err,result) => {
                         if(err) throw err;
 

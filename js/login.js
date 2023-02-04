@@ -10,7 +10,7 @@ async function login() {
         alert("Login failed, please make sure you have the right password")
         return;
     }
-    window.location = r.url
+    window.location = REDIRECT_URL || "/user"
 }
 
 let passfield = document.getElementById("pass")

@@ -27,7 +27,7 @@ async function register() {
         alert("Registration failed")
         return;
     }
-    window.location = r.url
+    window.location = REDIRECT_URL || "/user"
 }
 
 function passkeydown(e) {

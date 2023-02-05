@@ -11,7 +11,7 @@
     "html-minifier-terser": "^7.1.0",
     "lru-cache": "^7.14.1",
     "mysql": "^2.18.1",
-    "newrelic": "^9.7.1",
+    "newrelic": "^9.7.5",
     "sharp": "^0.30.7",
     "spdy": "^4.0.2",
     "uglify-js": "^3.17.4",

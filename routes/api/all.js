@@ -11,6 +11,13 @@ export const setup = function (router, con, server) {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         let unsigned;
         if (req.body.user == undefined || req.body.pass == undefined) {
+            if(typeof req.get("ipost-auth-token") === "string") {
+                try{
+                    req.body.auth = JSON.parse(req.get("ipost-auth-token"))
+                } catch(err) {
+                    console.log("error parsing header",err)
+                }
+            }
             if(req.body.auth != undefined) {
                 if(typeof req.body.auth === "string") {
                     try{
@@ -18,7 +25,7 @@ export const setup = function (router, con, server) {
                     } catch(err) {
                         console.log("error parsing",err)
                     }
-                }
+                } else 
                 if(
                     typeof req.body.auth            !== "object" || 
                     typeof req.body.auth.secret     !== "string" || 

@@ -25,7 +25,7 @@ socket.addEventListener("message", async function (event) {
         decURIComp(item.post_text),
         item.post_time,
         item.post_special_text,
-        highest_id+1,
+        item.post_id || (highest_id+1),
         item.post_from_bot,
         item.post_reply_id,
         true,

@@ -33,113 +33,137 @@ export const setup = function (router, con, server) {
         res.set("Access-Control-Allow-Origin", "*");
         res.json({ "pid": createPID() });
     });
-    router.post("/api/post",  function (req, res) {
-        if (!req.body.message) {
-            res.status(410)
-            res.json({ "error": "no message to post" });
-            return;
-        }
-        if ((typeof req.body.message) != "string") {
-            res.status(411)
-            res.json({ "error": "no message to post" });
-            return;
-        }
-        if ((typeof req.body.pid) != "string") {
-            res.status(412)
-            res.json({ "error": "no pid given" });
-            return;
-        }
-        if (req.body.pid.length != 10 || PIDS[req.body.pid] !== true) {
-            res.status(413)
-            res.json({ "error": "invalid pid given" });
-            return;
-        }
-        PIDS[req.body.pid] = "already_used";
-        let reply_id;
-        if (!req.body.reply_id || req.body.reply_id < 0) {
-            reply_id = 0;
-        }
-        else {
-            reply_id = req.body.reply_id;
-        }
-        if(typeof reply_id == "string") {
-            reply_id = parseInt(reply_id,10)
-            if(isNaN(reply_id)) {
-                res.status(414)
-                res.json({ "error": "no valid reply id given" });
-                return;
+
+    function validateMessage(message) {
+        if (!message) {
+            throw {
+                statusCode: 410,
+                message: "no message to post"
             }
         }
-        if ((typeof reply_id) != "number") {
-            res.status(415)
-            res.json({ "error": "no valid reply id given" });
-            return;
+        if ((typeof message) !== "string") {
+            throw {
+                statusCode: 411,
+                message: "no message to post"
+            }
         }
-        if (req.body.message.length > 1000) {
-            res.status(416)
-            res.json({ "error": "message too long" });
-            return;
+        if (message.length > 1000) {
+            throw {
+                statusCode: 416,
+                message: "message too long"
+            }
         }
-        req.body.message = encodeURIComponent(req.body.message.trim());
-        if (req.body.message.length > 3000) {
-            res.status(417)
-            res.json({ "error": "message too long" }); //check again after URI encoding it
-            return;
+        message = encodeURIComponent(message.trim());
+        if (message.length > 3000) {
+            throw {
+                statusCode: 417,
+                message: "message too long"
+            }
         }
-        req.body.receiver = encodeURIComponent(req.body.receiver || "");
-        if (req.body.receiver == "")
-            req.body.receiver = "everyone";
-        if (!req.body.message) {
-            res.status(418)
-            res.json({ "error": "no message to post" });
-            return;
-        }
-        //console.log(req.body);
-        let __dirname = server.dirname
+        if (!message) {
+            throw {
+                statusCode: 418,
+                message: "no message to post"
+            }
+        } //backup check
+        return message
+    }
 
-        const file_names = ["","","","",""]
-        if(isNotNull(req.files)) {
-            for(let file_index=0;file_index<5;file_index++) {
-                if(isNotNull(req.files[`file_${file_index}`])) {
-                    let file = req.files[`file_${file_index}`]
-                    const file_id = server.genstring(20)
-                    const file_name = `${file_id}/${(file.name.substring(0,25)).replace(/\.[^/.]+$/, "")}`
-                    let extension = file.name.substring(file.name.lastIndexOf("\.")+1)
-                    file_names[file_index]=`${file_name}${(extension in image_types && ".webp") || extension}`
-                    server.ensureExists(`${__dirname}/user_uploads/${file_id}`,undefined,async (err)=>{
-                        if(err) {
-                            console.error(err)
-                            return;
-                        }
-                        if(extension in image_types) {
-                            writeFile(`${__dirname}/user_uploads/${file_name}.webp`,await sharp(file.data).webp({mixed:true,effort:6}).toBuffer(),(err2)=>{
-                                if(err2)console.error(err2)
-                            })
-                            server.ensureExists(`${__dirname}/user_uploads/previews/${file_id}`,undefined,async (error) => {
-                                if(error) {
-                                    console.error(error)
-                                    return;
-                                }
-                                writeFile(`${__dirname}/user_uploads/previews/${file_name}.webp`,await sharp(file.data).resize(100,100,{fit: "inside"}).webp({mixed:true,effort:6}).toBuffer(),(error2)=>{
-                                    if(error2)console.error(error2)
-                                })
-                            })
-                        } else {
-                            file.mv(`${__dirname}/user_uploads/${file_name}.${extension}`,(err2)=>{
-                                if(err2)console.error(err2)
-                            })
-                        }
-                    })
-                } else {
-                    break
+    function validatePID(pid) {
+        if (!pid || typeof pid !== "string") {
+            throw {
+                statusCode: 412,
+                message: "no pid given"
+            }
+        }
+        if (pid.length !== 10 || PIDS[pid]!==true) {
+            throw {
+                statusCode: 413,
+                message: "invalid pid given"
+            }
+        }
+        PIDS[req.body.pid] = "already_used";
+    }
+
+    function validateReplyID(rid) {
+        let reply_id;
+        if (!rid || rid < 0) {
+            reply_id = 0
+        }
+        if(typeof rid === "string") {
+            reply_id = parseInt(reply_id,10)
+            if(isNaN(reply_id)) {
+                throw {
+                    statusCode: 414,
+                    message: "no valid reply id given"
                 }
             }
         }
-        
+        if (typeof reply_id !== "number") {
+            throw {
+                statusCode: 415,
+                message: "no valid reply id given"
+            } //backup case
+        }
+        return reply_id
+    }
 
-        let sql = `insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4) values (?,?,?,?,?,?,?,?,?,?,?);`;
-        let values = [encodeURIComponent(res.locals.username), req.body.message, Date.now(), req.body.receiver, res.locals.isbot, reply_id,...file_names];
-        con.query(sql, values, function (err, result) {
+    function validateReceiver(rec) {
+        let receiver = encodeURIComponent(rec || "");
+        if (receiver == "")
+            receiver = "everyone";
+        return receiver
+    }
+
+    router.post("/api/post",  async (req, res) => {
+        try {
+          let message   = validateMessage(req.body.message);
+          validatePID(req.body.pid);
+          let reply_id  = validateReplyID(req.body.reply_id);
+          let receiver  = validateReceiver(req.body.receiver);
+          validateFiles(req.files);
+
+          let __dirname = server.dirname
+          const file_names = ["","","","",""]
+          if(isNotNull(req.files)) {
+            for(let file_index=0;file_index<5;file_index++) {
+              if(isNotNull(req.files[`file_${file_index}`])) {
+                let file = req.files[`file_${file_index}`]
+                const file_id = server.genstring(20)
+                const file_name = `${file_id}/${(file.name.substring(0,25)).replace(/\.[^/.]+$/, "")}`
+                let extension = file.name.substring(file.name.lastIndexOf("\.")+1)
+                file_names[file_index]=`${file_name}${(extension in image_types && ".webp") || extension}`
+                server.ensureExists(`${__dirname}/user_uploads/${file_id}`,undefined,async (err)=>{
+                  if(err) {
+                    console.error(err)
+                    return;
+                  }
+                  if(extension in image_types) {
+                    writeFile(`${__dirname}/user_uploads/${file_name}.webp`,await sharp(file.data).webp({mixed:true,effort:6}).toBuffer(),(err2)=>{
+                      if(err2)console.error(err2)
+                    })
+                    server.ensureExists(`${__dirname}/user_uploads/previews/${file_id}`,undefined,async (error) => {
+                      if(error) {
+                        console.error(error)
+                        return;
+                      }
+                      writeFile(`${__dirname}/user_uploads/previews/${file_name}.webp`,await sharp(file.data).resize(100,100,{fit: "inside"}).webp({mixed:true,effort:6}).toBuffer(),(error2)=>{
+                        if(error2)console.error(error2)
+                      })
+                    })
+                  } else {
+                    file.mv(`${__dirname}/user_uploads/${file_name}.${extension}`,(err2)=>{
+                       if(err2)console.error(err2)
+                    })
+                  }
+                })
+              }
+            }
+          }
+
+          let sql = `insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4) values (?,?,?,?,?,?,?,?,?,?,?); SELECT LAST_INSERT_ID() as ID;`;
+          let values = [encodeURIComponent(res.locals.username), message, Date.now(), receiver, res.locals.isbot, reply_id,...file_names];
+          con.query(sql, values, function (err, result) {
             if (err){
                 res.status(500)
                 res.json({"error":"there's been an interal error"})
@@ -155,7 +179,8 @@ export const setup = function (router, con, server) {
                 post_from_bot: res.locals.isbot,
                 post_reply_id: reply_id,
                 user_avatar: res.locals.avatar,
-                files: file_names
+                files: file_names,
+                post_id: result[0].ID
             };
             let message = {
                 message: "new_post",
@@ -169,7 +194,11 @@ export const setup = function (router, con, server) {
             });
             res.json({ "success": "successfully posted message" });
             console.log(5, `posted new message by ${res.locals.username} : ${req.body.message}`);
-        });
+          });
+        } catch (error) {
+          res.status(error.statusCode)
+          res.json({ "error": error.message, "status": error.statusCode });
+        }
     });
     return createPID
 };

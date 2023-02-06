@@ -8,7 +8,7 @@ function changed() {
 }
 
 async function getJSON(url) {
-    return await(await fetch(url)).json()
+    return (await fetch(url)).json()
 }
 
 async function submit() {

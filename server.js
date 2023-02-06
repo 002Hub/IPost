@@ -67,7 +67,9 @@ const con = mysql.createPool({
     connectionLimit: config.mysql.connections,
     host: config.mysql.host,
     user: config.mysql.user,
-    password: readFileSync(config.mysql.password_file).toString()
+    password: readFileSync(config.mysql.password_file).toString(),
+    multipleStatements: true,
+    supportBigNumbers: true,
 });
 const cookiesecret = readFileSync("cookiesecret.txt").toString();
 

@@ -82,7 +82,7 @@ export const setup = function (router, con, server) {
                 message: "invalid pid given"
             }
         }
-        PIDS[req.body.pid] = "already_used";
+        PIDS[pid] = "already_used";
     }
 
     function validateReplyID(rid) {

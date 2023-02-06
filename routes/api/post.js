@@ -90,8 +90,8 @@ export const setup = function (router, con, server) {
         if (!rid || rid < 0) {
             reply_id = 0
         }
-        if(typeof rid === "string") {
-            reply_id = parseInt(reply_id,10)
+        if(typeof rid === "string" && rid !== "") {
+            reply_id = parseInt(rid,10)
             if(isNaN(reply_id)) {
                 throw {
                     statusCode: 414,

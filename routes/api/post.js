@@ -160,7 +160,12 @@ export const setup = function (router, con, server) {
             }
           }
 
-          let sql = `insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4) values (?,?,?,?,?,?,?,?,?,?,?); SELECT LAST_INSERT_ID() as ID;`;
+          let sql = `
+          START TRANSACTION;
+          insert into ipost.posts (post_user_name,post_text,post_time,post_receiver_name,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4) values (?,?,?,?,?,?,?,?,?,?,?);
+          SELECT LAST_INSERT_ID() as ID;
+          COMMIT;
+          `;
           let values = [encodeURIComponent(res.locals.username), message, Date.now(), receiver, res.locals.isbot, reply_id,...file_names];
           con.query(sql, values, function (err, result) {
             if (err){

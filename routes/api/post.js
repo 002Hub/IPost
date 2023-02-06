@@ -121,7 +121,6 @@ export const setup = function (router, con, server) {
           validatePID(req.body.pid);
           let reply_id  = validateReplyID(req.body.reply_id);
           let receiver  = validateReceiver(req.body.receiver);
-          validateFiles(req.files);
 
           let __dirname = server.dirname
           const file_names = ["","","","",""]

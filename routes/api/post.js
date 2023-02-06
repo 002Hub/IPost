@@ -196,8 +196,14 @@ export const setup = function (router, con, server) {
             console.log(5, `posted new message by ${res.locals.username} : ${req.body.message}`);
           });
         } catch (error) {
-          res.status(error.statusCode)
-          res.json({ "error": error.message, "status": error.statusCode });
+            if(error.statusCode) {
+                res.status(error.statusCode)
+                res.json({ "error": error.message, "status": error.statusCode });
+            } else {
+                console.error("some error: ", error)
+                res.status(500)
+                res.json({"error":"internal server error", "status": 500})
+            }
         }
     });
     return createPID

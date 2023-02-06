@@ -54,7 +54,7 @@ export const setup = function (router, con, server) {
                         res.locals.username = result[0].User_Name;
                         res.locals.bio = result[0].User_Bio || "";
                         res.locals.avatar = result[0].User_Avatar || "";
-                        res.locals.settings = JSON.parse(result[0].User_Settings) || {};
+                        res.locals.settings = result[0].User_Settings || {};
 
                         res.locals.isbot = true; //only apps/bots use auth tokens
 
@@ -96,7 +96,7 @@ export const setup = function (router, con, server) {
                 res.locals.username = result[0].User_Name;
                 res.locals.bio      = result[0].User_Bio || "";
                 res.locals.avatar   = result[0].User_Avatar || "";
-                res.locals.settings = JSON.parse(result[0].User_Settings) || {};
+                res.locals.settings = result[0].User_Settings || {};
                 
             }
             next()

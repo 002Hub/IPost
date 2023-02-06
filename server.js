@@ -6,7 +6,7 @@ import useragent from "express-useragent";
 import fileUpload from "express-fileupload";
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import * as mysql from "mysql";
+import * as mysql from "mysql2";
 import * as ws from "ws";
 import getIP from "./extra_modules/getip.js";
 import {unsign} from "./extra_modules/unsign.js";

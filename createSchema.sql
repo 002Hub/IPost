@@ -12,7 +12,7 @@ CREATE TABLE `application` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
-  `User_ID` int NOT NULL,
+  `User_ID` int NOT NULL AUTO_INCREMENT,
   `User_Name` varchar(250) NOT NULL,
   `User_PW` varchar(45) NOT NULL,
   `User_CreationStamp` varchar(1000) NOT NULL DEFAULT 'None',

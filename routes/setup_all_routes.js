@@ -11,6 +11,7 @@ import { setup as userroutessetup } from "./api/userRoutes.js";
 import { setup as servefilessetup} from "./serve_static_files.js"
 import { setup as userfilessetup} from "./userfiles.js"
 import { setup as userauthsetup} from "./user_auth.js"
+import { setup as applicationsetup} from "./authorize.js"
 
 export const setup = function (router, con, server) {
     const setuproute = handler => handler(router,con,server)
@@ -34,4 +35,6 @@ export const setup = function (router, con, server) {
     setuproute(userfilessetup) //needs getPID and getDMPID
     
     setuproute(userauthsetup) //login & register
+
+    setuproute(applicationsetup)
 }

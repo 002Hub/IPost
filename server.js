@@ -13,6 +13,7 @@ import {unsign} from "./extra_modules/unsign.js";
 import { readFileSync, appendFile } from "fs";
 import { format } from "util";
 import { setup as SETUP_ROUTES} from "./routes/setup_all_routes.js"
+import { verify as verifyHCaptcha_int } from "hcaptcha"
 
 import { ensureExists } from "./extra_modules/ensureExists.js"
 
@@ -57,6 +58,13 @@ function log_info(level, ...info) {
     }
 }
 console.log = log_info;
+
+
+const hcaptcha_secret = config.hcaptcha_secret
+// wrapper for the HCaptcha verify function
+function verifyHCaptcha(token) {
+    return verifyHCaptcha_int(hcaptcha_secret,token,undefined,config.hcaptcha_sitekey)
+}
 
 const WebSocket = ws.WebSocketServer;
 
@@ -259,7 +267,7 @@ app.use(bodyParser.default.json({ limit: "100mb" }));
 app.use(bodyParser.default.urlencoded({ limit: "100mb", extended: true }));
 app.use(cookieParser(cookiesecret));
 app.use(compression())
-var blocked_headers = [
+let blocked_headers = [
     'HTTP_VIA',
     'HTTP_X_FORWARDED_FOR',
     'HTTP_FORWARDED_FOR',
@@ -334,7 +342,11 @@ var commonfunctions = {
     ensureExists,
     "dirname": __dirname,
     config,
-    DID_I_FINALLY_ADD_HTTPS
+    DID_I_FINALLY_ADD_HTTPS,
+    hcaptcha: {
+        "verify":verifyHCaptcha,
+        "sitekey":config.hcaptcha_sitekey
+    }
 };
 
 SETUP_ROUTES(router,con,commonfunctions)

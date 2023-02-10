@@ -18,7 +18,7 @@ export const setup = function (router, con, server) {
                     console.log("error parsing header",err)
                 }
             }
-            if(req.body.auth != undefined) {
+            if(req.body.auth !== undefined && req.originalUrl!=="/redeemauthcode") {
                 if(typeof req.body.auth === "string") {
                     try{
                         req.body.auth = JSON.parse(req.body.auth)

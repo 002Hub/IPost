@@ -80,7 +80,8 @@ export const setup = function (router, con, server) {
         newrelic: load_var("./extra_modules/newrelic_monitor.html"),
         getPID: server.global_page_variables.getPID,
         getDMPID: server.global_page_variables.getDMPID,
-        unauthorized_description: "Chat now by creating an account on IPost"
+        unauthorized_description: "Chat now by creating an account on IPost",
+        hcaptcha_sitekey: server.hcaptcha.sitekey
     }
 
     

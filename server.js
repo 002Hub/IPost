@@ -36,7 +36,7 @@ const original_log = console.log;
  */
 function log_info(level, ...info) {
     let text = info;
-    if (text == undefined || text.length == 0) {
+    if (text === undefined || text.length === 0) {
         text = level;
         level = 5;
     }
@@ -162,11 +162,11 @@ function increaseIndividualCall(url, req) {
     if (!conf["enabled"])
         return true;
     let ip = getIP(req);
-    if (INDIVIDUAL_CALLS[ip] == undefined)
+    if (INDIVIDUAL_CALLS[ip] === undefined)
         INDIVIDUAL_CALLS[ip] = {};
-    if (INDIVIDUAL_CALLS[ip][url] == undefined)
+    if (INDIVIDUAL_CALLS[ip][url] === undefined)
         INDIVIDUAL_CALLS[ip][url] = 0;
-    if (INDIVIDUAL_CALLS[ip][url] == 0) {
+    if (INDIVIDUAL_CALLS[ip][url] === 0) {
         setTimeout(function () {
             INDIVIDUAL_CALLS[ip][url] = 0;
         }, conf["reset_time"]);
@@ -192,7 +192,7 @@ function increaseAccountAPICall(req, res) {
         return false;
     let values = unsigned.split(" ");
     let username = values[0];
-    if (API_CALLS_ACCOUNT[username] == undefined)
+    if (API_CALLS_ACCOUNT[username] === undefined)
         API_CALLS_ACCOUNT[username] = 0;
     if (API_CALLS_ACCOUNT[username] >= config.rate_limits.api.max_per_account) {
         res.status(429);
@@ -203,7 +203,7 @@ function increaseAccountAPICall(req, res) {
 }
 function increaseAPICall(req, res, next) {
     let ip = getIP(req);
-    if (API_CALLS[ip] == undefined)
+    if (API_CALLS[ip] === undefined)
         API_CALLS[ip] = 0;
     if (API_CALLS[ip] >= config.rate_limits.api.max_without_session) {
         if (REVERSE_SESSIONS[ip] && req.cookies.session !== REVERSE_SESSIONS[ip]) { //expected a session, but didn't get one
@@ -215,7 +215,7 @@ function increaseAPICall(req, res, next) {
             let session;
             do {
                 session = genstring(300);
-            } while (SESSIONS[session] != undefined);
+            } while (SESSIONS[session] !== undefined);
             SESSIONS[session] = ip;
             REVERSE_SESSIONS[ip] = session;
             setTimeout(function () {
@@ -241,7 +241,7 @@ function increaseAPICall(req, res, next) {
 }
 function increaseUSERCall(req, res, next) {
     let ip = getIP(req);
-    if (USER_CALLS[ip] == undefined)
+    if (USER_CALLS[ip] === undefined)
         USER_CALLS[ip] = 0;
     if (USER_CALLS[ip] >= config.rate_limits.user.max) {
         res.status(429);
@@ -307,13 +307,13 @@ if (DID_I_FINALLY_ADD_HTTPS) {
 app.use("/*", function (req, res, next) {
     res.set("x-powered-by", "ipost");
     for (let i = 0; i < blocked_headers.length; i++) {
-        if (req.header(blocked_headers[i]) != undefined) {
+        if (req.header(blocked_headers[i]) !== undefined) {
             res.json({ "error": "we don't allow proxies on our website." });
             return;
         }
     }
     let fullurl = req.baseUrl + req.path;
-    if (fullurl != "/") {
+    if (fullurl !== "/") {
         fullurl = fullurl.substring(0, fullurl.length - 1);
     }
     if (!increaseIndividualCall(fullurl, req)) {
@@ -418,7 +418,7 @@ wss.on("connection", function connection(ws) {
     console.log(5,"new connection");
     ws.on("message", function incoming(message) {
         message = JSON.parse(message);
-        if (message.id == "switchChannel") {
+        if (message.id === "switchChannel") {
             ws.channel = decodeURIComponent(message.data);
         }
     });

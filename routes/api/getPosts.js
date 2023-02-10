@@ -5,7 +5,7 @@ export const setup = function (router, con, server) {
     });
     router.get("/api/getPosts",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
-        if (req.query.channel != undefined) {
+        if (req.query.channel !== undefined) {
             let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,User_Avatar,file_0,file_1,file_2,file_3,file_4 from ipost.posts inner join ipost.users on (User_Name = post_user_name) where post_receiver_name = ? group by post_id order by post_id desc limit 30;`;
             con.query(sql, [encodeURIComponent(req.query.channel)], function (err, result) {
                 if (err)
@@ -24,7 +24,7 @@ export const setup = function (router, con, server) {
     });
     router.get("/api/getPostsLowerThan",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
-        if (req.query.channel != undefined) {
+        if (req.query.channel !== undefined) {
             let sql = `select post_user_name,post_text,post_time,post_special_text,post_id,post_from_bot,post_reply_id,file_0,file_1,file_2,file_3,file_4 from ipost.posts where ((post_receiver_name = ?) and (post_id < ?)) group by post_id order by post_id desc limit 30;`;
             con.query(sql, [encodeURIComponent(req.query.channel), req.query.id], function (err, result) {
                 if (err)

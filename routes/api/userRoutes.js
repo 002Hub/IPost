@@ -29,7 +29,7 @@ export const setup = function (router, con, server) {
                 } catch(ignored){}
             }
             let filename = genstring(95) + ".webp";
-            while (existsSync(avatars + "/" + filename) || filename == ".webp") { //generate new filename until it's unique
+            while (existsSync(avatars + "/" + filename) || filename === ".webp") { //generate new filename until it's unique
                 filename = genstring(95) + ".webp";
             }
             sharp(avatar.data).resize({ //resize avatar to 100x100 and convert it to a webp, then store it
@@ -54,7 +54,7 @@ export const setup = function (router, con, server) {
     });
     router.get("/api/getalluserinformation",  function (req, res) {
         res.set("Access-Control-Allow-Origin", ""); //we don't want that here
-        let unsigned = getunsigned(req, res);
+        let unsigned = getunsigned(req, res); //has to be asking for it via the cookie
         if (!unsigned)
             return;
         unsigned = decodeURIComponent(unsigned);
@@ -64,7 +64,7 @@ export const setup = function (router, con, server) {
         con.query(sql, values, function (err, result) {
             if (err)
                 throw err;
-            if (result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
+            if (result[0]) {
                 res.status(200);
                 res.json(result[0]);
             }
@@ -81,7 +81,7 @@ export const setup = function (router, con, server) {
         con.query(sql, [username], function (err, result) {
             if (err)
                 throw err;
-            if (result[0] && result[0].User_Name && result[0].User_Name == username) {
+            if (result[0]) {
                 res.json({ "username": username, "bio": result[0].User_Bio, "avatar": result[0].User_Avatar, "publicKey": result[0].User_PublicKey });
             }
             else {
@@ -112,11 +112,11 @@ export const setup = function (router, con, server) {
     });
     router.post("/api/changePW", (req, res) => {
         res.set("Access-Control-Allow-Origin", "");
-        if ((typeof req.body.newPW) != "string") {
+        if ((typeof req.body.newPW) !== "string") {
             res.json({ "error": "incorrect password" });
             return;
         }
-        if ((typeof req.body.currentPW) != "string") {
+        if ((typeof req.body.currentPW) !== "string") {
             res.json({ "error": "incorrect password" });
             return;
         }
@@ -132,7 +132,7 @@ export const setup = function (router, con, server) {
         con.query(sql, values, function (err, result) {
             if (err)
                 throw err;
-            if (result[0] && result[0].User_Name && result[0].User_Name == res.locals.username) {
+            if (result[0]) {
                 let sql = `update ipost.users set User_PW=? where User_Name=? and User_PW=?;`;
                 let values = [hashed_new_pw, res.locals.username, hashed_pw];
                 con.query(sql, values, (err2) => {
@@ -152,12 +152,12 @@ export const setup = function (router, con, server) {
     });
     router.post("/api/changeUsername",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "");
-        if ((typeof req.body.newUsername) != "string") {
+        if ((typeof req.body.newUsername) !== "string") {
             res.status(410);
             res.json({ "error": "incorrect username" });
             return;
         }
-        if ((typeof req.body.currentPW) != "string") {
+        if ((typeof req.body.currentPW) !== "string") {
             res.status(411);
             res.json({ "error": "incorrect password" });
             return;
@@ -167,19 +167,19 @@ export const setup = function (router, con, server) {
             res.json({ "error": "username is too long" });
             return;
         }
-        if (req.body.newUsername == res.locals.username) {
+        if (req.body.newUsername === res.locals.username) {
             res.status(413);
             res.json({ "error": "username can't be the current one" });
             return;
         }
         let hashed_pw = SHA256(req.body.currentPW, res.locals.username, HASHES_DB);
         let hashed_new_pw = SHA256(req.body.currentPW, req.body.newUsername, HASHES_DB);
-        let sql = `select * from ipost.users where User_Name=?;`; //check if pw is correct
-        let values = [res.locals.username];
+        let sql = `select * from ipost.users where User_Name=? and User_PW=?;`; //check if pw is correct
+        let values = [res.locals.username,hashed_pw];
         con.query(sql, values, function (err, result) {
             if (err)
                 throw err;
-            if (result[0] && result[0].User_PW == hashed_pw) {
+            if (result[0]) {
                 let sql = `select * from ipost.users where User_Name=?;`; //check if newUsername isn't already used
                 let values = [req.body.newUsername];
                 con.query(sql, values, function (err, result) {

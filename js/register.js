@@ -7,7 +7,7 @@ async function register() {
         alert("Username is too long!")
         return;
     }
-    if(document.getElementById("user").value.search("@") != -1) {
+    if(document.getElementById("user").value.search("@") !== -1) {
         alert("User cannot contain '@' character!")
         return;
     }
@@ -31,7 +31,7 @@ async function register() {
 }
 
 function passkeydown(e) {
-    if(e.code == "Enter") {
+    if(e.code === "Enter") {
         register()
     }
 }

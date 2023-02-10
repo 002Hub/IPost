@@ -129,10 +129,10 @@ async function setAllowCCR() {
 
   let r = await(await post("/api/settings",{setting: settingname, value: ACCR})).json() // skipqc
 
-  if(r.status == "error") {
+  if(r.status === "error") {
     alert("Couldn't change setting")
     console.log(r.code)
-  } else if(r.status == "success") {
+  } else if(r.status === "success") {
     //changed setting
   }
 }

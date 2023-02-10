@@ -11,7 +11,7 @@ export const setup = function (router, con, server) {
             res.json({ "error": "no setting to change" });
             return;
         }
-        if ((typeof req.body.setting) != "string") {
+        if ((typeof req.body.setting) !== "string") {
             res.status(411)
             res.json({ "error": "no setting to change" });
             return;
@@ -20,7 +20,7 @@ export const setup = function (router, con, server) {
         let allowed = false;
         let got = typeof req.body.value;
         for (let index = 0; index < types.length; index++) {
-            if (types[index] == got) {
+            if (types[index] === got) {
                 allowed = true;
                 break;
             }

@@ -4,7 +4,7 @@ export const setup = function (router, con, server) {
 
     function createPID(){
         let pid = server.genstring(10); //collision chance is low enough, but we'll check anyways
-        while (PIDS[pid] != undefined) {
+        while (PIDS[pid] !== undefined) {
             pid = server.genstring(10);
             console.log(5, "pid collision");
         }
@@ -26,17 +26,17 @@ export const setup = function (router, con, server) {
             res.json({ "error": "no message to post" });
             return;
         }
-        if ((typeof req.body.message) != "string") {
+        if ((typeof req.body.message) !== "string") {
             res.status(411)
             res.json({ "error": "no message to post" });
             return;
         }
-        if ((typeof req.body.pid) != "string") {
+        if ((typeof req.body.pid) !== "string") {
             res.status(412)
             res.json({ "error": "no pid given" });
             return;
         }
-        if (req.body.pid.length != 10 || PIDS[req.body.pid] !== true) {
+        if (req.body.pid.length !== 10 || PIDS[req.body.pid] !== true) {
             res.status(413)
             res.json({ "error": "invalid pid given" });
             return;
@@ -49,7 +49,7 @@ export const setup = function (router, con, server) {
         else {
             reply_id = req.body.reply_id;
         }
-        if ((typeof reply_id) != "number") {
+        if ((typeof reply_id) !== "number") {
             res.status(414)
             res.json({ "error": "no valid reply id given" });
             return;
@@ -66,7 +66,7 @@ export const setup = function (router, con, server) {
             return;
         }
         req.body.receiver = encodeURIComponent(req.body.receiver || "");
-        if (req.body.receiver == "" || req.body.receiver == encodeURIComponent(res.locals.username) || req.body.receiver.length > 100) {
+        if (req.body.receiver === "" || req.body.receiver === encodeURIComponent(res.locals.username) || req.body.receiver.length > 100) {
             res.status(417).json({ "error": "invalid receiver given" });
             return;
         }
@@ -85,28 +85,10 @@ export const setup = function (router, con, server) {
                 console.error(err)
                 return;
             }
-            // let post_obj = {
-            //     post_user_name: encodeURIComponent(res.locals.username),
-            //     post_text: req.body.message,
-            //     post_time: Date.now(),
-            //     post_special_text: "",
-            //     post_receiver_name: req.body.receiver,
-            //     post_from_bot: res.locals.isbot,
-            //     post_reply_id: reply_id
-            // }
-            // let message = {
-            //     message: "new_post",
-            //     data: post_obj
-            // }
-            // let messagestr = JSON.stringify(message)
-            // server.wss.clients.forEach(function(ws) {
-            //     if(ws.channel == decodeURIComponent(req.body.receiver)) {
-            //         ws.send(messagestr)
-            //     }
-            // });
             res.json({ "success": "successfully posted dm" });
             console.log(5, `posted new dm by ${res.locals.username} to ${otherperson} : ${xor(encodeURIComponent(res.locals.username), otherperson)}`);
         });
+        //TODO: bring dms up-to-date with normal posts
     });
     return createPID
 };

@@ -11,29 +11,29 @@ var highest_id
 var currentChannel
 
 let socket = new WebSocket(wss_URI);
-socket.addEventListener("message", async function (event) {
+socket.addEventListener("message", async function (_event) {
 	console.info("TODO: add websocket support to dms")
-	return
-  if(wss_server == event.origin) {
-    let data = event.data;
-    let ds = JSON.parse(data)
-    let message = ds.message
-    let item = ds.data
-    let username = decodeURIComponent(item.post_user_name)
-    if(message == "new_post") {
-      await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
-      if(user["username"]!=username)mainNoti(username)
+	// return
+  // if(wss_server === event.origin) {
+  //   let data = event.data;
+  //   let ds = JSON.parse(data)
+  //   let message = ds.message
+  //   let item = ds.data
+  //   let username = decodeURIComponent(item.post_user_name)
+  //   if(message === "new_post") {
+  //     await createPost(decodeURIComponent(item.post_user_name),decodeURIComponent(item.post_text),item.post_time,item.post_special_text,highest_id+1,item.post_from_bot,item.post_reply_id,true)
+  //     if(user["username"]!==username)mainNoti(username)
 
-      let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
-      for (let i = 0; i < highest_known_posts.length; i++) {
-        if(document.getElementById(highest_known_posts[i].post_id) == undefined) {
-          main()
-          return;
-        }
-      }
-      highest_id++;
-    }
-  }
+  //     let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
+  //     for (let i = 0; i < highest_known_posts.length; i++) {
+  //       if(document.getElementById(highest_known_posts[i].post_id) === undefined) {
+  //         main()
+  //         return;
+  //       }
+  //     }
+  //     highest_id++;
+  //   }
+  // }
 })
 
 var cd = true //inversed "cooldown"
@@ -74,12 +74,12 @@ async function postMsg() {
     alert(`Your message cant contain more than 1000 characters! (${len})`)
     return
   }
-  if(cd && posting_id!=undefined) {
+  if(cd && posting_id!==undefined) {
     cd = false
 
     let text = document.getElementById("post-text").value
 
-    if(typeof encrypt == "function" && encryption_keys != "") {
+    if(typeof encrypt === "function" && encryption_keys !== "") {
       text = encrypt(text,{
         packed: encryption_keys
       })
@@ -103,7 +103,7 @@ async function update_pid() {
   console.log("new pid info: ",r)
   if(r.error) {
     //an error occurred
-    if(r.error == "you cannot access the api without being logged in") {
+    if(r.error === "you cannot access the api without being logged in") {
       //account error, go to login page
       location.replace("/")
       return
@@ -125,7 +125,7 @@ function spacerTextNode() {
 const user_cache = {}
 async function getavatar(username) {
   let user = user_cache[username]
-  if(user == undefined) {
+  if(user === undefined) {
     user = (await (await fetch("/api/getotheruser?user="+encodeURIComponent(username))).json())["avatar"]
     if(user) {
       user = "/avatars/"+user
@@ -139,7 +139,7 @@ async function getavatar(username) {
 
 async function reply_link_clicked(reply_channel,reply_id) {
   console.log("clicked link")
-  if(reply_channel != currentChannel) {
+  if(reply_channel !== currentChannel) {
     console.log("reply is in another channel")
     switchChannel(reply_channel)
     console.log("switched channel")
@@ -186,7 +186,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   time = time.toString()
   time = time.split(" ")
   time = time[0] + " " + time[1] + " " + time[2] + " " + time[3] + " " + time[4]
-  if(timedate=="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time="unknown time"
+  if(timedate==="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time="unknown time"
   const newTime = document.createTextNode(time)
   const newSpecialText = document.createTextNode(specialtext)
   newDiv.classList.add("post");
@@ -210,9 +210,9 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   newP.appendChild(newA)
   newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan2)
-  if(specialtext != "")newP.appendChild(spacerTextNode())
+  if(specialtext !== "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan3)
-  if(isbot==1){
+  if(isbot===1){
     newP.appendChild(spacerTextNode())
     newP.appendChild(boticon)
   }
@@ -220,7 +220,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   // |\>.</|
   newP.innerHTML += `<button onclick="reply(${postid})">Reply to this Post</button>`
 
-  if(reply_id != 0) {
+  if(reply_id !== 0) {
     try {
       const reply_obj = await (await fetch(`/api/dms/getDM?id=${reply_id}`)).json()
       const reply_username = decodeURIComponent(reply_obj.dms_user_name)
@@ -236,7 +236,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
       replyA.appendChild(reply_username_text)
       replyA.appendChild(spacerTextNode())
 
-      if(typeof decrypt == "function" && encryption_keys != "") {
+      if(typeof decrypt === "function" && encryption_keys !== "") {
         reply_text = decrypt(reply_text,{packed:encryption_keys}).msg
       }
 
@@ -262,7 +262,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
     }
   }
 
-  if(typeof decrypt == "function" && encryption_keys != "") {
+  if(typeof decrypt === "function" && encryption_keys !== "") {
     text = decrypt(text,{packed:encryption_keys}).msg
   }
   newDiv.appendChild(newP)
@@ -316,7 +316,7 @@ async function main(){
 
   let mentions = document.getElementsByClassName("mention")
   for (let i = 0; i < mentions.length; i++) {
-    if(mentions[i]!=undefined && mentions[i].innerText == "@"+username) {
+    if(mentions[i]!==undefined && mentions[i].innerText === "@"+username) {
       mentions[i].classList.add("user-mention");
       mentions[i].classList.remove("mention");
       i--;
@@ -336,7 +336,7 @@ async function reply(postid) {
 
   posttext = decodeURIComponent(posttext)
 
-  if(typeof decrypt == "function" && encryption_keys != "") {
+  if(typeof decrypt === "function" && encryption_keys !== "") {
     posttext = decrypt(posttext,{packed:encryption_keys}).msg
   }
 
@@ -438,7 +438,7 @@ async function loadChannels() {
   let channels = []
 
 	for(let dm of dms) {
-		if(dm.dms_user_name == username) {
+		if(dm.dms_user_name === username) {
 			channels[channels.length] = dm.dms_receiver
 		} else {
 			channels[channels.length] = dm.dms_user_name
@@ -450,7 +450,7 @@ async function loadChannels() {
   let tab = document.getElementById("channelTab")
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
-		if(channels[i]=="")continue;
+		if(channels[i]==="")continue;
     createChannel(channels[i],tab)
   }
 }
@@ -467,13 +467,13 @@ function init() {
 }
 
 async function clickPress(event) {
-	if (event.key == "Enter") {
+	if (event.key === "Enter") {
 		user = (await (await fetch("/api/getotheruser?user="+encodeURIComponent(document.getElementById("Username_input").value))).json())
-		if(user.username == undefined) {
+		if(user.username === undefined) {
 			alert("invalid username entered")
 			return
 		} else {
-			if(document.getElementById(user.username) == undefined) {
+			if(document.getElementById(user.username) === undefined) {
 				let tab = document.getElementById("channelTab")
 				createChannel(encodeURIComponent(user.username),tab)
 			}

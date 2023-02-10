@@ -10,7 +10,7 @@ export const setup = function (router, con, server) {
     router.use("/*", (req, res, next) => {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
         let unsigned;
-        if (req.body.user == undefined || req.body.pass == undefined) {
+        if (req.body.user === undefined || req.body.pass === undefined) {
             if(typeof req.get("ipost-auth-token") === "string") {
                 try{
                     req.body.auth = JSON.parse(req.get("ipost-auth-token"))
@@ -18,7 +18,7 @@ export const setup = function (router, con, server) {
                     console.log("error parsing header",err)
                 }
             }
-            if(req.body.auth !== undefined && req.originalUrl!=="/redeemauthcode") {
+            if(req.body.auth !== undefined && req.originalUrl !== "/redeemauthcode") {
                 if(typeof req.body.auth === "string") {
                     try{
                         req.body.auth = JSON.parse(req.body.auth)
@@ -45,7 +45,7 @@ export const setup = function (router, con, server) {
                     con.query(sql,[SHA256(req.body.auth.auth_token,req.body.auth.appid, HASHES_DB),SHA256(req.body.auth.secret,req.body.auth.appid, HASHES_DB),req.body.auth.appid],(err,result) => {
                         if(err) throw err;
 
-                        if(result.length != 1) {
+                        if(result.length !== 1) {
                             res.status(420).send("invalid authentication object (or server error?)")
                             return;
                         }
@@ -90,7 +90,7 @@ export const setup = function (router, con, server) {
         con.query(sql, values, function (err, result) {
             if (err)
                 throw err;
-            if (result[0] && result[0].User_Name && result[0].User_Name == values[0]) {
+            if (result[0] && result[0].User_Name && result[0].User_Name === values[0]) {
 
                 res.locals.userid   = result[0].User_ID;
                 res.locals.username = result[0].User_Name;
@@ -105,13 +105,13 @@ export const setup = function (router, con, server) {
 
     router.use("/api/*", (req, res, next) => {
         res.set("Access-Control-Allow-Origin", "*"); //we'll allow it for now
-        if (config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] == "/api/getotheruser") {
+        if (config["allow_getotheruser_without_cookie"] && req.originalUrl.split("\?")[0] === "/api/getotheruser") {
             next();
             return;
         }
         if (!server.increaseAPICall(req, res))return;
 
-        if (res.locals.username != undefined) {
+        if (res.locals.username !== undefined) {
             next();
         }
         else {

@@ -57,7 +57,7 @@ export const setup = function (router, con, server) {
                 let out = []
     
                 for(let channel of result){
-                    if(channel.post_receiver_name == "")continue;
+                    if(channel.post_receiver_name === "")continue;
                     out[out.length] = channel.post_receiver_name
                 }
     
@@ -109,7 +109,7 @@ export const setup = function (router, con, server) {
 
     async function handleUserFiles(request, response, overrideurl) {
         if (!increaseUSERCall(request, response))return;
-        if(typeof overrideurl != "string")overrideurl = undefined;
+        if(typeof overrideurl !== "string")overrideurl = undefined;
     
         let originalUrl = overrideurl || request.originalUrl.split("?").shift();
     
@@ -177,13 +177,13 @@ export const setup = function (router, con, server) {
             return;
         }
     
-        if(originalUrl == "/favicon.ico") {
+        if(originalUrl === "/favicon.ico") {
             response.set('Cache-Control', 'public, max-age=2592000');
             response.sendFile(dir + "/views/favicon.ico")
             return
         }
     
-        if(originalUrl == "/api/documentation/") {
+        if(originalUrl === "/api/documentation/") {
             readFile(path,function(_err,res){
                 response.send(res.toString())
             })

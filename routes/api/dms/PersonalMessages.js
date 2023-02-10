@@ -4,7 +4,7 @@ export const setup = function (router, con, server) {
     router.get("/api/getPersonalPosts",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "");
         let otherperson = encodeURIComponent(req.query.otherperson || "");
-        if (typeof otherperson != "string" || otherperson.length > 100 || otherperson == "") {
+        if (typeof otherperson !== "string" || otherperson.length > 100 || otherperson === "") {
             res.status(410).json({ "error": "invalid otherperson given" });
             return;
         }
@@ -23,11 +23,8 @@ export const setup = function (router, con, server) {
     });
     router.get("/api/dms/conversations",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
-        const columns = [
-            "dms_user_name", "dms_receiver"
-        ];
         let uriencusername = encodeURIComponent(res.locals.username);
-        let sql = `select ${columns.join(",")} from ipost.dms where ((dms_receiver = ?) or (dms_user_name = ?)) group by dms_receiver,dms_user_name;`;
+        let sql = `select dms_user_name, dms_receiver from ipost.dms where ((dms_receiver = ?) or (dms_user_name = ?)) group by dms_receiver,dms_user_name;`;
         con.query(sql, [uriencusername, uriencusername], function (err, result) {
             if (err)
                 throw err;

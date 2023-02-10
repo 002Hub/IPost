@@ -20,7 +20,7 @@ async function submit() {
   console.log(res);
   for (let i = 0; i < res.length; i++) {
     let obj = res[i]
-    if(type=="user") {
+    if(type === "user") {
       createPost(decodeURIComponent(obj.User_Name || ""),decodeURIComponent(obj.User_Bio || "wow such empty"),0)
     } else {
       createPost(decodeURIComponent(obj.post_user_name),decodeURIComponent(obj.post_text),obj.post_time,obj.post_special_text,obj.post_id)
@@ -53,7 +53,7 @@ function createPost(username,text,time,specialtext,postid) {
   time = time.toString()
   time = time.split(" ")
   time = time[0] + " " + time[1] + " " + time[2] + " " + time[3] + " " + time[4]
-  if(timedate=="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time=""
+  if(timedate==="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)")time=""
   const newTime = document.createTextNode(time)
   const newSpecialText = document.createTextNode(specialtext)
 
@@ -68,9 +68,9 @@ function createPost(username,text,time,specialtext,postid) {
 
 
   newP.appendChild(newA)
-  if(time != "")newP.appendChild(spacerTextNode())
+  if(time !== "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan2)
-  if(specialtext != "" && time != "")newP.appendChild(spacerTextNode())
+  if(specialtext !== "" && time !== "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan3)
 
   newDiv.appendChild(newP)

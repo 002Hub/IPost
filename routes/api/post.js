@@ -18,7 +18,7 @@ export const setup = function (router, con, server) {
 
     function createPID(){
         let pid = server.genstring(10); //collision chance is low enough, but we'll check anyways
-        while (PIDS[pid] != undefined) {
+        while (PIDS[pid] !== undefined) {
             pid = server.genstring(10);
             console.log(5, "pid collision");
         }
@@ -110,7 +110,7 @@ export const setup = function (router, con, server) {
 
     function validateReceiver(rec) {
         let receiver = encodeURIComponent(rec || "");
-        if (receiver == "")
+        if (receiver === "")
             receiver = "everyone";
         return receiver
     }

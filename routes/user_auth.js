@@ -19,12 +19,12 @@ export const setup = function (router, con, server) {
                 return;
         }
         res.status(200);
-        if ((typeof req.body.user) != "string") {
+        if ((typeof req.body.user) !== "string") {
             res.status(416);
             res.json({ "error": "incorrect username" });
             return;
         }
-        if ((typeof req.body.pass) != "string") {
+        if ((typeof req.body.pass) !== "string") {
             res.status(417);
             res.json({ "error": "incorrect password" });
             return;
@@ -37,7 +37,7 @@ export const setup = function (router, con, server) {
             res.redirect("/register?success=false&reason=username");
             return;
         }
-        if (username == "") {
+        if (username === "") {
             res.status(411);
             res.redirect("/register?success=false&reason=username");
             return;
@@ -52,7 +52,7 @@ export const setup = function (router, con, server) {
             res.send("username is too long");
             return;
         }
-        if (username.search("@") != -1) {
+        if (username.search("@") !== -1) {
             res.status(414);
             res.send("username can't contain @-characters");
             return;
@@ -93,12 +93,12 @@ export const setup = function (router, con, server) {
     router.post("/login",  function (req, res) {
         if (!increaseAPICall(req, res))
             return;
-        if ((typeof req.body.user) != "string") {
+        if ((typeof req.body.user) !== "string") {
             res.status(416);
             res.json({ "error": "incorrect username" });
             return;
         }
-        if ((typeof req.body.pass) != "string") {
+        if ((typeof req.body.pass) !== "string") {
             res.status(417);
             res.json({ "error": "incorrect password" });
             return;
@@ -150,7 +150,7 @@ export const setup = function (router, con, server) {
                 let cookiesigned = signature.sign(setTo, cookiesecret + (!no_ip_lock ? ip : ""));
                 res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
                 ip = SHA256(ip, setTo, HASHES_DB);
-                if (result[0].User_LastIP != ip) {
+                if (result[0].User_LastIP !== ip) {
                     let sql = `update ipost.users set User_LastIP = ? where User_Name = ?;`;
                     con.query(sql, [ip, encodeURIComponent(username)], function (error) {
                         if (error)

@@ -13,13 +13,13 @@ function getById(i){return document.getElementById(i)}
 let socket = new WebSocket(wss_URI);
 socket.addEventListener("message", async function (event) {
   console.log("new websocket message arrived");
-  if(wss_server == event.origin) {
+  if(wss_server === event.origin) {
     let data = event.data;
     let ds = JSON.parse(data)
     let message = ds.message
     let item = ds.data
     let username = decURIComp(item.post_user_name)
-    if(message == "new_post" && decURIComp(item.post_receiver_name) == currentChannel) {
+    if(message === "new_post" && decURIComp(item.post_receiver_name) === currentChannel) {
       await createPost(
         username,
         decURIComp(item.post_text),
@@ -37,11 +37,11 @@ socket.addEventListener("message", async function (event) {
         item.files[4]
       )
       console.log("created new post");
-      if(user["username"]!=username)mainNoti(username)
+      if(user["username"] !== username)mainNoti(username)
 
       let highest_known_posts = await (await fetch(`/api/getPostsLowerThan?id=${highest_id+28}&channel=${currentChannel}`)).json()
       for (let i = 0; i < highest_known_posts.length; i++) {
-        if(getById(highest_known_posts[i].post_id) == undefined) {
+        if(getById(highest_known_posts[i].post_id) === undefined) {
           main()
           return;
         }
@@ -76,7 +76,7 @@ let last_called_postMsg = Date.now()
   last_called_postMsg = Date.now()
   let msg = getById("post-text").value
   let len = msg.length
-  if(len==0){
+  if(len===0){
     alert("you have to enter a message!")
     return;
   };
@@ -88,7 +88,7 @@ let last_called_postMsg = Date.now()
     alert("Your message is too long! (Too many special characters)")
     return
   }
-  if(cd && posting_id!=undefined) {
+  if(cd && posting_id !== undefined) {
     cd = false
     setTimeout(function(){
       cd = true
@@ -122,7 +122,7 @@ async function update_pid() {
   console.log("new pid info: ",r)
   if(r.error) {
     //an error occurred
-    if(r.error == "you cannot access the api without being logged in") {
+    if(r.error === "you cannot access the api without being logged in") {
       //account error, go to login page
       location.replace("/")
       return
@@ -139,7 +139,7 @@ function spacerTextNode() {
 
 async function reply_link_clicked(reply_channel,reply_id) {
   console.log("clicked link")
-  if(reply_channel != currentChannel) {
+  if(reply_channel !== currentChannel) {
     console.log("reply is in another channel")
     switchChannel(reply_channel)
     console.log("switched channel")
@@ -229,9 +229,9 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   newP.appendChild(newA)
   newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan2)
-  if(specialtext != "")newP.appendChild(spacerTextNode())
+  if(specialtext !== "")newP.appendChild(spacerTextNode())
   newP.appendChild(newSpan3)
-  if(isbot==1){
+  if(isbot === 1){
     newP.appendChild(spacerTextNode())
     newP.appendChild(boticon)
   }
@@ -239,7 +239,7 @@ async function createPost(username,text,time,specialtext,postid,isbot,reply_id,a
   // |\>.</|
   newP.innerHTML += `<button onclick="reply(${postid})">Reply to this Post</button>`
 
-  if(reply_id != 0) {
+  if(reply_id !== 0) {
     try {
       const reply_obj = await (await fetch(`/api/getPost?id=${reply_id}`)).json()
       const reply_username = decURIComp(reply_obj.post_user_name)
@@ -417,7 +417,7 @@ async function main(){
 
   let mentions = document.getElementsByClassName("mention")
   for (let i = 0; i < mentions.length; i++) {
-    if(mentions[i]!=undefined && mentions[i].innerText == "@"+username) {
+    if(mentions[i] !== undefined && mentions[i].innerText === "@"+username) {
       mentions[i].classList.add("user-mention");
       mentions[i].classList.remove("mention");
       i--;
@@ -494,7 +494,7 @@ function switchChannel(channelname) {
   tab.innerHTML = ""
   for (let i = 0; i < channels.length; i++) {
     let channelname = decURIComp(channels[i])
-    if(channelname == "")continue;
+    if(channelname === "")continue;
     let channelp = createElement("p")
     channelp.classList.add("channel")
     let textnode = document.createTextNode(channelname)
@@ -505,8 +505,8 @@ function switchChannel(channelname) {
 
       let settings = await (await fetch("/api/settings")).json() // skipqc
       console.log(settings) // skipqc
-      if(settings != "null") {
-        if(settings.ACCR == false) {
+      if(settings !== "null") {
+        if(settings.ACCR === false) {
           unreply()
         }
       }
@@ -561,7 +561,7 @@ function dropHandler(ev) {
 
 function init() {
   setInterval(update_pid,30000)
-  if(posting_id=="")update_pid()
+  if(posting_id==="")update_pid()
   main()
   firstAsk()
   loadChannels()

@@ -15,7 +15,7 @@ async function login() {
 
 let passfield = document.getElementById("pass")
 function passkeydown(e) {
-    if(e.code == "Enter") {
+    if(e.code === "Enter") {
         login()
     }
 }

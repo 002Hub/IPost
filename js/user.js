@@ -4,10 +4,10 @@ function getCookie(cname) {
   let ca = decodedCookie.split(';');
   for(let i = 0; i <ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) == ' ') {
+    while (c.charAt(0) ===' ') {
       c = c.substring(1);
     }
-    if (c.indexOf(name) == 0) {
+    if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
     }
   }
@@ -28,7 +28,7 @@ function logout() {
 }
 
 async function setuser() {
-  if(getCookie("priv_key") != "") {
+  if(getCookie("priv_key") !== "") {
     localStorage.setItem("priv_key",getCookie("priv_key"))
     setCookie("priv_key","",0)
   }

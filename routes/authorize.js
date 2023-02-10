@@ -13,8 +13,6 @@ export const setup = function (router, con, server) {
 
         if(data.success) {
 
-            console.log("captcha success")
-
             let appid = req.body.application_id
             if(typeof appid === "string") {
                 appid = Number(appid)

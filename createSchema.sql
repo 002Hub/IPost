@@ -8,8 +8,11 @@ use ipost;
 CREATE TABLE `application` (
   `application_id` int NOT NULL AUTO_INCREMENT,
   `application_secret` varchar(45) NOT NULL,
+  `application_name` text,
+  `application_description` text,
+  `application_auth_url` text,
   PRIMARY KEY (`application_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
   `User_ID` int NOT NULL AUTO_INCREMENT,
@@ -45,9 +48,9 @@ CREATE TABLE `dms` (
   `dms_receiver` varchar(100) DEFAULT NULL,
   `dms_is_private` tinyint DEFAULT '0',
   `dms_from_bot` tinyint DEFAULT '0',
-  `dms_reply_id` bigint unsigned DEFAULT NULL,
+  `dms_reply_id` bigint DEFAULT NULL,
   PRIMARY KEY (`dms_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=180805 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `posts` (
   `post_id` bigint NOT NULL AUTO_INCREMENT,
@@ -57,7 +60,7 @@ CREATE TABLE `posts` (
   `post_special_text` varchar(100) DEFAULT NULL,
   `post_receiver_name` varchar(100) DEFAULT NULL,
   `post_from_bot` tinyint DEFAULT '0',
-  `post_reply_id` bigint unsigned DEFAULT NULL,
+  `post_reply_id` bigint DEFAULT NULL,
   `post_is_private` tinyint DEFAULT '0',
   `file_0` varchar(52) DEFAULT NULL,
   `file_1` varchar(52) DEFAULT NULL,
@@ -65,6 +68,6 @@ CREATE TABLE `posts` (
   `file_3` varchar(52) DEFAULT NULL,
   `file_4` varchar(52) DEFAULT NULL,
   PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=994 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 commit;

@@ -32,7 +32,7 @@ export const setup = function (router, con, server) {
                 }
                 setTimeout(() => {
                     let data = temp_code_to_token[tokencode]
-                    if(data !== undefined && data.token===token && data.appid === appid && data.userid === userid) {
+                    if(data !== undefined && data.token===token && data.appid === appid && data.userid === res.locals.userid) {
                         temp_code_to_token[tokencode]=undefined
                     }
                 }, 300000); //wait for 5 minutes

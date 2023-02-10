@@ -66,6 +66,26 @@ export const setup = function (router, con, server) {
         })
     }
 
+    const appId_Cache = new LRU({max:20,ttl: 1000 * 60 * 15}) //cache for 15 minutes
+    function getAppWithId(appid) {
+        appid = Number(appid)
+        return new Promise((res,rej) => {
+            if(appId_Cache.has(appid)) {
+                res(appId_Cache.get(appid) || {})
+                return
+            }
+            con.query("SELECT * FROM ipost.application WHERE application_id=?",[appid],(err,result) => {
+                if(err) {
+                    console.error(err)
+                    rej({})
+                    return
+                }
+                appId_Cache.set(appid,result[0])
+                res(result[0] || {})
+            })
+        })
+    }
+
     let global_page_variables = {
         globalcss: load_var("./css/global.css"),
         httppostjs: load_var("./js/httppost.js"),
@@ -81,12 +101,13 @@ export const setup = function (router, con, server) {
         getPID: server.global_page_variables.getPID,
         getDMPID: server.global_page_variables.getDMPID,
         unauthorized_description: "Chat now by creating an account on IPost",
-        hcaptcha_sitekey: server.hcaptcha.sitekey
+        hcaptcha_sitekey: server.hcaptcha.sitekey,
+        getAppWithId: getAppWithId
     }
 
     
 
-    function handleUserFiles(request, response, overrideurl) {
+    async function handleUserFiles(request, response, overrideurl) {
         if (!increaseUSERCall(request, response))return;
         if(typeof overrideurl != "string")overrideurl = undefined;
     
@@ -115,9 +136,12 @@ export const setup = function (router, con, server) {
             path = dir + "views" + originalUrl + ".html"
         }
     
-        if(path != "" && originalUrl != "/favicon.ico" && originalUrl != "/api/documentation/") {
+        if(path !== "" && originalUrl !== "/favicon.ico" && originalUrl !== "/api/documentation/") {
             global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
             global_page_variables.query = request.query
+            if(originalUrl === "/authorize") {
+                global_page_variables.application = await getAppWithId(request.query.id)
+            }
             ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
                 str = await str
                 err = await err

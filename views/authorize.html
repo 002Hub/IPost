@@ -14,18 +14,28 @@
     <% if(user.username === undefined) { %>
       <script> document.location.href = '/no_login?r='+encodeURIComponent(document.location.pathname) </script>
     <% } else { %>
-        <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+        <% if(query.id === undefined) { %>
+            <script> document.location.href="/" </script>
+        <% } else { %>
+            <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+        <% } %>
     <% } %>
   </head>
   <body>
     <div class="center">
         <h1>Authorize App</h1>
-        <p>Please authorize the app to access your information:</p>
+        <p>Please authorize the app "<%= application.application_name %>" to access your information:</p>
         <form action="/authorize" method="post">
-            <input type="number" value=<%- query.id %> class="hidden" name="application_id" id="application_id">
+            <input type="number" value=<%= query.id %> class="hidden" name="application_id" id="application_id">
             <div class="h-captcha" data-sitekey="<%- hcaptcha_sitekey %>"></div>
             <input type="submit" value="Authorize">
         </form>
+        <br>
+        <br>
+        <div>
+            <h2>more about <b><%= application.application_name %></b></h2>
+            <%= application.application_description %>
+        </div>
     </div>
   </body>
 </html>

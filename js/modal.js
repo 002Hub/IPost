@@ -26,20 +26,3 @@ function createModal(text,renderAsHTML=false) {
     }
     currentModal.style.display = shade.style.display = "block"
 }
-
-
-// This code is a workaround for IE6's lack of support for the
-// position: fixed style.
-//
-if (!('maxHeight' in document.body.style)) {
-    function modalsize() {
-      const top = document.documentElement.scrollTop;
-      const winsize = document.documentElement.offsetHeight;
-      const docsize = document.documentElement.scrollHeight;
-      shade.style.height = Math.max(winsize, docsize) + 'px';
-      modal.style.top = top + Math.floor(winsize / 3) + 'px';
-    };
-    modal.style.position = shade.style.position = 'absolute';
-    window.onscroll = window.onresize = modalsize;
-    modalsize();
-  }

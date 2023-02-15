@@ -50,7 +50,7 @@ export const setup = function (router, con, server) {
         });         
     });
     router.get("/api/getuser",  function (_req, res) {
-        res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar });
+        res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar, "userid": res.locals.userid });
     });
     router.get("/api/getalluserinformation",  function (req, res) {
         res.set("Access-Control-Allow-Origin", ""); //we don't want that here

@@ -70,7 +70,6 @@ const WebSocket = ws.WebSocketServer;
 
 const router = Router();
 const app = express();
-const DID_I_FINALLY_ADD_HTTPS = true;
 const con = mysql.createPool({
     connectionLimit: config.mysql.connections,
     host: config.mysql.host,
@@ -222,7 +221,7 @@ function increaseAPICall(req, res, next) {
                 SESSIONS[session] = undefined;
                 REVERSE_SESSIONS[ip] = undefined;
             }, 50000);
-            res.cookie('session', session, { maxAge: 100000, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+            res.cookie('session', session, { maxAge: 100000, httpOnly: true, secure: true });
             console.log(3, "sending session to " + ip);
         }
     }
@@ -291,19 +290,19 @@ app.use(function (_req, res, next) {
     res.set("X-XSS-Protection", "1; mode=block");
     next();
 });
-if (DID_I_FINALLY_ADD_HTTPS) {
-    //auto redirect to https
-    app.use((req, res, next) => {
-        if (req.secure) {
-            //already secure
-            next();
-        }
-        else {
-            //redirect to https
-            res.redirect('https://' + req.headers.host + req.url);
-        }
-    });
-}
+
+//auto redirect to https
+app.use((req, res, next) => {
+    if (req.secure) {
+        //already secure
+        next();
+    }
+    else {
+        //redirect to https
+        res.redirect('https://' + req.headers.host + req.url);
+    }
+});
+
 app.use("/*", function (req, res, next) {
     res.set("x-powered-by", "ipost");
     for (let i = 0; i < blocked_headers.length; i++) {
@@ -342,7 +341,6 @@ var commonfunctions = {
     ensureExists,
     "dirname": __dirname,
     config,
-    DID_I_FINALLY_ADD_HTTPS,
     hcaptcha: {
         "verify":verifyHCaptcha,
         "sitekey":config.hcaptcha_sitekey
@@ -367,11 +365,6 @@ END /API/*
 
 */
 
-router.get("/logout",  function (_req, res) {
-    res.cookie("AUTH_COOKIE", "", { maxAge: 0, httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
-    res.redirect("/");
-});
-
 console.log(5, "finished loading routes");
 app.use(router);
 const httpServer = http.createServer(app);
@@ -385,16 +378,12 @@ var httpsServer;
 
 import spdy from "spdy"
 
-if (DID_I_FINALLY_ADD_HTTPS) {
-    httpsServer = spdy.createServer(credentials,app)
-    //httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(config["ports"]["https"], function () {
-        console.log(5, "HTTPS Server is listening");
-    });
-}
-else {
-    httpsServer = httpServer;
-}
+httpsServer = spdy.createServer(credentials,app)
+//httpsServer = https.createServer(credentials, app);
+httpsServer.listen(config["ports"]["https"], function () {
+    console.log(5, "HTTPS Server is listening");
+});
+
 wss = new WebSocket({
     server: httpsServer,
     perMessageDeflate: {

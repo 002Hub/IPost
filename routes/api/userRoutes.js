@@ -141,7 +141,7 @@ export const setup = function (router, con, server) {
                     let ip = getIP(req);
                     let setTo = `${res.locals.username} ${SHA256(req.body.newPW, res.locals.username, HASHES_COOKIE)}`
                     let cookiesigned = signature.sign(setTo, cookiesecret + ip);
-                    res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+                    res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: true });
                     res.json({ "success": "successfully changed password" });
                 });
             }
@@ -197,7 +197,7 @@ export const setup = function (router, con, server) {
                         let ip = getIP(req);
                         let setTo = `${req.body.newUsername} ${SHA256(req.body.currentPW, req.body.newUsername, HASHES_COOKIE)}`
                         let cookiesigned = signature.sign(setTo, cookiesecret + ip);
-                        res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: DID_I_FINALLY_ADD_HTTPS });
+                        res.cookie('AUTH_COOKIE', cookiesigned, { maxAge: Math.pow(10, 10), httpOnly: true, secure: true });
                         //updated username in the users table, but not yet on posts
                         //TODO: update username on dms
                         let sql = `update ipost.posts set post_user_name=? where post_user_name=?;`; //change username of every past post sent

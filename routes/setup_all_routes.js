@@ -12,6 +12,8 @@ import { setup as servefilessetup} from "./serve_static_files.js"
 import { setup as userfilessetup} from "./userfiles.js"
 import { setup as userauthsetup} from "./user_auth.js"
 import { setup as applicationsetup} from "./authorize.js"
+import { setup as logoutsetup} from "./logout.js"
+
 
 export const setup = function (router, con, server) {
     const setuproute = handler => handler(router,con,server)
@@ -27,6 +29,7 @@ export const setup = function (router, con, server) {
     setuproute(getpostssetup)
     setuproute(userroutessetup)
     setuproute(servefilessetup)
+    setuproute(logoutsetup)
     let global_page_variables = {
         getPID: get_pid,
         getDMPID: get_dmpid,

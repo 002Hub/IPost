@@ -45,7 +45,11 @@ export const setup = function (router, con, server) {
                         res.redirect(`/authorize?id=${req.body.application_id}`)
                         return
                     }
-                    res.redirect(`${result[0].application_auth_url}?code=${tokencode}`)
+                    let extra = ""
+                    if(req.body.application_extra !== "") {
+                        extra = "&extra="+String(req.body.application_extra)
+                    }
+                    res.redirect(`${result[0].application_auth_url}?code=${tokencode}${extra}`)
                 })
 
                 

@@ -27,6 +27,7 @@
         <p>Please authorize the app "<%= application.application_name %>" to access your information:</p>
         <form action="/authorize" method="post">
             <input type="number" value=<%= query.id %> class="hidden" name="application_id" id="application_id">
+            <input type="number" value=<%= query.extra || "" %> class="hidden" name="application_extra" id="application_extra">
             <div class="h-captcha" data-sitekey="<%- hcaptcha_sitekey %>"></div>
             <input type="submit" value="Authorize">
         </form>

@@ -23,7 +23,7 @@ export const setup = function (router, con, server) {
                 
                 let tokencode;
                 while(tokencode===undefined || temp_code_to_token[tokencode]!==undefined) {
-                    tokencode = randomBytes(15).toString("base64")
+                    tokencode = randomBytes(15).toString("base64").replace("/\//g","f") //"/" may break some apps
                 }
                 temp_code_to_token[tokencode]={
                     "userid":res.locals.userid,

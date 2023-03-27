@@ -10,7 +10,7 @@
     "express-useragent": "^1.0.15",
     "hcaptcha": "^0.1.1",
     "html-minifier-terser": "^7.1.0",
-    "lru-cache": "^7.18.2",
+    "lru-cache": "^7.18.3",
     "newrelic": "^9.10.2",
     "mysql2": "^3.2.0",
     "sharp": "^0.30.7",

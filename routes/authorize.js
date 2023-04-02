@@ -20,7 +20,7 @@ export const setup = function (router, con, server) {
             if(typeof appid === "number") {
 
                 const token = randomBytes(150).toString("base64")
-                
+
                 let tokencode;
                 while(tokencode===undefined || temp_code_to_token[tokencode]!==undefined) {
                     tokencode = randomBytes(15).toString("base64").replaceAll("/","f").replaceAll("+","A") //"/" and "+" may break some apps
@@ -35,7 +35,7 @@ export const setup = function (router, con, server) {
                     if(data !== undefined && data.token===token && data.appid === appid && data.userid === res.locals.userid) {
                         temp_code_to_token[tokencode]=undefined
                     }
-                }, 300000); //wait for 5 minutes
+                }, 1000*60*5);
 
                 const sql = "SELECT application_auth_url FROM ipost.application where application_id=?"
 
@@ -52,8 +52,8 @@ export const setup = function (router, con, server) {
                     res.redirect(`${result[0].application_auth_url}?code=${tokencode}${extra}`)
                 })
 
-                
-                
+
+
                 return
             }
         }
@@ -75,12 +75,12 @@ export const setup = function (router, con, server) {
             } catch(err) {
                 console.log("error parsing",err)
             }
-        } 
+        }
         if(
-            typeof req.body.auth            !== "object" || 
-            typeof req.body.auth.secret     !== "string" || 
-            typeof req.body.auth.appid      !== "number" || 
-            req.body.auth.secret.length     !== 200      || 
+            typeof req.body.auth            !== "object" ||
+            typeof req.body.auth.secret     !== "string" ||
+            typeof req.body.auth.appid      !== "number" ||
+            req.body.auth.secret.length     !== 200      ||
             Buffer.from(req.body.auth.secret,"base64").length !== 150 ||
             req.body.auth.appid !== temp_code_to_token[req.body.authcode].appid
         ) {
@@ -106,10 +106,10 @@ export const setup = function (router, con, server) {
 
             let data = temp_code_to_token[req.body.authcode]
             temp_code_to_token[req.body.authcode] = undefined
-            
-            
+
+
             const sql = "INSERT INTO `ipost`.`auth_tokens`(`auth_token`,`auth_token_u_id`,`auth_token_isfrom_application_id`) VALUES(?,?,?);"
-            
+
             const values = [SHA256(data.token,appid,10000),data.userid,data.appid] //token,id,appid
             con.query(sql,values,(err,result) => {
                 if(err) {
@@ -121,7 +121,7 @@ export const setup = function (router, con, server) {
             })
         })
 
-        
-    
+
+
     })
 }

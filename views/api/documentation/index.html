@@ -1,86 +1,1571 @@
-<!DOCTYPE html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!doctype html>
+<html>
+  <head>
+    <title>IPost API</title>
+    <style type="text/css">
+      body {
+      	font-family: Trebuchet MS, sans-serif;
+      	font-size: 15px;
+      	color: #444;
+      	margin-right: 24px;
+      }
+      
+      h1	{
+      	font-size: 25px;
+      }
+      h2	{
+      	font-size: 20px;
+      }
+      h3	{
+      	font-size: 16px;
+      	font-weight: bold;
+      }
+      hr	{
+      	height: 1px;
+      	border: 0;
+      	color: #ddd;
+      	background-color: #ddd;
+      }
+      
+      .app-desc {
+        clear: both;
+        margin-left: 20px;
+      }
+      .param-name {
+        width: 100%;
+      }
+      .license-info {
+        margin-left: 20px;
+      }
+      
+      .license-url {
+        margin-left: 20px;
+      }
+      
+      .model {
+        margin: 0 0 0px 20px;
+      }
+      
+      .method {
+        margin-left: 20px;
+      }
+      
+      .method-notes	{
+      	margin: 10px 0 20px 0;
+      	font-size: 90%;
+      	color: #555;
+      }
+      
+      pre {
+        padding: 10px;
+        margin-bottom: 2px;
+      }
+      
+      .http-method {
+       text-transform: uppercase;
+      }
+      
+      pre.get {
+        background-color: #0f6ab4;
+      }
+      
+      pre.post {
+        background-color: #10a54a;
+      }
+      
+      pre.put {
+        background-color: #c5862b;
+      }
+      
+      pre.delete {
+        background-color: #a41e22;
+      }
+      
+      .huge	{
+      	color: #fff;
+      }
+      
+      pre.example {
+        background-color: #f3f3f3;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      
+      code {
+        white-space: pre;
+      }
+      
+      .nickname {
+        font-weight: bold;
+      }
+      
+      .method-path {
+        font-size: 1.5em;
+        background-color: #0f6ab4;
+      }
+      
+      .up {
+        float:right;
+      }
+      
+      .parameter {
+        width: 500px;
+      }
+      
+      .param {
+        width: 500px;
+        padding: 10px 0 0 20px;
+        font-weight: bold;
+      }
+      
+      .param-desc {
+        width: 700px;
+        padding: 0 0 0 20px;
+        color: #777;
+      }
+      
+      .param-type {
+        font-style: italic;
+      }
+      
+      .param-enum-header {
+      width: 700px;
+      padding: 0 0 0 60px;
+      color: #777;
+      font-weight: bold;
+      }
+      
+      .param-enum {
+      width: 700px;
+      padding: 0 0 0 80px;
+      color: #777;
+      font-style: italic;
+      }
+      
+      .field-label {
+        padding: 0;
+        margin: 0;
+        clear: both;
+      }
+      
+      .field-items	{
+      	padding: 0 0 15px 0;
+      	margin-bottom: 15px;
+      }
+      
+      .return-type {
+        clear: both;
+        padding-bottom: 10px;
+      }
+      
+      .param-header {
+        font-weight: bold;
+      }
+      
+      .method-tags {
+        text-align: right;
+      }
+      
+      .method-tag {
+        background: none repeat scroll 0% 0% #24A600;
+        border-radius: 3px;
+        padding: 2px 10px;
+        margin: 2px;
+        color: #FFF;
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>IPost API</h1>
+    <div class="app-desc">the official IPost.rocks API documentation</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
 
-  <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css" media="screen">
-  <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.css" media="screen">
-  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-  <script src="assets/js/jquery-1.8.3.min.js" type="text/javascript"></script>
-  <script src="assets/js/main.js" type="text/javascript"></script>
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
 
-  <title>REST API Resources</title>
-</head>
-<body>
-  <div class="header">
-    <div class="top-bar">
-      <h1 id="logo"><a class="logo" href="/"><span>Swagger</span><span class="light">API Docs</span></a></h1>
-    </div>
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Default">Default</a></h4>
+  <ul>
+  <li><a href="#apiChangePWPost"><code><span class="http-method">post</span> /api/changePW</code></a></li>
+  <li><a href="#apiChangeUsernamePost"><code><span class="http-method">post</span> /api/changeUsername</code></a></li>
+  <li><a href="#apiDmsConversationsGet"><code><span class="http-method">get</span> /api/dms/conversations</code></a></li>
+  <li><a href="#apiDmsEncryptJsGet"><code><span class="http-method">get</span> /api/dms/encrypt.js</code></a></li>
+  <li><a href="#apiDmsGetDMGet"><code><span class="http-method">get</span> /api/dms/getDM</code></a></li>
+  <li><a href="#apiDmsPidGet"><code><span class="http-method">get</span> /api/dms/pid</code></a></li>
+  <li><a href="#apiDmsPostPost"><code><span class="http-method">post</span> /api/dms/post</code></a></li>
+  <li><a href="#apiGetChannelsGet"><code><span class="http-method">get</span> /api/getChannels</code></a></li>
+  <li><a href="#apiGetFileIconGet"><code><span class="http-method">get</span> /api/getFileIcon/*</code></a></li>
+  <li><a href="#apiGetPersonalPostsGet"><code><span class="http-method">get</span> /api/getPersonalPosts</code></a></li>
+  <li><a href="#apiGetPostGet"><code><span class="http-method">get</span> /api/getPost</code></a></li>
+  <li><a href="#apiGetPostsGet"><code><span class="http-method">get</span> /api/getPosts/*</code></a></li>
+  <li><a href="#apiGetPostsGet_1"><code><span class="http-method">get</span> /api/getPosts</code></a></li>
+  <li><a href="#apiGetPostsLowerThanGet"><code><span class="http-method">get</span> /api/getPostsLowerThan</code></a></li>
+  <li><a href="#apiGetalluserinformationGet"><code><span class="http-method">get</span> /api/getalluserinformation</code></a></li>
+  <li><a href="#apiGetotheruserGet"><code><span class="http-method">get</span> /api/getotheruser</code></a></li>
+  <li><a href="#apiGetuserGet"><code><span class="http-method">get</span> /api/getuser</code></a></li>
+  <li><a href="#apiPidGet"><code><span class="http-method">get</span> /api/pid</code></a></li>
+  <li><a href="#apiPostPost"><code><span class="http-method">post</span> /api/post</code></a></li>
+  <li><a href="#apiSearchGet"><code><span class="http-method">get</span> /api/search</code></a></li>
+  <li><a href="#apiSetBioPost"><code><span class="http-method">post</span> /api/setBio</code></a></li>
+  <li><a href="#apiSetavatarPost"><code><span class="http-method">post</span> /api/setavatar</code></a></li>
+  <li><a href="#apiSettingsGet"><code><span class="http-method">get</span> /api/settings</code></a></li>
+  <li><a href="#apiSettingsPost"><code><span class="http-method">post</span> /api/settings</code></a></li>
+  <li><a href="#authorizePost"><code><span class="http-method">post</span> /authorize</code></a></li>
+  <li><a href="#avatarsGet"><code><span class="http-method">get</span> /avatars/*</code></a></li>
+  <li><a href="#cssGet"><code><span class="http-method">get</span> /css/*</code></a></li>
+  <li><a href="#get"><code><span class="http-method">get</span> /*</code></a></li>
+  <li><a href="#imagesGet"><code><span class="http-method">get</span> /images/*</code></a></li>
+  <li><a href="#jsGet"><code><span class="http-method">get</span> /js/*</code></a></li>
+  <li><a href="#loginPost"><code><span class="http-method">post</span> /login</code></a></li>
+  <li><a href="#logoutGet"><code><span class="http-method">get</span> /logout</code></a></li>
+  <li><a href="#redeemauthcodePost"><code><span class="http-method">post</span> /redeemauthcode</code></a></li>
+  <li><a href="#registerPost"><code><span class="http-method">post</span> /register</code></a></li>
+  <li><a href="#rootGet"><code><span class="http-method">get</span> /</code></a></li>
+  <li><a href="#userUploadsGet"><code><span class="http-method">get</span> /user_uploads/*</code></a></li>
+  <li><a href="#usersGet"><code><span class="http-method">get</span> /users/*</code></a></li>
+  </ul>
+
+  <h1><a name="Default">Default</a></h1>
+  <div class="method"><a name="apiChangePWPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/changePW</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiChangePWPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#api_changePW_body">api_changePW_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiChangeUsernamePost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/changeUsername</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiChangeUsernamePost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#api_changeUsername_body">api_changeUsername_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">412</h4>
+    Precondition Failed
+        <a href="#"></a>
+    <h4 class="field-label">413</h4>
+    Payload Too Large
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiDmsConversationsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/dms/conversations</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiDmsConversationsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiDmsEncryptJsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/dms/encrypt.js</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiDmsEncryptJsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiDmsGetDMGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/dms/getDM</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiDmsGetDMGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">id (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiDmsPidGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/dms/pid</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiDmsPidGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiDmsPostPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/dms/post</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiDmsPostPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#dms_post_body">dms_post_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">412</h4>
+    Precondition Failed
+        <a href="#"></a>
+    <h4 class="field-label">413</h4>
+    Payload Too Large
+        <a href="#"></a>
+    <h4 class="field-label">414</h4>
+    URI Too Long
+        <a href="#"></a>
+    <h4 class="field-label">415</h4>
+    Unsupported Media Type
+        <a href="#"></a>
+    <h4 class="field-label">416</h4>
+    Range Not Satisfiable
+        <a href="#"></a>
+    <h4 class="field-label">417</h4>
+    Expectation Failed
+        <a href="#"></a>
+    <h4 class="field-label">418</h4>
+    I&#x27;m a teapot
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetChannelsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getChannels</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetChannelsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+    </div>  <!-- field-items -->
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">429</h4>
+    Too Many Requests
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetFileIconGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getFileIcon/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetFileIconGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetPersonalPostsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getPersonalPosts</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetPersonalPostsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">otherperson (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetPostGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getPost</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetPostGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">id (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetPostsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getPosts/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetPostsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetPostsGet_1"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getPosts</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetPostsGet_1</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">channel (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetPostsLowerThanGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getPostsLowerThan</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetPostsLowerThanGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">channel (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>      <div class="param">id (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetalluserinformationGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getalluserinformation</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetalluserinformationGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized
+        <a href="#"></a>
+    <h4 class="field-label">402</h4>
+    Payment Required
+        <a href="#"></a>
+    <h4 class="field-label">403</h4>
+    Forbidden
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetotheruserGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getotheruser</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetotheruserGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">user (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiGetuserGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/getuser</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiGetuserGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiPidGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/pid</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiPidGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiPostPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/post</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiPostPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#api_post_body">api_post_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiSearchGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/search</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiSearchGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">type (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>      <div class="param">selector (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiSetBioPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/setBio</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiSetBioPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#api_setBio_body">api_setBio_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiSetavatarPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/setavatar</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiSetavatarPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiSettingsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /api/settings</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiSettingsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiSettingsPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/settings</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">apiSettingsPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#api_settings_body">api_settings_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">412</h4>
+    Precondition Failed
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="authorizePost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /authorize</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">authorizePost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#authorize_body">authorize_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="avatarsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /avatars/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">avatarsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="cssGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /css/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">cssGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="get"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">get</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">id (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>    </div>  <!-- field-items -->
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+    <h4 class="field-label">500</h4>
+    Internal Server Error
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="imagesGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /images/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">imagesGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="jsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /js/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">jsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="loginPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /login</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">loginPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#login_body">login_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">412</h4>
+    Precondition Failed
+        <a href="#"></a>
+    <h4 class="field-label">413</h4>
+    Payload Too Large
+        <a href="#"></a>
+    <h4 class="field-label">414</h4>
+    URI Too Long
+        <a href="#"></a>
+    <h4 class="field-label">415</h4>
+    Unsupported Media Type
+        <a href="#"></a>
+    <h4 class="field-label">416</h4>
+    Range Not Satisfiable
+        <a href="#"></a>
+    <h4 class="field-label">417</h4>
+    Expectation Failed
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="logoutGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /logout</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">logoutGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="redeemauthcodePost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /redeemauthcode</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">redeemauthcodePost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#redeemauthcode_body">redeemauthcode_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">420</h4>
+    
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="registerPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /register</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">registerPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>*/*</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#register_body">register_body</a> (optional)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+                </div>  <!-- field-items -->
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">410</h4>
+    Gone
+        <a href="#"></a>
+    <h4 class="field-label">411</h4>
+    Length Required
+        <a href="#"></a>
+    <h4 class="field-label">412</h4>
+    Precondition Failed
+        <a href="#"></a>
+    <h4 class="field-label">413</h4>
+    Payload Too Large
+        <a href="#"></a>
+    <h4 class="field-label">414</h4>
+    URI Too Long
+        <a href="#"></a>
+    <h4 class="field-label">415</h4>
+    Unsupported Media Type
+        <a href="#"></a>
+    <h4 class="field-label">416</h4>
+    Range Not Satisfiable
+        <a href="#"></a>
+    <h4 class="field-label">417</h4>
+    Expectation Failed
+        <a href="#"></a>
+    <h4 class="field-label">418</h4>
+    I&#x27;m a teapot
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="rootGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">rootGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="userUploadsGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /user_uploads/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">userUploadsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+    <h4 class="field-label">404</h4>
+    Not Found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="usersGet"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /users/*</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">usersGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    OK
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#api_changePW_body"><code>api_changePW_body</code></a></li>
+    <li><a href="#api_changeUsername_body"><code>api_changeUsername_body</code></a></li>
+    <li><a href="#api_post_body"><code>api_post_body</code></a></li>
+    <li><a href="#api_setBio_body"><code>api_setBio_body</code></a></li>
+    <li><a href="#api_settings_body"><code>api_settings_body</code></a></li>
+    <li><a href="#authorize_body"><code>authorize_body</code></a></li>
+    <li><a href="#dms_post_body"><code>dms_post_body</code></a></li>
+    <li><a href="#login_body"><code>login_body</code></a></li>
+    <li><a href="#redeemauthcode_body"><code>redeemauthcode_body</code></a></li>
+    <li><a href="#register_body"><code>register_body</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="api_changePW_body"><code>api_changePW_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">newPW (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">currentPW (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
   </div>
-  <div class="model-container"></div>
-  <div class="content">
-    <div class="box clearfix">
-      <div class="sidebar">
-        <div class="section-box">
-          <div class="section-header">
-            Overview
-          </div>
-          <ul>
-            <li>Getting Started</li>
-          </ul>
-        </div>
-        <div class="section-box">
-          <div class="section-header">
-            <a href="#!/DefaultApi">DefaultApi</a>
-          </div>
-          <ul>
-            <li><a href="#!/DefaultApi#apiChangePWPost">apiChangePWPost</a></li>
-            <li><a href="#!/DefaultApi#apiChangeUsernamePost">apiChangeUsernamePost</a></li>
-            <li><a href="#!/DefaultApi#apiDmsConversationsGet">apiDmsConversationsGet</a></li>
-            <li><a href="#!/DefaultApi#apiDmsEncryptJsGet">apiDmsEncryptJsGet</a></li>
-            <li><a href="#!/DefaultApi#apiDmsGetDMGet">apiDmsGetDMGet</a></li>
-            <li><a href="#!/DefaultApi#apiDmsPidGet">apiDmsPidGet</a></li>
-            <li><a href="#!/DefaultApi#apiDmsPostPost">apiDmsPostPost</a></li>
-            <li><a href="#!/DefaultApi#apiGetChannelsGet">apiGetChannelsGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetFileIconGet">apiGetFileIconGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetPersonalPostsGet">apiGetPersonalPostsGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetPostGet">apiGetPostGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetPostsGet">apiGetPostsGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetPostsGet_1">apiGetPostsGet_1</a></li>
-            <li><a href="#!/DefaultApi#apiGetPostsLowerThanGet">apiGetPostsLowerThanGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetalluserinformationGet">apiGetalluserinformationGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetotheruserGet">apiGetotheruserGet</a></li>
-            <li><a href="#!/DefaultApi#apiGetuserGet">apiGetuserGet</a></li>
-            <li><a href="#!/DefaultApi#apiPidGet">apiPidGet</a></li>
-            <li><a href="#!/DefaultApi#apiPostPost">apiPostPost</a></li>
-            <li><a href="#!/DefaultApi#apiSearchGet">apiSearchGet</a></li>
-            <li><a href="#!/DefaultApi#apiSetBioPost">apiSetBioPost</a></li>
-            <li><a href="#!/DefaultApi#apiSetavatarPost">apiSetavatarPost</a></li>
-            <li><a href="#!/DefaultApi#apiSettingsGet">apiSettingsGet</a></li>
-            <li><a href="#!/DefaultApi#apiSettingsPost">apiSettingsPost</a></li>
-            <li><a href="#!/DefaultApi#authorizePost">authorizePost</a></li>
-            <li><a href="#!/DefaultApi#avatarsGet">avatarsGet</a></li>
-            <li><a href="#!/DefaultApi#cssGet">cssGet</a></li>
-            <li><a href="#!/DefaultApi#get">get</a></li>
-            <li><a href="#!/DefaultApi#imagesGet">imagesGet</a></li>
-            <li><a href="#!/DefaultApi#jsGet">jsGet</a></li>
-            <li><a href="#!/DefaultApi#loginPost">loginPost</a></li>
-            <li><a href="#!/DefaultApi#logoutGet">logoutGet</a></li>
-            <li><a href="#!/DefaultApi#redeemauthcodePost">redeemauthcodePost</a></li>
-            <li><a href="#!/DefaultApi#registerPost">registerPost</a></li>
-            <li><a href="#!/DefaultApi#rootGet">rootGet</a></li>
-            <li><a href="#!/DefaultApi#userUploadsGet">userUploadsGet</a></li>
-            <li><a href="#!/DefaultApi#usersGet">usersGet</a></li>
-          </ul>
-        </div>
-      </div>
-    <div class="non-sidebar">
-      <div class="main-content">
-        <h2>Getting Started</h2>
-        <p>To begin using your fancy HTTP API, follow the steps below.</p>
-        <p>You can add some helpful tips, here</p>
-      </div>
-    </div>
+  <div class="model">
+    <h3><a name="api_changeUsername_body"><code>api_changeUsername_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">newUsername (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">currentPW (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
   </div>
-</body>
+  <div class="model">
+    <h3><a name="api_post_body"><code>api_post_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">pid (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">reply_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">receiver (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="api_setBio_body"><code>api_setBio_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">Bio (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="api_settings_body"><code>api_settings_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">setting (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">value (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="authorize_body"><code>authorize_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">application_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">application_extra (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="dms_post_body"><code>dms_post_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">message (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">pid (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">reply_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">receiver (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="login_body"><code>login_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">pass (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">r (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="redeemauthcode_body"><code>redeemauthcode_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">authcode (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">auth (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="register_body"><code>register_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">user (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">pass (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+<div class="param">r (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: any</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
 </html>

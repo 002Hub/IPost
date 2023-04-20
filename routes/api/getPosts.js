@@ -1,8 +1,4 @@
 export const setup = function (router, con, server) {
-    router.get("/api/getPosts/*",  function (_req, res) {
-        res.set("Access-Control-Allow-Origin", "");
-        res.redirect("/api/getPosts");
-    });
     router.get("/api/getPosts",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         if (req.query.channel !== undefined) {
@@ -21,6 +17,9 @@ export const setup = function (router, con, server) {
                 res.json(result);
             });
         }
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/getPostsLowerThan",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
@@ -40,6 +39,9 @@ export const setup = function (router, con, server) {
                 res.json(result);
             });
         }
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/getPost",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
@@ -56,5 +58,8 @@ export const setup = function (router, con, server) {
                 res.json({ "error": "there is no such post!" });
             }
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 }

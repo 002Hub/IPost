@@ -59,6 +59,10 @@ export const setup = function (router, con, server) {
         }
 
         res.redirect(`/authorize?id=${req.body.application_id}`)
+
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     })
 
     router.post("/redeemauthcode", (req,res) => {
@@ -124,4 +128,8 @@ export const setup = function (router, con, server) {
 
 
     })
+
+    /* #swagger.security = [{
+        "appTokenAuthHeader": []
+    }] */
 }

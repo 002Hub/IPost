@@ -358,6 +358,9 @@ router.get("/api/getChannels",  function (_req, res) {
             throw err;
         res.json(result);
     });
+    /* #swagger.security = [{
+        "appTokenAuthHeader": []
+    }] */
 });
 /*
 

@@ -31,8 +31,8 @@ async function addTextOnImage(text,buf) {
 }
 
 export const setup = function (router, con, server) {
-    router.get("/api/getFileIcon/*",async function(req,res){
-        let path = req.path.split("/api/getFileIcon/")[1]
+    router.get("/api/getFileIcon/:icon",async function(req,res){
+        let path = req.params.icon
         if(path.length > 4) {
             res.status(410).json({"error":"file ending is too long"})
             return;
@@ -41,5 +41,8 @@ export const setup = function (router, con, server) {
             res.set("content-type","image/png")
             res.send(buf)
         })
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     })
 }

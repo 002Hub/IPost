@@ -34,5 +34,9 @@ export const setup = function (router, con, server) {
         else {
             res.json({ "error": "invalid type passed along, expected `user` or `post`", "message": "search has been deprecated as of 11/30/2022"});
         }
+
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 }

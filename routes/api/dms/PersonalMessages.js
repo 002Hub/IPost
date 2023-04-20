@@ -20,6 +20,9 @@ export const setup = function (router, con, server) {
                 throw err;
             res.json(result);
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/dms/conversations",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
@@ -30,10 +33,16 @@ export const setup = function (router, con, server) {
                 throw err;
             res.json(result);
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/dms/encrypt.js",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.send(web_version());
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     //
     router.get("/api/dms/getDM",  function (req, res) {
@@ -52,6 +61,9 @@ export const setup = function (router, con, server) {
                 res.json({ "error": "there is no such dm!" });
             }
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 };
 export default {

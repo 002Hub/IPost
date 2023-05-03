@@ -263,11 +263,19 @@ app.use(fileUpload({
     }
 }));
 
-app.use(hsts({
+const hstsMiddleware = hsts({
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true
-}));
+})
+
+app.use((req, res, next) => {
+    if (req.secure) {
+      hstsMiddleware(req, res, next)
+    } else {
+      next()
+    }
+})
 
 app.use(bodyParser.default.json({ limit: "100mb" }));
 app.use(bodyParser.default.urlencoded({ limit: "100mb", extended: true }));

@@ -270,6 +270,12 @@ const hstsMiddleware = hsts({
 })
 
 app.use((req, res, next) => {
+    res.set("x-powered-by", "ipost");
+    res.set("X-Frame-Options","DENY");
+    res.set("X-XSS-Protection","1; mode=block");
+    res.set("X-Content-Type-Options","nosniff");
+    res.set("Referrer-Policy","no-referrer");
+
     if (req.secure) {
       hstsMiddleware(req, res, next)
     } else {
@@ -319,7 +325,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/*", function (req, res, next) {
-    res.set("x-powered-by", "ipost");
     for (let i = 0; i < blocked_headers.length; i++) {
         if (req.header(blocked_headers[i]) !== undefined) {
             res.json({ "error": "we don't allow proxies on our website." });

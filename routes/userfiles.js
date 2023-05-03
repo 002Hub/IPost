@@ -70,6 +70,10 @@ export const setup = function (router, con, server) {
     function getAppWithId(appid) {
         appid = Number(appid)
         return new Promise((res,rej) => {
+            if(isNaN(appid)) {
+                res({})
+                return
+            }
             if(appId_Cache.has(appid)) {
                 res(appId_Cache.get(appid) || {})
                 return
@@ -111,7 +115,9 @@ export const setup = function (router, con, server) {
         if (!increaseUSERCall(request, response))return;
         if(typeof overrideurl !== "string")overrideurl = undefined;
     
-        let originalUrl = overrideurl || request.originalUrl.split("?").shift();
+        let originalUrl = overrideurl
+            || request.params.file
+            || request.originalUrl.split("?").shift(); //backup in case anything goes wrong
     
         let path = ""
         if (existsSync(dir + "views" + originalUrl)) {
@@ -136,10 +142,11 @@ export const setup = function (router, con, server) {
             path = dir + "views" + originalUrl + ".html"
         }
     
-        if(path !== "" && originalUrl !== "/favicon.ico" && originalUrl !== "/api/documentation/") {
+        if(path !== "" && originalUrl !== "favicon.ico" && originalUrl !== "api_documentation" && originalUrl !== "api_documentation.html") {
+            console.log(originalUrl)
             global_page_variables.user = { "username": response.locals.username, "bio": response.locals.bio, "avatar": response.locals.avatar }
             global_page_variables.query = request.query
-            if(originalUrl === "/authorize") {
+            if(originalUrl === "authorize") {
                 global_page_variables.application = await getAppWithId(request.query.id)
             }
             ejs.renderFile(path,global_page_variables,{async: true},async function(err,str){
@@ -176,20 +183,20 @@ export const setup = function (router, con, server) {
             })
             return;
         }
-    
-        if(originalUrl === "/favicon.ico") {
+
+        if(originalUrl === "api_documentation" || originalUrl === "api_documentation.html") {
+            response.set('Cache-Control', 'public, max-age=2592000');
+            response.set('Content-Type', 'text/html')
+            response.send(load_var("./views/api_documentation.html"))
+            return
+        }
+
+        if(originalUrl === "favicon.ico") {
             response.set('Cache-Control', 'public, max-age=2592000');
             response.sendFile(dir + "/views/favicon.ico")
             return
         }
-    
-        if(originalUrl === "/api/documentation/") {
-            readFile(path,function(_err,res){
-                response.send(res.toString())
-            })
-            return
-        }
-    
+
         console.log(5,"no file found",originalUrl);
         try {
             response.status(404).send("No file with that name found");
@@ -197,13 +204,14 @@ export const setup = function (router, con, server) {
             console.error(err)
         }
     }
-    
-    /** 
+
+    /**
     * Handle default URI as /index (interpreted redirect: "localhost" -> "localhost/index" )
     */
     router.get("/", function (req, res) {
+        req.params.file = "index"
         handleUserFiles(req,res,"/index")
     });
-    
-    router.get("/*", handleUserFiles);
+
+    router.get("/:file", handleUserFiles);
 }

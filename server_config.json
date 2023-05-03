@@ -155,8 +155,8 @@
     "level": 5
   },
   "ssl": {
-    "privateKey": "./etc/letsencrypt/live/ipost.rocks/privkey.pem",
-    "certificate" : "./etc/letsencrypt/live/ipost.rocks/fullchain.pem"
+    "privateKey": "/etc/letsencrypt/live/ipost.rocks-0002/privkey.pem",
+    "certificate" : "/etc/letsencrypt/live/ipost.rocks-0002/fullchain.pem"
   },
   "ports": {
     "http": 9999,

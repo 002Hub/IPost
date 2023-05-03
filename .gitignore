@@ -8,3 +8,4 @@ avatars/*
 etc/*
 *newrelic*
 user_uploads/*
+swagger-api.json

@@ -4,6 +4,10 @@ const allowed_settings = {
 export const setup = function (router, con, server) {
     router.get("/api/settings", function (req, res) {
         res.json(res.locals.settings);
+
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.post("/api/settings", function (req, res) {
         if (!req.body.setting) {
@@ -45,6 +49,10 @@ export const setup = function (router, con, server) {
             }
             res.json({ "status": "success" });
         });
+
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 };
 export default {

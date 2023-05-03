@@ -14,6 +14,7 @@ import { readFileSync, appendFile } from "fs";
 import { format } from "util";
 import { setup as SETUP_ROUTES} from "./routes/setup_all_routes.js"
 import { verify as verifyHCaptcha_int } from "hcaptcha"
+import hsts from "hsts"
 
 import { ensureExists } from "./extra_modules/ensureExists.js"
 
@@ -262,6 +263,12 @@ app.use(fileUpload({
     }
 }));
 
+app.use(hsts({
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+}));
+
 app.use(bodyParser.default.json({ limit: "100mb" }));
 app.use(bodyParser.default.urlencoded({ limit: "100mb", extended: true }));
 app.use(cookieParser(cookiesecret));
@@ -358,6 +365,9 @@ router.get("/api/getChannels",  function (_req, res) {
             throw err;
         res.json(result);
     });
+    /* #swagger.security = [{
+        "appTokenAuthHeader": []
+    }] */
 });
 /*
 

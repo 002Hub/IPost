@@ -19,7 +19,7 @@
     "swagger-autogen": "^2.23.1",
     "uglify-js": "^3.17.4",
     "unsafe_encrypt": "^1.0.4",
-    "ws": "^8.12.1"
+    "ws": "^8.13.0"
   },
   "scripts": {
     "start": "node server.js",

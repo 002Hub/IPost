@@ -5,43 +5,43 @@ export const setup = function (router, con, server) {
     const __dirname = server.dirname
     const dir = __dirname + "/"
     
-    router.get("/users/*",  function (req, res) {
+    router.get("/users/:user",  function (req, res) {
         if (!increaseUSERCall(req, res))
             return;
         res.sendFile(dir + "views/otheruser.html");
     });
-    router.get("/css/*", (request, response) => {
+    router.get("/css/:file", (request, response) => {
         if (!increaseUSERCall(request, response))
             return;
-        if (existsSync(__dirname + request.originalUrl)) {
-            response.sendFile(__dirname + request.originalUrl);
+        if (existsSync(`${__dirname}/css/${request.params.file}`)) {
+            response.sendFile(`${__dirname}/css/${request.params.file}`);
         }
         else {
             response.status(404).send("no file with that name found");
         }
         return;
     });
-    router.get("/js/*", (request, response) => {
+    router.get("/js/:file", (request, response) => {
         if (!increaseUSERCall(request, response))
             return;
-        if (existsSync(__dirname + request.originalUrl)) {
-            response.sendFile(__dirname + request.originalUrl);
+        if (existsSync(`${__dirname}/js/${request.params.file}`)) {
+            response.sendFile(`${__dirname}/js/${request.params.file}`);
         }
         else {
             response.status(404).send("no file with that name found");
         }
         return;
     });
-    router.get("/images/*", (request, response) => {
+    router.get("/images/:file", (request, response) => {
         if (!increaseUSERCall(request, response))
             return;
-        if (existsSync(__dirname + request.originalUrl)) {
+        if (existsSync(`${__dirname}/images/${request.params.file}`)) {
             response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
-            response.sendFile(__dirname + request.originalUrl);
+            response.sendFile(`${__dirname}/images/${request.params.file}`);
         }
-        else if(existsSync(__dirname + request.originalUrl.toLowerCase())){
+        else if(existsSync(`${__dirname}/images/${request.params.file.toLowerCase()}`)){
             response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
-            response.sendFile(__dirname + request.originalUrl.toLowerCase());
+            response.sendFile(`${__dirname}/images/${request.params.file.toLowerCase()}`);
         }
         else {
             response.status(404).send("no file with that name found");
@@ -49,12 +49,12 @@ export const setup = function (router, con, server) {
         return;
     });
     
-    router.get("/user_uploads/*", (request, response) => {
+    router.get("/user_uploads/:file", (request, response) => {
         if (!increaseUSERCall(request, response))
             return;
-        if (existsSync(__dirname + request.originalUrl)) {
+        if (existsSync(`${__dirname}/user_uploads/${request.params.file}`)) {
             response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
-            response.sendFile(__dirname + request.originalUrl);
+            response.sendFile(`${__dirname}/user_uploads/${request.params.file}`);
         }
         else {
             response.status(404).send("no file with that name found");
@@ -62,13 +62,12 @@ export const setup = function (router, con, server) {
         return;
     });
     
-    router.get("/avatars/*", (request, response) => {
+    router.get("/avatars/:avatar", (request, response) => {
         if (!increaseUSERCall(request, response))
             return;
         response.set('Cache-Control', 'public, max-age=2592000'); //cache it for one month-ish
-        let originalUrl = request.originalUrl.split("?").shift();
-        if (existsSync(dir + originalUrl)) {
-            return response.sendFile(dir + originalUrl);
+        if (existsSync(`${__dirname}/avatars/${request.params.avatar}`)) {
+            return response.sendFile(`${__dirname}/avatars/${request.params.avatar}`);
         }
         response.status(404).send("No avatar with that name found");
     });

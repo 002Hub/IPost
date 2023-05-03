@@ -19,6 +19,9 @@ export const setup = function (router, con, server) {
     router.get("/api/dms/pid",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.json({ "pid": createPID() });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.post("/api/dms/post",  function (req, res) {
         if (!req.body.message) {
@@ -89,6 +92,10 @@ export const setup = function (router, con, server) {
             console.log(5, `posted new dm by ${res.locals.username} to ${otherperson} : ${xor(encodeURIComponent(res.locals.username), otherperson)}`);
         });
         //TODO: bring dms up-to-date with normal posts
+
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     return createPID
 };

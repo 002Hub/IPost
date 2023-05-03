@@ -47,10 +47,16 @@ export const setup = function (router, con, server) {
                     res.json({ "success": "updated avatar" });
                 });
             })
-        });         
+        });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/getuser",  function (_req, res) {
         res.json({ "username": res.locals.username, "bio": res.locals.bio, "avatar": res.locals.avatar, "userid": res.locals.userid });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/getalluserinformation",  function (req, res) {
         res.set("Access-Control-Allow-Origin", ""); //we don't want that here
@@ -73,6 +79,9 @@ export const setup = function (router, con, server) {
                 res.json({ "error": "you cannot access the api without being logged in" });
             }
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.get("/api/getotheruser",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
@@ -109,6 +118,9 @@ export const setup = function (router, con, server) {
                 throw err;
             res.json({ "success": "updated bio" });
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.post("/api/changePW", (req, res) => {
         res.set("Access-Control-Allow-Origin", "");
@@ -149,6 +161,9 @@ export const setup = function (router, con, server) {
                 res.json({ "error": "invalid password" });
             }
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     router.post("/api/changeUsername",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "");
@@ -212,5 +227,8 @@ export const setup = function (router, con, server) {
                 res.json({ "error": "invalid password" });
             }
         });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 }

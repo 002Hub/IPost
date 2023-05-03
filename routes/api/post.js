@@ -32,6 +32,9 @@ export const setup = function (router, con, server) {
     router.get("/api/pid",  function (req, res) {
         res.set("Access-Control-Allow-Origin", "*");
         res.json({ "pid": createPID() });
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
 
     function validateMessage(message) {
@@ -204,6 +207,9 @@ export const setup = function (router, con, server) {
                 res.json({"error":"internal server error", "status": 500})
             }
         }
+        /* #swagger.security = [{
+            "appTokenAuthHeader": []
+        }] */
     });
     return createPID
 };

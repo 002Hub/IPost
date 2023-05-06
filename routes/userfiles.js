@@ -1,5 +1,5 @@
 import ejs from "ejs"
-import LRU from "lru-cache"
+import { LRUCache as LRU} from "lru-cache"
 import {minify as min_js} from "uglify-js"
 import Clean from 'clean-css';
 import Minifier from 'html-minifier-terser';
@@ -25,27 +25,27 @@ export const setup = function (router, con, server) {
         updateAgeOnHas: true
     })
 
-    function load_var(fina) {
-        if(load_var_cache.get(fina))return load_var_cache.get(fina)
-        if(!existsSync(fina)) {
-            console.log(1,"tried loading non-existent file",fina)
-            load_var_cache.set(fina,"")
-            return "";
-        }
-        let out = readFileSync(fina)
-        if(fina.endsWith(".js")) {
-            out = min_js(out.toString()).code
-        }
-        else if(fina.endsWith(".css")) {
-            const {
-                styles,
-            } = new Clean({}).minify(out.toString());
-            out = styles
+    function load_var(filePath) {
+        if (load_var_cache.has(filePath)) {
+          return load_var_cache.get(filePath);
         }
 
-        load_var_cache.set(fina,out)
-        
-        return out
+        if (!existsSync(filePath)) {
+          console.log(1,'Tried loading non-existent file', filePath);
+          load_var_cache.set(filePath, '');
+          return '';
+        }
+
+        let output = readFileSync(filePath);
+
+        if (filePath.endsWith('.js')) {
+          output = min_js(output.toString()).code;
+        } else if (filePath.endsWith('.css')) {
+          const { styles } = new Clean({}).minify(output.toString());
+          output = styles;
+        }
+        load_var_cache.set(filePath, output);
+        return output;
     }
 
     function get_channels(){

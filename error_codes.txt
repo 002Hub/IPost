@@ -4,7 +4,7 @@
 403: login error (no cookie)
 404: invalid url / not found
 410-419: argument/data error
-420: invalid authetication object
+420: invalid authentication object
 429: ratelimit
 
 500: server error

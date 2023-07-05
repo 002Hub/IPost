@@ -120,8 +120,8 @@ export const setup = function (router, con, server) {
             || request.originalUrl.split("?").shift(); //backup in case anything goes wrong
     
         let path = ""
-        if (existsSync(dir + "views" + originalUrl)) {
-            path = dir + "views" + originalUrl
+        if (existsSync(dir + "views/" + originalUrl)) {
+            path = dir + "views/" + originalUrl
             //send .txt files as plaintext to help browsers interpret it correctly
             if(originalUrl.endsWith(".txt")) {
                 response.set('Content-Type', 'text/plain');

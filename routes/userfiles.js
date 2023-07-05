@@ -208,10 +208,14 @@ export const setup = function (router, con, server) {
     /**
     * Handle default URI as /index (interpreted redirect: "localhost" -> "localhost/index" )
     */
-    router.get("/", function (req, res) {
+    router.get("/", (req, res) => {
         req.params.file = "index"
         handleUserFiles(req,res,"/index")
     });
 
     router.get("/:file", handleUserFiles);
+    router.get("/:folder/:file", (req, res) => {
+        req.params.file = req.params.folder+"/"+req.params.file
+        handleUserFiles(req,res)
+    });
 }

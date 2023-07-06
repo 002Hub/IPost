@@ -13,7 +13,7 @@
     "newrelic": "^9.15.0",
     "html-minifier-terser": "^7.2.0",
     "lru-cache": "^9.1.2",
-    "mysql2": "^3.2.3",
+    "mysql2": "^3.3.5",
     "newrelic": "^9.11.0",
     "sharp": "^0.30.7",
     "spdy": "^4.0.2",
